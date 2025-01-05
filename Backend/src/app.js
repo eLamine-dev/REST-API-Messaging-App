@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes);
 // app.use('/api/messages', messageRoutes);
 
 module.exports = app;
