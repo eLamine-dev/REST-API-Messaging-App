@@ -12,3 +12,34 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
+  password         String
+  username         String
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  groups           Group[]   @relation("UserGroups")
+  status           String    @default("offline")
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  senderId   Int
+  receiverId Int?
+  groupId    Int?
+  timestamp  DateTime @default(now())
+
+  sender   User   @relation(fields: [senderId], references: [id], name: "SentMessages")
+  receiver User?  @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
+  group    Group? @relation(fields: [groupId], references: [id])
+}
+
+model Group {
+  id       Int       @id @default(autoincrement())
+  name     String
+  members  User[]    @relation("UserGroups")
+  messages Message[]
+}

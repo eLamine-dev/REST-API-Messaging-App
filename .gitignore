@@ -2,6 +2,7 @@
 logs
 *.log
 npm-debug.log*
+logs.txt
 
 # Dependency directories
 frontend/node_modules/
