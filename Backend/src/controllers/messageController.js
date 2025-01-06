@@ -1,3 +1,5 @@
+const prisma = require('../utils/prismaClient');
+
 exports.sendMessage = async (req, res) => {
    const { receiverId, groupId, content } = req.body;
    const message = await prisma.message.create({
