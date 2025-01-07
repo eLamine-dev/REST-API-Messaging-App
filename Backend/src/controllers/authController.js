@@ -29,7 +29,7 @@ exports.login = async (req, res) => {
    if (!valid) return res.status(400).json({ error: 'Invalid credentials' });
 
    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '2h',
    });
 
    await prisma.user.update({
@@ -40,10 +40,12 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = async (req, res) => {
-   await prisma.user.update({
-      where: { id: req.user.userId },
-      data: { status: 'offline' },
-   });
+   console.log('Logging out');
+
+   // await prisma.user.update({
+   //    where: { id: req.user.userId },
+   //    data: { status: 'offline' },
+   // });
    res.clearCookie('token');
    res.json({ message: 'Logged out successfully' });
 };

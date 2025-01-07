@@ -7,7 +7,12 @@ const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 
 const app = express();
-app.use(cors());
+app.use(
+   cors({
+      origin: 'http://localhost:5173',
+      credentials: true,
+   })
+);
 app.use(bodyParser.json());
 
 app.use('/api/auth', authRoutes);

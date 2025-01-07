@@ -2,7 +2,6 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.getProfile = async (req, res) => {
-   console.log('Decoded user:', req.user);
    const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
    });
