@@ -42,10 +42,15 @@ exports.login = async (req, res) => {
 exports.logout = async (req, res) => {
    console.log('Logging out');
 
-   // await prisma.user.update({
-   //    where: { id: req.user.userId },
-   //    data: { status: 'offline' },
-   // });
+   await prisma.user.update({
+      where: { id: req.user.userId },
+      data: { status: 'offline' },
+   });
+   const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+   });
+   console.log(user);
+
    res.clearCookie('token');
    res.json({ message: 'Logged out successfully' });
 };

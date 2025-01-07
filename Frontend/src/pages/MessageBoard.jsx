@@ -6,11 +6,15 @@ function MessageBoard() {
       try {
          const token = localStorage.getItem('token');
 
-         await axios.post('http://localhost:5000/api/auth/logout', {
-            headers: {
-               Authorization: `${token}`,
-            },
-         });
+         await axios.post(
+            'http://localhost:5000/api/auth/logout',
+            {},
+            {
+               headers: {
+                  Authorization: `${token}`,
+               },
+            }
+         );
          localStorage.removeItem('token');
          window.location.href = '/';
       } catch (error) {
