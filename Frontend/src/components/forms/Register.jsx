@@ -17,7 +17,7 @@ function Register({ toggleForm }) {
          alert('Account created! Please log in.');
          toggleForm();
       } catch (error) {
-         alert('User already exists');
+         alert('User already exists', error);
       }
    };
 
