@@ -13,10 +13,27 @@ exports.sendMessage = async (req, res) => {
    res.json(message);
 };
 
-exports.getMessages = async (req, res) => {
+exports.getPrivateConversation = async (req, res) => {
+   const { id } = req.params;
    const messages = await prisma.message.findMany({
       where: {
-         OR: [{ senderId: req.user.userId }, { receiverId: req.user.userId }],
+         privateConversationId: parseInt(id),
+      },
+      orderBy: {
+         timestamp: 'asc',
+      },
+   });
+   res.json(messages);
+};
+
+exports.getGroupConversation = async (req, res) => {
+   const { id } = req.params;
+   const messages = await prisma.message.findMany({
+      where: {
+         groupConversationId: parseInt(id),
+      },
+      orderBy: {
+         timestamp: 'asc',
       },
    });
    res.json(messages);

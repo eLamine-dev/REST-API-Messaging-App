@@ -14,32 +14,41 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  email            String    @unique
-  password         String
-  username         String
-  sentMessages     Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
-  groups           Group[]   @relation("UserGroups")
-  status           String    @default("offline")
+  id                   Int                   @id @default(autoincrement())
+  email                String                @unique
+  password             String
+  username             String
+  sentMessages         Message[]             @relation("SentMessages")
+  receivedMessages     Message[]             @relation("ReceivedMessages")
+  status               String                @default("offline")
+  groupConversations   GroupConversation[]   @relation("UserGroups")
+  privateConversations PrivateConversation[] @relation("UserPrivateConversations")
 }
 
 model Message {
-  id         Int      @id @default(autoincrement())
-  content    String
-  senderId   Int
-  receiverId Int?
-  groupId    Int?
-  timestamp  DateTime @default(now())
-
-  sender   User   @relation(fields: [senderId], references: [id], name: "SentMessages")
-  receiver User?  @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
-  group    Group? @relation(fields: [groupId], references: [id])
+  id                    Int                  @id @default(autoincrement())
+  content               String
+  senderId              Int
+  receiverId            Int?
+  groupConversationId   Int?
+  privateConversationId Int?
+  timestamp             DateTime             @default(now())
+  sender                User                 @relation(fields: [senderId], references: [id], name: "SentMessages")
+  receiver              User?                @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
+  groupConversation     GroupConversation?   @relation(fields: [groupConversationId], references: [id])
+  privateConversation   PrivateConversation? @relation(fields: [privateConversationId], references: [id])
 }
 
-model Group {
+model GroupConversation {
   id       Int       @id @default(autoincrement())
   name     String
   members  User[]    @relation("UserGroups")
+  messages Message[]
+}
+
+model PrivateConversation {
+  id       Int       @id @default(autoincrement())
+  name     String
+  members  User[]    @relation("UserPrivateConversations")
   messages Message[]
 }

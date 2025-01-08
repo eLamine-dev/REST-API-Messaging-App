@@ -1,7 +1,15 @@
-import Messages from '../components/forms/Messages';
 import axios from 'axios';
+import { useState } from 'react';
+import ChatArea from '../components/ChatArea';
+import UserList from '../components/UsersList';
+import GroupList from '../components/GroupList';
 
 function MessageBoard() {
+   const [chat, setChat] = useState({
+      type: 'chat-room',
+      id: null,
+   });
+
    async function logout() {
       try {
          const token = localStorage.getItem('token');
@@ -25,9 +33,15 @@ function MessageBoard() {
 
    return (
       <div className="message-board">
-         <h1>Welcome to the Message Board</h1>
-         <Messages />
-         <button onClick={logout}>Logout</button>
+         <div className="header">
+            <h1>Message Board</h1>
+            <h3>Welcome, {localStorage.getItem('username')}</h3>
+            <button onClick={logout}>Logout</button>
+         </div>
+
+         <UserList openDM={setChat} />
+         <GroupList openGroup={setChat} />
+         <ChatArea chat={chat} />
       </div>
    );
 }

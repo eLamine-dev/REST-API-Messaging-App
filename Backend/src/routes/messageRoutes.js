@@ -1,12 +1,15 @@
 const express = require('express');
 const {
    sendMessage,
-   getMessages,
+
+   getGroupConversation,
+   getPrivateConversation,
 } = require('../controllers/messageController');
 const authenticateJWT = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/', authenticateJWT, sendMessage);
-router.get('/', authenticateJWT, getMessages);
+router.get('/private/:id', authenticateJWT, getPrivateConversation);
+router.get('/group/:id', authenticateJWT, getGroupConversation);
 
 module.exports = router;
