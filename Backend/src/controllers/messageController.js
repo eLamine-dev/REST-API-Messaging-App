@@ -15,26 +15,33 @@ exports.sendMessage = async (req, res) => {
 
 exports.getPrivateConversation = async (req, res) => {
    const { id } = req.params;
-   const messages = await prisma.message.findMany({
+   const conversation = await prisma.privateConversation.findUnique({
       where: {
-         privateConversationId: parseInt(id),
+         id: parseInt(id),
       },
-      orderBy: {
-         timestamp: 'asc',
+      include: {
+         messages: {
+            orderBy: {
+               timestamp: 'asc',
+            },
+         },
       },
    });
-   res.json(messages);
+   res.json(conversation.messages);
 };
 
 exports.getGroupConversation = async (req, res) => {
    const { id } = req.params;
-   const messages = await prisma.message.findMany({
+   const conversation = await prisma.groupConversation.findUnique({
       where: {
-         groupConversationId: parseInt(id),
+         id: parseInt(id),
       },
-      orderBy: {
-         timestamp: 'asc',
+      include: {
+         messages: {
+            orderBy: {
+               timestamp: 'asc',
+            },
+         },
       },
    });
-   res.json(messages);
 };

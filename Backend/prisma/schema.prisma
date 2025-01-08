@@ -14,41 +14,41 @@ datasource db {
 }
 
 model User {
-  id                   Int                   @id @default(autoincrement())
-  email                String                @unique
-  password             String
-  username             String
-  sentMessages         Message[]             @relation("SentMessages")
-  receivedMessages     Message[]             @relation("ReceivedMessages")
-  status               String                @default("offline")
-  groupConversations   GroupConversation[]   @relation("UserGroups")
-  privateConversations PrivateConversation[] @relation("UserPrivateConversations")
+  id               Int           @id @default(autoincrement())
+  email            String        @unique
+  password         String
+  username         String
+  sentMessages     Message[]     @relation("SentMessages")
+  receivedMessages Message[]     @relation("ReceivedMessages")
+  status           String        @default("offline")
+  groupChats       GroupChat[]   @relation("UserGroups")
+  privateChats     PrivateChat[] @relation("UserPrivateChats")
 }
 
 model Message {
-  id                    Int                  @id @default(autoincrement())
-  content               String
-  senderId              Int
-  receiverId            Int?
-  groupConversationId   Int?
-  privateConversationId Int?
-  timestamp             DateTime             @default(now())
-  sender                User                 @relation(fields: [senderId], references: [id], name: "SentMessages")
-  receiver              User?                @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
-  groupConversation     GroupConversation?   @relation(fields: [groupConversationId], references: [id])
-  privateConversation   PrivateConversation? @relation(fields: [privateConversationId], references: [id])
+  id            Int          @id @default(autoincrement())
+  content       String
+  senderId      Int
+  receiverId    Int?
+  groupChatId   Int?
+  privateChatId Int?
+  timestamp     DateTime     @default(now())
+  sender        User         @relation(fields: [senderId], references: [id], name: "SentMessages")
+  receiver      User?        @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
+  groupChat     GroupChat?   @relation(fields: [groupChatId], references: [id])
+  privateChat   PrivateChat? @relation(fields: [privateChatId], references: [id])
 }
 
-model GroupConversation {
+model GroupChat {
   id       Int       @id @default(autoincrement())
   name     String
   members  User[]    @relation("UserGroups")
   messages Message[]
 }
 
-model PrivateConversation {
+model PrivateChat {
   id       Int       @id @default(autoincrement())
   name     String
-  members  User[]    @relation("UserPrivateConversations")
+  members  User[]    @relation("UserPrivateChats")
   messages Message[]
 }
