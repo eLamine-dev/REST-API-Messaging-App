@@ -28,6 +28,8 @@ model User {
   createdAt           DateTime       @default(now())
   updatedAt           DateTime       @updatedAt
   deletedAt           DateTime?
+  bio                 String?
+  profilePic          String?
 }
 
 model Message {
@@ -81,13 +83,9 @@ model Friendship {
 enum FriendshipStatus {
   PENDING
   ACCEPTED
-  REJECTED
-  BLOCKED
 }
 
 enum UserStatus {
   OFFLINE
   ONLINE
-  AWAY
-  DO_NOT_DISTURB
 }

@@ -1,3 +1,28 @@
+exports.getFriends = async (req, res) => {
+   const userId = req.user.userId;
+
+   try {
+      const friendships = await prisma.friendship.findMany({
+         where: {
+            status: 'ACCEPTED',
+            OR: [{ senderId: userId }, { receiverId: userId }],
+         },
+         include: {
+            sender: { select: { id: true, username: true, status: true } },
+            receiver: { select: { id: true, username: true, status: true } },
+         },
+      });
+
+      const friends = friendships.map((f) =>
+         f.senderId === userId ? f.receiver : f.sender
+      );
+
+      res.json(friends);
+   } catch (error) {
+      res.status(500).json({ error: 'Error retrieving friends.' });
+   }
+};
+
 exports.sendFriendRequest = async (req, res) => {
    const { receiverId } = req.body;
    try {
@@ -27,14 +52,13 @@ exports.acceptFriendRequest = async (req, res) => {
    }
 };
 
-exports.rejectFriendRequest = async (req, res) => {
+exports.ignoreRequest = async (req, res) => {
    const { id } = req.params;
    try {
-      await prisma.friendship.update({
+      await prisma.friendship.delete({
          where: { id: parseInt(id) },
-         data: { status: 'REJECTED' },
       });
-      res.json({ message: 'Friend request rejected.' });
+      res.json({ message: 'Friend request deleted.' });
    } catch (error) {
       res.status(500).json({ error: 'Error rejecting friend request.' });
    }

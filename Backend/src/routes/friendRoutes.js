@@ -8,6 +8,6 @@ const authenticateJWT = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/', authenticateJWT, sendFriendRequest);
-router.get('/:id', authenticateJWT, acceptFriendRequest);
+router.post('/accept', authenticateJWT, acceptFriendRequest);
 
 module.exports = router;

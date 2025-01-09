@@ -63,3 +63,16 @@ exports.addMember = async (req, res) => {
       res.status(500).json({ error: 'Error adding member.' });
    }
 };
+
+exports.disconnectMember = async (req, res) => {
+   const { conversationId, memberId } = req.body;
+   try {
+      await prisma.conversation.update({
+         where: { id: conversationId },
+         data: { members: { disconnect: { id: memberId } } },
+      });
+      res.json({ message: 'Member removed successfully.' });
+   } catch (error) {
+      res.status(500).json({ error: 'Error removing member.' });
+   }
+};
