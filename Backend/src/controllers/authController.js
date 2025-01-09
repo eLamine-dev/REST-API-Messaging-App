@@ -13,44 +13,46 @@ exports.register = async (req, res) => {
       const user = await prisma.user.create({
          data: { email, password: hashedPassword, username },
       });
-      res.json({ user });
+      res.status(201).json({ user });
    } catch (error) {
-      res.status(400).json({ error: 'User already exists' });
+      res.status(400).json({ error: 'User already exists.' });
    }
 };
 
 exports.login = async (req, res) => {
    const { email, password } = req.body;
 
-   const user = await prisma.user.findUnique({ where: { email } });
-   if (!user) return res.status(400).json({ error: 'Invalid credentials' });
+   try {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user) return res.status(400).json({ error: 'Invalid credentials.' });
 
-   const valid = await bcrypt.compare(password, user.password);
-   if (!valid) return res.status(400).json({ error: 'Invalid credentials' });
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid)
+         return res.status(400).json({ error: 'Invalid credentials.' });
 
-   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-      expiresIn: '2h',
-   });
+      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+         expiresIn: '2h',
+      });
 
-   await prisma.user.update({
-      where: { id: user.id },
-      data: { status: 'online' },
-   });
-   res.json({ token });
+      await prisma.user.update({
+         where: { id: user.id },
+         data: { status: 'ONLINE' },
+      });
+      res.json({ token, userId: user.id });
+   } catch (error) {
+      res.status(500).json({ error: 'Error during login.' });
+   }
 };
 
 exports.logout = async (req, res) => {
-   console.log('Logging out');
-
-   await prisma.user.update({
-      where: { id: req.user.userId },
-      data: { status: 'offline' },
-   });
-   const user = await prisma.user.findUnique({
-      where: { id: req.user.userId },
-   });
-   console.log(user);
-
-   res.clearCookie('token');
-   res.json({ message: 'Logged out successfully' });
+   try {
+      await prisma.user.update({
+         where: { id: req.user.userId },
+         data: { status: 'OFFLINE' },
+      });
+      res.clearCookie('token');
+      res.json({ message: 'Logged out successfully.' });
+   } catch (error) {
+      res.status(500).json({ error: 'Error during logout.' });
+   }
 };
