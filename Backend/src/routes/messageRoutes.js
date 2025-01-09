@@ -1,10 +1,5 @@
 const express = require('express');
-const {
-   sendMessage,
-
-   getGroupConversation,
-   getPrivateConversation,
-} = require('../controllers/messageController');
+const { sendMessage } = require('../controllers/messageController');
 const authenticateJWT = require('../middleware/authMiddleware');
 const router = express.Router();
 

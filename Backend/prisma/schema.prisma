@@ -14,41 +14,49 @@ datasource db {
 }
 
 model User {
-  id               Int           @id @default(autoincrement())
-  email            String        @unique
+  id               Int       @id @default(autoincrement())
+  email            String    @unique
   password         String
   username         String
-  sentMessages     Message[]     @relation("SentMessages")
-  receivedMessages Message[]     @relation("ReceivedMessages")
-  status           String        @default("offline")
-  groupChats       GroupChat[]   @relation("UserGroups")
-  privateChats     PrivateChat[] @relation("UserPrivateChats")
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  status           String    @default("offline")
+  conversationId   Int?
+
+  Conversation Conversation? @relation(fields: [conversationId], references: [id])
+  Conversation Conversation? @relation(fields: [conversationId], references: [id])
+  Friendship   Friendship[]
+  Friendship   Friendship[]
 }
 
 model Message {
-  id            Int          @id @default(autoincrement())
-  content       String
-  senderId      Int
-  receiverId    Int?
-  groupChatId   Int?
-  privateChatId Int?
-  timestamp     DateTime     @default(now())
-  sender        User         @relation(fields: [senderId], references: [id], name: "SentMessages")
-  receiver      User?        @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
-  groupChat     GroupChat?   @relation(fields: [groupChatId], references: [id])
-  privateChat   PrivateChat? @relation(fields: [privateChatId], references: [id])
+  id             Int           @id @default(autoincrement())
+  content        String
+  senderId       Int
+  receiverId     Int?
+  timestamp      DateTime      @default(now())
+  sender         User          @relation(fields: [senderId], references: [id], name: "SentMessages")
+  receiver       User?         @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
+  conversationId Int?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
 }
 
-model GroupChat {
+model Conversation {
   id       Int       @id @default(autoincrement())
   name     String
+  isGroup  Boolean
   members  User[]    @relation("UserGroups")
   messages Message[]
+  adminId  Int
+  User     User[]
 }
 
-model PrivateChat {
-  id       Int       @id @default(autoincrement())
-  name     String
-  members  User[]    @relation("UserPrivateChats")
-  messages Message[]
+model Friendship {
+  id        Int      @id @default(autoincrement())
+  user1Id   Int
+  user2Id   Int
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  user1     User     @relation("UserFriendships", fields: [user1Id], references: [id])
+  user2     User     @relation("UserFriendships", fields: [user2Id], references: [id])
 }
