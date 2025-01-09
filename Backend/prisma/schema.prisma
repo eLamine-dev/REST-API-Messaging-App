@@ -14,49 +14,80 @@ datasource db {
 }
 
 model User {
-  id               Int       @id @default(autoincrement())
-  email            String    @unique
-  password         String
-  username         String
-  sentMessages     Message[] @relation("SentMessages")
-  receivedMessages Message[] @relation("ReceivedMessages")
-  status           String    @default("offline")
-  conversationId   Int?
-
-  Conversation Conversation? @relation(fields: [conversationId], references: [id])
-  Conversation Conversation? @relation(fields: [conversationId], references: [id])
-  Friendship   Friendship[]
-  Friendship   Friendship[]
+  id                  Int            @id @default(autoincrement())
+  email               String         @unique
+  password            String
+  username            String
+  status              UserStatus     @default(OFFLINE)
+  sentMessages        Message[]      @relation("SentMessages")
+  receivedMessages    Message[]      @relation("ReceivedMessages")
+  sentFriendships     Friendship[]   @relation("SentFriendships")
+  receivedFriendships Friendship[]   @relation("ReceivedFriendships")
+  conversations       Conversation[] @relation("UserConversations")
+  ownedConversations  Conversation[] @relation("ConversationAdmin")
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  deletedAt           DateTime?
 }
 
 model Message {
-  id             Int           @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   content        String
+  timestamp      DateTime     @default(now())
+  readAt         DateTime?
   senderId       Int
   receiverId     Int?
-  timestamp      DateTime      @default(now())
-  sender         User          @relation(fields: [senderId], references: [id], name: "SentMessages")
-  receiver       User?         @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
-  conversationId Int?
-  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  conversationId Int
+  sender         User         @relation("SentMessages", fields: [senderId], references: [id])
+  receiver       User?        @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  deletedAt      DateTime?
+
+  @@index([senderId])
+  @@index([receiverId])
 }
 
 model Conversation {
-  id       Int       @id @default(autoincrement())
-  name     String
-  isGroup  Boolean
-  members  User[]    @relation("UserGroups")
-  messages Message[]
-  adminId  Int
-  User     User[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  isGroup      Boolean   @default(false)
+  members      User[]    @relation("UserConversations")
+  messages     Message[]
+  adminId      Int
+  lastActivity DateTime?
+  admin        User      @relation("ConversationAdmin", fields: [adminId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 }
 
 model Friendship {
-  id        Int      @id @default(autoincrement())
-  user1Id   Int
-  user2Id   Int
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-  user1     User     @relation("UserFriendships", fields: [user1Id], references: [id])
-  user2     User     @relation("UserFriendships", fields: [user2Id], references: [id])
+  id         Int              @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  status     FriendshipStatus @default(PENDING)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  deletedAt  DateTime?
+  sender     User             @relation("SentFriendships", fields: [senderId], references: [id])
+  receiver   User             @relation("ReceivedFriendships", fields: [receiverId], references: [id])
+  userId     Int?
+
+  @@unique([senderId, receiverId]) // Prevent duplicate friendships
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+}
+
+enum UserStatus {
+  OFFLINE
+  ONLINE
+  AWAY
+  DO_NOT_DISTURB
 }
