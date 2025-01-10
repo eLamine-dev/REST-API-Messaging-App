@@ -1,3 +1,5 @@
+const prisma = require('../utils/prismaClient');
+
 exports.createConversation = async (req, res) => {
    const { name, isGroup, memberIds } = req.body;
    try {
@@ -15,9 +17,9 @@ exports.createConversation = async (req, res) => {
    }
 };
 
-exports.getConversation = async (req, res) => {
+exports.getConversationMessages = async (req, res) => {
    const { id } = req.params;
-   const conversation = await prisma.Conversation.findUnique({
+   const conversation = await prisma.conversation.findUnique({
       where: {
          id: parseInt(id),
       },
@@ -125,7 +127,7 @@ exports.addMember = async (req, res) => {
    }
 };
 
-exports.disconnectMember = async (req, res) => {
+exports.removeMember = async (req, res) => {
    const { conversationId, memberId } = req.body;
    try {
       await prisma.conversation.update({

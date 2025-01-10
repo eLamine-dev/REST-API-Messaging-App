@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from '../utils/axiosConfig';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 
 function ChatArea({ chat }) {

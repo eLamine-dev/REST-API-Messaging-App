@@ -1,3 +1,5 @@
+const prisma = require('../utils/prismaClient');
+
 exports.getFriends = async (req, res) => {
    const userId = req.user.userId;
 

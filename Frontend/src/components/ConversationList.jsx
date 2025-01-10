@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from '../utils/axiosConfig';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 
 function ConversationList({ setConversationType }) {
@@ -9,7 +9,18 @@ function ConversationList({ setConversationType }) {
    useEffect(() => {
       const fetchConversations = async () => {
          try {
-            const response = await axios.get('/conversation/user');
+            const token = localStorage.getItem('token');
+            console.log('token:', token);
+
+            const response = await axios.get(
+               'http://localhost:5000/api/conversation/user/',
+
+               {
+                  headers: {
+                     Authorization: `${token}`,
+                  },
+               }
+            );
             setPrivateConversations(response.data.privateConversations);
             setGroupConversations(response.data.groupConversations);
          } catch (error) {

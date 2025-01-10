@@ -4,10 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authenticateJWT = (req, res, next) => {
-   console.log('Authenticating JWT');
-
    const token = req.header('Authorization');
-   console.log(token);
 
    if (!token) return res.sendStatus(401);
 

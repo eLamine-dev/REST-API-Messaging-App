@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
       });
       res.status(201).json({ user });
    } catch (error) {
-      res.status(400).json({ error: 'User already exists.' });
+      res.status(400).json({ error: 'Registration Error.' });
    }
 };
 
@@ -24,11 +24,16 @@ exports.login = async (req, res) => {
 
    try {
       const user = await prisma.user.findUnique({ where: { email } });
-      if (!user) return res.status(400).json({ error: 'Invalid credentials.' });
+      if (!user) {
+         console.log('Invalid user.');
+         return res.status(400).json({ error: 'Invalid user.' });
+      }
 
       const valid = await bcrypt.compare(password, user.password);
-      if (!valid)
-         return res.status(400).json({ error: 'Invalid credentials.' });
+      if (!valid) {
+         console.log('Invalid password.');
+         return res.status(400).json({ error: 'Invalid password.' });
+      }
 
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
          expiresIn: '2h',
@@ -50,6 +55,13 @@ exports.logout = async (req, res) => {
          where: { id: req.user.userId },
          data: { status: 'OFFLINE' },
       });
+
+      const user = await prisma.user.findUnique({
+         where: { id: req.user.userId },
+      });
+
+      console.log('User logged out:', user.status);
+
       res.clearCookie('token');
       res.json({ message: 'Logged out successfully.' });
    } catch (error) {

@@ -26,7 +26,7 @@ model User {
   conversations       Conversation[] @relation("UserConversations")
   ownedConversations  Conversation[] @relation("ConversationAdmin")
   createdAt           DateTime       @default(now())
-  updatedAt           DateTime       @updatedAt
+  updatedAt           DateTime?      @updatedAt
   deletedAt           DateTime?
   bio                 String?
   profilePic          String?
@@ -51,7 +51,7 @@ model Message {
 
 model Conversation {
   id           Int       @id @default(autoincrement())
-  name         String
+  name         String?
   isGroup      Boolean   @default(false)
   members      User[]    @relation("UserConversations")
   messages     Message[]
