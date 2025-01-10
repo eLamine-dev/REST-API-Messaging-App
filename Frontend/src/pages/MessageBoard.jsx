@@ -1,47 +1,34 @@
-import axios from 'axios';
 import { useState } from 'react';
+import axios from 'axios';
 import ChatArea from '../components/ChatArea';
-import UserList from '../components/UsersList';
-import GroupList from '../components/GroupList';
+import FriendList from '../components/FriendList';
+import ConversationList from '../components/ConversationList';
 
 function MessageBoard() {
-   const [chat, setChat] = useState({
-      type: 'chat-room',
-      id: null,
-   });
+   const [chat, setChat] = useState({ type: 'private', id: null });
 
-   async function logout() {
+   const handleLogout = async () => {
       try {
-         const token = localStorage.getItem('token');
-
-         await axios.post(
-            'http://localhost:5000/api/auth/logout',
-            {},
-            {
-               headers: {
-                  Authorization: `${token}`,
-               },
-            }
-         );
+         await axios.post('http://localhost:5000/api/auth/logout');
          localStorage.removeItem('token');
          window.location.href = '/';
       } catch (error) {
          console.error('Logout failed:', error);
          alert('Logout failed, please try again.');
       }
-   }
+   };
 
    return (
       <div className="message-board">
          <div className="header">
             <h1>Message Board</h1>
-            <h3>Welcome, {localStorage.getItem('username')}</h3>
-            <button onClick={logout}>Logout</button>
+            <button onClick={handleLogout}>Logout</button>
          </div>
-
-         <UserList openDM={setChat} />
-         <GroupList openGroup={setChat} />
-         <ChatArea chat={chat} />
+         <div className="main-content">
+            <FriendList setConversationType={setChat} />
+            <ConversationList setConversationType={setChat} />
+            <ChatArea chat={chat} />
+         </div>
       </div>
    );
 }

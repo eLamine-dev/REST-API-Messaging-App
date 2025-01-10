@@ -4,7 +4,7 @@ const authenticateJWT = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/register', register);
-router.post('/login', login);
+router.post('/login', authenticateJWT, login);
 router.post('/logout', authenticateJWT, logout);
 
 module.exports = router;
