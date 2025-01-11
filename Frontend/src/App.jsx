@@ -1,26 +1,29 @@
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from './utils/AppContext';
 import AuthPage from './pages/Auth';
 import MessageBoard from './pages/MessageBoard';
 
-import './App.css';
-
 function App() {
-   const token = localStorage.getItem('token');
+   const { state } = useContext(AppContext);
+   const { token } = state;
 
    return (
       <BrowserRouter>
          <Routes>
-            <Route path="/auth" element={<AuthPage />} />
+            <Route
+               path="/auth"
+               element={token ? <Navigate to="/messages" /> : <AuthPage />}
+            />
 
             <Route
                path="/messages"
                element={token ? <MessageBoard /> : <Navigate to="/auth" />}
             />
+
             <Route
                path="/"
-               element={
-                  token ? <Navigate to="/messages" /> : <Navigate to="/auth" />
-               }
+               element={<Navigate to={token ? '/messages' : '/auth'} />}
             />
          </Routes>
       </BrowserRouter>
