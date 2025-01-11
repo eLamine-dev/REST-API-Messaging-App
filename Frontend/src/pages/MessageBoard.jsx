@@ -4,11 +4,15 @@ import { useState } from 'react';
 // import FriendList from '../components/FriendList';
 import ConversationList from '../components/ConversationList';
 
+import { useNavigate } from 'react-router-dom';
+
 function MessageBoard() {
    const [chat, setChat] = useState({
       type: 'chat-room',
       id: null,
    });
+
+   const navigate = useNavigate();
 
    async function logout() {
       try {
@@ -24,7 +28,7 @@ function MessageBoard() {
             }
          );
          localStorage.removeItem('token');
-         window.location.href = '/';
+         navigate('/auth');
       } catch (error) {
          console.error('Logout failed:', error);
          alert('Logout failed, please try again.');

@@ -16,7 +16,6 @@ function App() {
                path="/messages"
                element={token ? <MessageBoard /> : <Navigate to="/auth" />}
             />
-
             <Route
                path="/"
                element={

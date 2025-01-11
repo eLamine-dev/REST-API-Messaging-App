@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
          where: { id: user.id },
          data: { status: 'ONLINE' },
       });
-      res.json({ token, userId: user.id });
+      res.json({ token, user: { id: user.id, username: user.username } });
    } catch (error) {
       res.status(500).json({ error: 'Error during login.' });
    }

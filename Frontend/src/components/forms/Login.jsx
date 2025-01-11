@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { AppContext } from '../../utils/AppContext';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Login({ toggleForm }) {
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const { state, setState } = useContext(AppContext);
+   const navigate = useNavigate();
 
    const handleSubmit = async (e) => {
       e.preventDefault();
+
       try {
          const response = await axios.post(
             'http://localhost:5000/api/auth/login',
@@ -15,8 +20,14 @@ function Login({ toggleForm }) {
                password,
             }
          );
+
+         setState((prevState) => ({
+            ...prevState,
+            user: response.data.user,
+         }));
+
          localStorage.setItem('token', response.data.token);
-         window.location.href = '/messages';
+         navigate('/messages');
       } catch (e) {
          alert('Invalid credentials', e);
       }

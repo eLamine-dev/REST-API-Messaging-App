@@ -75,7 +75,7 @@ model Friendship {
   receiver   User             @relation("ReceivedFriendships", fields: [receiverId], references: [id])
   userId     Int?
 
-  @@unique([senderId, receiverId]) // Prevent duplicate friendships
+  @@unique([senderId, receiverId])
   @@index([senderId])
   @@index([receiverId])
 }
