@@ -1,15 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { AppContext } from '../utils/AppContext';
 
-function FriendList({ setConversationType }) {
+function FriendList() {
    const [friends, setFriends] = useState([]);
+   const { state, setState } = useContext(AppContext);
 
    useEffect(() => {
       const fetchFriends = async () => {
          try {
+            const token = localStorage.getItem('token');
             const response = await axios.get(
-               'http://localhost:5000/api/friends'
+               'http://localhost:5000/api/friends',
+
+               {
+                  headers: {
+                     Authorization: `${token}`,
+                  },
+               }
             );
             setFriends(response.data);
          } catch (error) {
@@ -27,7 +36,10 @@ function FriendList({ setConversationType }) {
                friendId: user.id,
             }
          );
-         setConversationType({ type: 'private', id: conversation.id });
+         setState((prevState) => ({
+            ...prevState,
+            conversation: { type: 'private', id: conversation.data.id },
+         }));
       } catch (error) {
          console.error('Error creating conversation:', error);
       }
@@ -54,9 +66,5 @@ function FriendList({ setConversationType }) {
       </div>
    );
 }
-
-FriendList.propTypes = {
-   setConversationType: PropTypes.func.isRequired,
-};
 
 export default FriendList;

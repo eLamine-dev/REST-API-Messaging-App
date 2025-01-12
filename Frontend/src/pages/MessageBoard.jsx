@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from 'react';
 // import ChatArea from '../components/ChatArea';
-// import FriendList from '../components/FriendList';
+import FriendList from '../components/FriendList';
 import ConversationList from '../components/ConversationList';
 import { useContext } from 'react';
 
@@ -11,10 +11,6 @@ import { useNavigate } from 'react-router-dom';
 
 function MessageBoard() {
    const { state, setState } = useContext(AppContext);
-   const [chat, setChat] = useState({
-      type: 'chat-room',
-      id: null,
-   });
 
    const navigate = useNavigate();
 
@@ -52,8 +48,8 @@ function MessageBoard() {
             <button onClick={logout}>Logout</button>
          </div>
 
-         {/* <FriendList setConversationType={setChat} /> */}
-         <ConversationList setConversationType={setChat} />
+         <FriendList />
+         <ConversationList />
          {/* <ChatArea chat={chat} /> */}
       </div>
    );

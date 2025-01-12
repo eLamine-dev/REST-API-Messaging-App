@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { AppContext } from '../utils/AppContext';
 
-function ConversationList({ setConversationType }) {
+function ConversationList({}) {
    const [privateConversations, setPrivateConversations] = useState([]);
    const [groupConversations, setGroupConversations] = useState([]);
+   const { state, setState } = useContext(AppContext);
 
    useEffect(() => {
       const fetchConversations = async () => {
@@ -12,7 +14,7 @@ function ConversationList({ setConversationType }) {
             const token = localStorage.getItem('token');
 
             const response = await axios.get(
-               'http://localhost:5000/api/conversation/user/',
+               'http://localhost:5000/api/conversations/user/',
 
                {
                   headers: {
@@ -42,10 +44,13 @@ function ConversationList({ setConversationType }) {
                      key={conversation.id}
                      className="conversation-item"
                      onClick={() =>
-                        setConversationType({
-                           type: 'private',
-                           id: conversation.id,
-                        })
+                        setState((prevState) => ({
+                           ...prevState,
+                           conversation: {
+                              type: 'private',
+                              id: conversation.data.id,
+                           },
+                        }))
                      }
                   >
                      <p>
@@ -93,9 +98,5 @@ function ConversationList({ setConversationType }) {
       </div>
    );
 }
-
-ConversationList.propTypes = {
-   setConversationType: PropTypes.func.isRequired,
-};
 
 export default ConversationList;

@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
-app.use('/api/conversation', conversationRoutes);
-app.use('/api/friend', friendRoutes);
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/friends', friendRoutes);
 
 module.exports = app;

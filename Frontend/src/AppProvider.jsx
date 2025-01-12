@@ -6,6 +6,7 @@ export const AppProvider = ({ children }) => {
    const [state, setState] = useState({
       token: localStorage.getItem('token'),
       user: null,
+      conversation: { type: 'chat-room', id: null },
    });
 
    return (
