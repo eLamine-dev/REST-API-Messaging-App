@@ -18,7 +18,6 @@ exports.getFriends = async (req, res) => {
       const friends = friendships.map((f) =>
          f.senderId === userId ? f.receiver : f.sender
       );
-      console.log('get friends', friends);
 
       res.json(friends);
    } catch (error) {

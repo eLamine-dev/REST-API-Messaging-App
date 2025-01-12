@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-// import ChatArea from '../components/ChatArea';
+import ChatArea from '../components/ChatArea';
 import FriendList from '../components/FriendList';
 import ConversationList from '../components/ConversationList';
 import { useContext } from 'react';
@@ -44,13 +44,13 @@ function MessageBoard() {
       <div className="message-board">
          <div className="header">
             <h1>Message Board</h1>
-            <h3>Welcome, {localStorage.getItem('username')}</h3>
+            {/* <h3>Welcome, {state.user.username}</h3> */}
             <button onClick={logout}>Logout</button>
          </div>
 
          <FriendList />
          <ConversationList />
-         {/* <ChatArea chat={chat} /> */}
+         <ChatArea />
       </div>
    );
 }

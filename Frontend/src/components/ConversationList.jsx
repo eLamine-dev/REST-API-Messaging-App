@@ -49,6 +49,8 @@ function ConversationList({}) {
                            conversation: {
                               type: 'private',
                               id: conversation.data.id,
+                              isGroup: false,
+                              name: conversation.name,
                            },
                         }))
                      }
@@ -79,10 +81,15 @@ function ConversationList({}) {
                      key={conversation.id}
                      className="conversation-item"
                      onClick={() =>
-                        setConversationType({
-                           type: 'group',
-                           id: conversation.id,
-                        })
+                        setState((prevState) => ({
+                           ...prevState,
+                           conversation: {
+                              type: 'group',
+                              id: conversation.data.id,
+                              isGroup: false,
+                              name: conversation.name,
+                           },
+                        }))
                      }
                   >
                      <p>{conversation.name}</p>

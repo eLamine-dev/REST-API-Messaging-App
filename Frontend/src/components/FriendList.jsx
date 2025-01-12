@@ -20,6 +20,7 @@ function FriendList() {
                   },
                }
             );
+
             setFriends(response.data);
          } catch (error) {
             console.error('Error fetching friends:', error);
@@ -31,7 +32,7 @@ function FriendList() {
    const handleClickOnUser = async (user) => {
       try {
          const conversation = await axios.post(
-            'http://localhost:5000/api/conversation/startFriendConversation',
+            'http://localhost:5000/api/conversations/startFriendConversation',
             {
                friendId: user.id,
             }

@@ -31,7 +31,6 @@ exports.login = async (req, res) => {
 
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) {
-         console.log('Invalid password.');
          return res.status(400).json({ error: 'Invalid password.' });
       }
 
@@ -43,6 +42,7 @@ exports.login = async (req, res) => {
          where: { id: user.id },
          data: { status: 'ONLINE' },
       });
+
       res.json({ token, user: { id: user.id, username: user.username } });
    } catch (error) {
       res.status(500).json({ error: 'Error during login.' });

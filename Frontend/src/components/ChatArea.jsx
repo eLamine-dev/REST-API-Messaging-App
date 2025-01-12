@@ -1,23 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { AppContext } from '../utils/AppContext';
 
 function ChatArea({ chat }) {
-   const [conversation, setConversation] = useState(null);
    const [messages, setMessages] = useState([]);
+   const { state, setState } = useContext(AppContext);
 
    useEffect(() => {
-      const fetchConversation = async () => {
+      const fetchConversationMessages = async () => {
          try {
-            const response = await axios.get(`/conversation/${chat.id}`);
-            setConversation(response.data);
+            const response = await axios.get(
+               `http://localhost:5000/api/conversations/messages/:id${state.conversation.id}`
+            );
+
             setMessages(response.data.messages);
          } catch (error) {
             console.error('Error fetching conversation:', error);
          }
       };
-      fetchConversation();
-   }, [chat.id]);
+      fetchConversationMessages();
+   }, [state.conversation.id]);
 
    const handleSendMessage = async (e) => {
       e.preventDefault();
@@ -37,11 +40,11 @@ function ChatArea({ chat }) {
 
    return (
       <div className="chat-area">
-         {conversation && (
+         {state.conversation.id && (
             <>
                <div className="conversation-header">
-                  <h2>{conversation.name}</h2>
-                  {conversation.isGroup && <p>Group Chat</p>}
+                  <h2>{state.conversation.name}</h2>
+                  {state.conversation.isGroup && <p>Group Chat</p>}
                </div>
                <div className="messages">
                   {messages.length === 0 ? (
@@ -72,12 +75,5 @@ function ChatArea({ chat }) {
       </div>
    );
 }
-
-ChatArea.propTypes = {
-   chat: PropTypes.shape({
-      type: PropTypes.string.isRequired,
-      id: PropTypes.number.isRequired,
-   }).isRequired,
-};
 
 export default ChatArea;
