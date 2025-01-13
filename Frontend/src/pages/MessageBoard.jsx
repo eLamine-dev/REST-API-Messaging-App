@@ -15,16 +15,19 @@ function MessageBoard() {
    const navigate = useNavigate();
 
    async function logout() {
+      const token = localStorage.getItem('token');
       try {
          await axios.post(
             'http://localhost:5000/api/auth/logout',
             {},
             {
                headers: {
-                  Authorization: `${state.token}`,
+                  Authorization: `${token}`,
                },
             }
          );
+
+         localStorage.removeItem('token');
 
          setState((prevState) => ({
             ...prevState,
@@ -32,11 +35,9 @@ function MessageBoard() {
             user: null,
          }));
 
-         localStorage.removeItem('token');
          navigate('/auth');
       } catch (error) {
          console.error('Logout failed:', error);
-         alert('Logout failed, please try again.');
       }
    }
 
@@ -50,7 +51,7 @@ function MessageBoard() {
 
          <FriendList />
          <ConversationList />
-         <ChatArea />
+         {/* <ChatArea /> */}
       </div>
    );
 }

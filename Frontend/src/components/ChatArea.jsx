@@ -27,21 +27,21 @@ function ChatArea({ chat }) {
       fetchConversationMessages();
    }, [state.conversation.id]);
 
-   const handleSendMessage = async (e) => {
-      e.preventDefault();
-      const content = e.target.elements.message.value;
+   // const handleSendMessage = async (e) => {
+   //    e.preventDefault();
+   //    const content = e.target.elements.message.value;
 
-      try {
-         const response = await axios.post(`/messages`, {
-            content,
-            conversationId: state.conversation.id,
-         });
-         setMessages([...messages, response.data]);
-         e.target.reset();
-      } catch (error) {
-         console.error('Error sending message:', error);
-      }
-   };
+   //    try {
+   //       const response = await axios.post(`/messages`, {
+   //          content,
+   //          conversationId: state.conversation.id,
+   //       });
+   //       setMessages([...messages, response.data]);
+   //       e.target.reset();
+   //    } catch (error) {
+   //       console.error('Error sending message:', error);
+   //    }
+   // };
 
    return (
       <div className="chat-area">

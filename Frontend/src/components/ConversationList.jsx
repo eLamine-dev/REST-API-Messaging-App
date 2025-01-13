@@ -14,7 +14,7 @@ function ConversationList({}) {
             const token = localStorage.getItem('token');
 
             const response = await axios.get(
-               'http://localhost:5000/api/conversations/user/',
+               'http://localhost:5000/api/conversations/user',
 
                {
                   headers: {
