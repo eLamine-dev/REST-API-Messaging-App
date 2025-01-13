@@ -68,3 +68,21 @@ exports.logout = async (req, res) => {
       res.status(500).json({ error: 'Error during logout.' });
    }
 };
+
+exports.validateToken = async (req, res) => {
+   try {
+      const user = await prisma.user.findUnique({
+         where: { id: req.user.userId },
+         select: { id: true, username: true, email: true },
+      });
+
+      if (!user) {
+         return res.status(401).json({ error: 'Invalid token.' });
+      }
+
+      res.json({ user });
+   } catch (error) {
+      console.error('Error validating token:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+   }
+};

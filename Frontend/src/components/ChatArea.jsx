@@ -11,7 +11,12 @@ function ChatArea({ chat }) {
       const fetchConversationMessages = async () => {
          try {
             const response = await axios.get(
-               `http://localhost:5000/api/conversations/messages/:id${state.conversation.id}`
+               `http://localhost:5000/api/conversations/messages/${state.conversation.id}`,
+               {
+                  headers: {
+                     Authorization: `${state.token}`,
+                  },
+               }
             );
 
             setMessages(response.data.messages);
@@ -29,7 +34,7 @@ function ChatArea({ chat }) {
       try {
          const response = await axios.post(`/messages`, {
             content,
-            conversationId: chat.id,
+            conversationId: state.conversation.id,
          });
          setMessages([...messages, response.data]);
          e.target.reset();
