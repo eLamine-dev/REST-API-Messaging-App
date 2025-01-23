@@ -50,10 +50,10 @@ model Message {
 }
 
 model Conversation {
-  id      Int     @id @default(autoincrement())
-  name    String?
-  isGroup Boolean @default(false)
-
+  id           Int       @id @default(autoincrement())
+  name         String?
+  isGroup      Boolean   @default(false)
+  isChatRoom   Boolean   @default(false)
   members      User[]    @relation("UserConversations")
   messages     Message[]
   adminId      Int?
