@@ -1,164 +1,86 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
 const prisma = require("../utils/prismaClient");
 
-exports.createConversation = async (req, res) => {
-  const { name, isGroup, memberIds } = req.body;
+dotenv.config();
+
+exports.register = async (req, res) => {
+  const { email, password, username } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   try {
-    const conversation = await prisma.conversation.create({
-      data: {
-        name,
-        isGroup,
-        adminId: req.user.userId,
-        members: { connect: memberIds.map((id) => ({ id })) },
-      },
+    const user = await prisma.user.create({
+      data: { email, password: hashedPassword, username },
     });
-    res.json(conversation);
+    res.status(201).json({ user });
   } catch (error) {
-    res.status(500).json({ error: "Error creating conversation." });
+    res.status(400).json({ error: "Registration Error." });
   }
 };
 
-exports.getConversationMessages = async (req, res) => {
-  const { id } = req.params;
-  console.log("params id", id);
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    const conversation = await prisma.conversation.findUnique({
-      where: {
-        id: parseInt(id),
-      },
-      include: {
-        messages: {
-          orderBy: {
-            timestamp: "asc",
-          },
-        },
-      },
-    });
-
-    res.json(conversation.messages);
-  } catch (error) {
-    console.log("error getting conversation messages", error);
-  }
-};
-
-exports.getChatRoomId = async (req, res) => {
-  try {
-    const chatRoom = await prisma.conversation.findFirst({
-      where: { isChatRoom: true },
-    });
-
-    if (!chatRoom) {
-      return res.status(404).json({ error: "Chat room not found." });
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      console.log("Invalid user.");
+      return res.status(400).json({ error: "Invalid user." });
     }
 
-    res.json(chatRoom.id);
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return res.status(400).json({ error: "Invalid password." });
+    }
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { status: "ONLINE" },
+    });
+
+    res.json({ token, user: { id: user.id, username: user.username } });
   } catch (error) {
+    res.status(500).json({ error: "Error during login." });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    await prisma.user.update({
+      where: { id: req.user.userId },
+      data: { status: "OFFLINE" },
+    });
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+    });
+
+    res.clearCookie("token");
+    res.json({ message: "Logged out successfully." });
+  } catch (error) {
+    res.status(500).json({ error: "Error during logout." });
+  }
+};
+
+exports.validateToken = async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { id: true, username: true, email: true },
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid token." });
+    }
+
+    res.json({ user });
+  } catch (error) {
+    console.error("Error validating token:", error);
     res.status(500).json({ error: "Internal server error." });
-  }
-};
-
-exports.startFriendConversation = async (req, res) => {
-  const { friendId } = req.body;
-  const userId = req.user.userId;
-
-  const existingConversation = await prisma.conversation.findFirst({
-    where: {
-      AND: [
-        { isGroup: false },
-        { members: { some: { id: userId } } },
-        { members: { some: { id: friendId } } },
-      ],
-    },
-  });
-
-  if (existingConversation) {
-    res.json(existingConversation);
-  } else {
-    const friendConversation = await prisma.conversation.create({
-      data: {
-        isGroup: false,
-        members: {
-          connect: [{ id: userId }, { id: friendId }],
-        },
-      },
-    });
-    res.json(friendConversation);
-  }
-};
-
-exports.getUserConversations = async (req, res) => {
-  try {
-    const userId = req.user.userId;
-
-    const conversations = await prisma.conversation.findMany({
-      where: {
-        members: {
-          some: { id: userId },
-        },
-      },
-      include: {
-        members: {
-          select: { id: true, username: true, status: true },
-        },
-        messages: {
-          orderBy: { timestamp: "desc" },
-          take: 1,
-        },
-      },
-    });
-
-    const privateConversations = conversations.filter((c) => !c.isGroup);
-    const groupConversations = conversations.filter((c) => c.isGroup);
-
-    res.json({ privateConversations, groupConversations });
-  } catch (error) {
-    res.status(500).json({ error: "Error fetching conversations." });
-  }
-};
-
-exports.deleteConversation = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await prisma.message.deleteMany({
-      where: {
-        conversationId: parseInt(id),
-      },
-    });
-    await prisma.conversation.delete({
-      where: {
-        id: parseInt(id),
-      },
-    });
-    res.json({
-      message: "Conversation and related messages deleted successfully.",
-    });
-  } catch (error) {
-    res.status(500).json({ error: "Error deleting conversation." });
-  }
-};
-
-exports.addMember = async (req, res) => {
-  const { conversationId, memberId } = req.body;
-  try {
-    await prisma.conversation.update({
-      where: { id: conversationId },
-      data: { members: { connect: { id: memberId } } },
-    });
-    res.json({ message: "Member added successfully." });
-  } catch (error) {
-    res.status(500).json({ error: "Error adding member." });
-  }
-};
-
-exports.removeMember = async (req, res) => {
-  const { conversationId, memberId } = req.body;
-  try {
-    await prisma.conversation.update({
-      where: { id: conversationId },
-      data: { members: { disconnect: { id: memberId } } },
-    });
-    res.json({ message: "Member removed successfully." });
-  } catch (error) {
-    res.status(500).json({ error: "Error removing member." });
   }
 };
