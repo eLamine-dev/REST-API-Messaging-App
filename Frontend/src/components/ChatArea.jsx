@@ -1,18 +1,19 @@
 import { useEffect, useState, useContext } from "react";
+import PropTypes from "prop-types";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
-function ChatArea() {
+function ChatArea({ conversation }) {
   const [messages, setMessages] = useState([]);
+
   const { state } = useContext(AppContext);
 
   useEffect(() => {
-    if (!state.conversation) return;
-
     const fetchConversationMessages = async () => {
+      if (!conversation.id) return;
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/conversations/messages/${state.conversation.id}`,
+          `http://localhost:5000/api/conversations/messages/${conversation.id}`,
           { headers: { Authorization: `${state.token}` } }
         );
 
@@ -23,15 +24,11 @@ function ChatArea() {
     };
 
     fetchConversationMessages();
-  }, [state.conversation, state.token]);
-
-  if (!state.conversation?.id) {
-    return <p>Loading chat room...</p>;
-  }
+  }, [conversation.id]);
 
   return (
     <div className="chat-area">
-      {state.conversation.id ? (
+      {conversation.id ? (
         <>
           <h2>Chat Room</h2>
           <div className="messages">
@@ -48,5 +45,10 @@ function ChatArea() {
     </div>
   );
 }
+ChatArea.propTypes = {
+  conversation: PropTypes.shape({
+    id: PropTypes.string,
+  }).isRequired,
+};
 
 export default ChatArea;

@@ -8,8 +8,6 @@ export const AppProvider = ({ children }) => {
   const [state, setState] = useState({
     token: localStorage.getItem("token") || null,
     user: null,
-    conversation: { type: "chat-room", id: null },
-    chatRoomId: null,
   });
 
   const isTokenExpired = (token) => {
@@ -42,25 +40,10 @@ export const AppProvider = ({ children }) => {
           }
         );
 
-        // setState((prevState) => ({
-        //    ...prevState,
-        //    token,
-        //    user: response.data.user,
-        // }));
-
-        const chatRoomIdResponse = await axios.get(
-          "http://localhost:5000/api/conversations/get-chatroom",
-          { headers: { Authorization: `${token}` } }
-        );
-
-        console.log(chatRoomIdResponse);
-
         setState((prevState) => ({
           ...prevState,
           token,
           user: response.data.user,
-          chatRoomId: chatRoomIdResponse.data,
-          conversation: { type: "chat-room", id: chatRoomIdResponse.data },
         }));
       } catch (error) {
         console.error("Token validation failed:", error);

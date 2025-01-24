@@ -3,7 +3,7 @@ import { useState } from "react";
 import ChatArea from "../components/ChatArea";
 import FriendList from "../components/FriendList";
 import ConversationList from "../components/ConversationList";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 import { AppContext } from "../utils/AppContext";
 
@@ -11,8 +11,35 @@ import { useNavigate } from "react-router-dom";
 
 function MessageBoard() {
   const { state, setState } = useContext(AppContext);
+  const [conversation, setConversation] = useState({
+    type: "chat-room",
+    id: null,
+    chatRoomId: null,
+  });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getChatRoomId = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/conversations/get-chatroom",
+          { headers: { Authorization: `${state.token}` } }
+        );
+
+        setConversation({
+          type: "chat-room",
+          id: response.data,
+          chatRoomId: response.data,
+        });
+      } catch (error) {
+        console.error("Error fetching chat room ID:", error);
+      }
+    };
+    if (conversation.type === "chat-room" && conversation.chatRoomId === null) {
+      getChatRoomId();
+    }
+  });
 
   async function logout() {
     const token = localStorage.getItem("token");
@@ -33,7 +60,6 @@ function MessageBoard() {
       setState({
         token: null,
         user: null,
-        conversation: { type: "chat-room", id: null },
       });
       navigate("/auth");
     }
@@ -49,7 +75,7 @@ function MessageBoard() {
 
       <FriendList />
       <ConversationList />
-      <ChatArea />
+      <ChatArea conversation={conversation} />
     </div>
   );
 }
