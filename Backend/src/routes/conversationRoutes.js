@@ -5,7 +5,7 @@ const {
   deleteConversation,
   addMember,
   removeMember,
-  startFriendConversation,
+  getFriendConversation,
   getUserConversations,
   getChatRoomId,
 } = require("../controllers/conversationController");
@@ -20,10 +20,10 @@ router.get("/get-chatroom", authenticateJWT, getChatRoomId);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
 router.post("/addMember/:id", authenticateJWT, addMember);
 router.post("/removeMember/:id", authenticateJWT, removeMember);
-router.post(
-  "/startFriendConversation",
+router.get(
+  "/getFriendConversation/:friendId",
   authenticateJWT,
-  startFriendConversation
+  getFriendConversation
 );
 
 module.exports = router;

@@ -24,7 +24,7 @@ function ChatArea({ conversation }) {
     };
 
     fetchConversationMessages();
-  }, [conversation.id]);
+  }, [conversation.id, state.token]);
 
   return (
     <div className="chat-area">
@@ -47,7 +47,7 @@ function ChatArea({ conversation }) {
 }
 ChatArea.propTypes = {
   conversation: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
 };
 

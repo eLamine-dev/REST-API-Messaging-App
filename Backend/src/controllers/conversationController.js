@@ -57,16 +57,17 @@ exports.getChatRoomId = async (req, res) => {
   }
 };
 
-exports.startFriendConversation = async (req, res) => {
-  const { friendId } = req.body;
+exports.getFriendConversation = async (req, res) => {
+  const { friendId } = req.params;
   const userId = req.user.userId;
+  console.log(userId, friendId);
 
   const existingConversation = await prisma.conversation.findFirst({
     where: {
       AND: [
         { isGroup: false },
-        { members: { some: { id: userId } } },
-        { members: { some: { id: friendId } } },
+        { members: { some: { id: parseInt(userId) } } },
+        { members: { some: { id: parseInt(friendId) } } },
       ],
     },
   });
@@ -74,7 +75,7 @@ exports.startFriendConversation = async (req, res) => {
   if (existingConversation) {
     res.json(existingConversation);
   } else {
-    const friendConversation = await prisma.conversation.create({
+    const newfriendConversation = await prisma.conversation.create({
       data: {
         isGroup: false,
         members: {
@@ -82,7 +83,7 @@ exports.startFriendConversation = async (req, res) => {
         },
       },
     });
-    res.json(friendConversation);
+    res.json(newfriendConversation);
   }
 };
 
