@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
+import UserCard from "./UserCard";
 
 function FriendList({ setConversation }) {
   const [friends, setFriends] = useState([]);
@@ -54,15 +55,11 @@ function FriendList({ setConversation }) {
         <p>No friends to display.</p>
       ) : (
         friends.map((friend) => (
-          <div
+          <UserCard
             key={friend.id}
-            className={`friend-item ${
-              friend.status === "ONLINE" ? "online" : "offline"
-            }`}
+            user={friend}
             onClick={() => handleClickOnUser(friend.id)}
-          >
-            {friend.username}
-          </div>
+          />
         ))
       )}
     </div>

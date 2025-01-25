@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import MessageCard from "./MessageCard";
 
 function ChatArea({ conversation }) {
   const [messages, setMessages] = useState([]);
@@ -33,9 +34,7 @@ function ChatArea({ conversation }) {
           <h2>Chat Room</h2>
           <div className="messages">
             {messages.map((msg) => (
-              <div key={msg.id} className="message">
-                <p>{msg.content}</p>
-              </div>
+              <MessageCard key={msg.id} message={msg} />
             ))}
           </div>
         </>

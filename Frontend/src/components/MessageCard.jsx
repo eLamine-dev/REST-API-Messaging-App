@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 function MessageCard({ message, isCurrentUser }) {
   return (
     <div className={`message-card ${isCurrentUser ? "current-user" : ""}`}>
-      <p className="message-sender">{message.sender.username}</p>
+      {/* <p className="message-sender">{message.sender.username}</p> */}
       <p className="message-content">{message.content}</p>
     </div>
   );
