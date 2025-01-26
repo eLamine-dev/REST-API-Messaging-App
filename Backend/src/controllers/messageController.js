@@ -18,7 +18,7 @@ exports.sendMessage = async (req, res) => {
       data: {
         content,
         senderId,
-        conversation: parseInt(conversationId),
+        conversationId: parseInt(conversationId),
       },
     });
 
