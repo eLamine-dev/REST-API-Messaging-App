@@ -1,80 +1,272 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
+  background-color: #36393f;
+  color: #ffffff;
 }
 
 .message-board {
   display: flex;
   height: 100vh;
+  background-color: #36393f;
 }
 
 .header {
-  background-color: #4caf50;
-  color: white;
+  background-color: #2f3136;
+  color: #ffffff;
   padding: 10px;
   text-align: center;
+  border-bottom: 1px solid #202225;
 }
 
-.friend-list,
-.conversation-list,
-.chat-area {
-  padding: 10px;
-  border-right: 1px solid #ddd;
-  background-color: white;
+.header h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.header button {
+  background-color: #7289da;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.header button:hover {
+  background-color: #677bc4;
 }
 
 .friend-list {
-  width: 200px;
+  width: 240px;
+  background-color: #2f3136;
+  padding: 10px;
+  border-right: 1px solid #202225;
+  overflow-y: auto;
+}
+
+.friend-list h3 {
+  color: #8e9297;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.friend-list .user-card {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.friend-list .user-card:hover {
+  background-color: #3a3d44;
+}
+
+.friend-list .user-status {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.friend-list .user-status.online {
+  background-color: #43b581;
+}
+
+.friend-list .user-status.offline {
+  background-color: #747f8d;
+}
+
+.friend-list p {
+  margin: 0;
+  font-size: 14px;
 }
 
 .conversation-list {
-  width: 250px;
+  width: 240px;
+  background-color: #2f3136;
+  border-right: 1px solid #202225;
+  overflow-y: auto;
+}
+
+.conversation-list h3 {
+  color: #8e9297;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin: 10px 0;
+}
+
+.conversation-list .conversation-item {
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin: 4px 0;
+}
+
+.conversation-list .conversation-item:hover {
+  background-color: #3a3d44;
+}
+
+.conversation-list p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.conversation-list .last-message {
+  color: #8e9297;
+  font-size: 12px;
 }
 
 .chat-area {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #36393f;
 }
 
-.user-card {
-  display: flex;
-  align-items: center;
+.chat-area h2 {
+  color: #ffffff;
+  font-size: 16px;
   padding: 10px;
+  border-bottom: 1px solid #202225;
+  margin: 0;
+}
+
+.chat-area .messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.chat-area .message-card {
+  background-color: #40444b;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 8px 0;
+  max-width: 70%;
+}
+
+.chat-area .message-card.current-user {
+  background-color: #7289da;
+  margin-left: auto;
+}
+
+.chat-area .message-content {
+  margin: 0;
+  font-size: 14px;
+}
+
+.chat-area .message-sender {
+  font-size: 12px;
+  color: #8e9297;
+  margin-bottom: 4px;
+}
+
+.message-input {
+  display: flex;
+  padding: 10px;
+  background-color: #40444b;
+  border-top: 1px solid #202225;
+}
+
+.message-input input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  background-color: #40444b;
+  color: #ffffff;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.message-input input::placeholder {
+  color: #8e9297;
+}
+
+.message-input button {
+  background-color: #7289da;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.message-input button:hover {
+  background-color: #677bc4;
+}
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #36393f;
+}
+
+.auth-form {
+  background-color: #2f3136;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.auth-form h2 {
+  color: #ffffff;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  background-color: #40444b;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.auth-form input::placeholder {
+  color: #8e9297;
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 8px;
+  background-color: #7289da;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.auth-form button:hover {
+  background-color: #677bc4;
+}
+
+.auth-form p {
+  color: #8e9297;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.auth-form span {
+  color: #7289da;
   cursor: pointer;
 }
 
-.user-status {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-
-.user-status.online {
-  background-color: green;
-}
-
-.user-status.offline {
-  background-color: gray;
-}
-
-.message-card {
-  background-color: #e1ffc7;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
-}
-
-.message-card.current-user {
-  background-color: #c7e1ff;
-}
-
-.friend-request {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-.friend-request button {
-  margin-right: 5px;
+.auth-form span:hover {
+  text-decoration: underline;
 }
