@@ -34,7 +34,7 @@ function ChatArea({ conversation }) {
     <div className="chat-area">
       {conversation.id ? (
         <>
-          <h2>Chat Room</h2>
+          <h2>{conversation.type == "chat-room" && "Chat Room"}</h2>
           <div className="messages">
             {messages.map((msg) => (
               <MessageCard

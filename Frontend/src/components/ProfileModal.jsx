@@ -1,63 +1,73 @@
-import { useState, useContext } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
+import { useState, useContext } from "react";
 import { AppContext } from "../utils/AppContext";
 
-function ProfileModal({ user, onClose, onUpdate }) {
-  const [username, setUsername] = useState(user.username);
-  const [email, setEmail] = useState(user.email);
+function ProfileModal({ userId, onClose }) {
+  const [userInfo, setUserInfo] = useState(null);
+  const [isFriend, setIsFriend] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { state } = useContext(AppContext);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchUserInfo = async () => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        "http://localhost:5000/api/users/profile",
-        { username, email },
+      const response = await axios.get(
+        `http://localhost:5000/api/users/profile/${userId}`,
         { headers: { Authorization: `${state.token}` } }
       );
-      onUpdate({ username, email });
-      onClose();
+      setUserInfo(response.data);
+      setIsFriend(response.data.isFriend);
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error fetching user info:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const sendFriendRequest = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/friends",
+        { receiverId: userId },
+        { headers: { Authorization: `${state.token}` } }
+      );
+      alert("Friend request sent!");
+    } catch (error) {
+      console.error("Error sending friend request:", error);
+    }
+  };
+
+  useState(() => {
+    fetchUserInfo();
+  }, [userId]);
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="profile-modal">
-      <div className="modal-content">
-        <h2>Edit Profile</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button type="submit">Save</button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
-        </form>
-      </div>
+      <button className="close-btn" onClick={onClose}>
+        Close
+      </button>
+      {userInfo ? (
+        <div>
+          <h2>{userInfo.username}</h2>
+          <p>Email: {userInfo.email}</p>
+          <p>Status: {userInfo.status}</p>
+          <p>Bio: {userInfo.bio || "No bio available"}</p>
+          {!isFriend && (
+            <button onClick={sendFriendRequest}>Send Friend Request</button>
+          )}
+        </div>
+      ) : (
+        <p>User not found.</p>
+      )}
     </div>
   );
 }
 
 ProfileModal.propTypes = {
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-  }).isRequired,
+  userId: PropTypes.number.isRequired,
   onClose: PropTypes.func.isRequired,
-  onUpdate: PropTypes.func.isRequired,
 };
 
 export default ProfileModal;

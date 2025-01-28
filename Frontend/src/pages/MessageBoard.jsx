@@ -73,9 +73,9 @@ function MessageBoard() {
         <button onClick={logout}>Logout</button>
       </div>
 
-      <FriendList setConversation={setConversation} />
       <ConversationList setConversation={setConversation} />
       <ChatArea conversation={conversation} />
+      <FriendList setConversation={setConversation} />
     </div>
   );
 }
