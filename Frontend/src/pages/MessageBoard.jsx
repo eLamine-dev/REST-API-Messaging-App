@@ -4,6 +4,7 @@ import ChatArea from "../components/ChatArea";
 import FriendList from "../components/FriendList";
 import ConversationList from "../components/ConversationList";
 import Sidebar from "../components/Sidebar";
+import UserDetail from "../components/UserDetails";
 import { useContext, useEffect } from "react";
 
 import { AppContext } from "../utils/AppContext";
@@ -12,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 function MessageBoard() {
   const [selectedTab, setSelectedTab] = useState("messages");
+  const [selectedUser, setSelectedUser] = useState(null);
   const { state, setState } = useContext(AppContext);
   const [conversation, setConversation] = useState({
     type: "chat-room",
@@ -73,7 +75,11 @@ function MessageBoard() {
 
       <ConversationList setConversation={setConversation} />
       <ChatArea conversation={conversation} />
-      <FriendList setConversation={setConversation} />
+      {selectedUser ? (
+        <UserDetail user={selectedUser} />
+      ) : (
+        <FriendList setSelectedUser={setSelectedUser} />
+      )}
     </div>
   );
 }

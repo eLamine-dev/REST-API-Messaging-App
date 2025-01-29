@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 import UserCard from "./UserCard";
 
-function FriendList({ setConversation }) {
+function FriendList({ setSelectedUser }) {
   const [friends, setFriends] = useState([]);
   const { state } = useContext(AppContext);
 
@@ -30,23 +30,23 @@ function FriendList({ setConversation }) {
     fetchFriends();
   }, []);
 
-  const handleClickOnUser = async (friendId) => {
-    console.log("friendId", friendId);
-    try {
-      const conversation = await axios.get(
-        `http://localhost:5000/api/conversations/getFriendConversation/${friendId}`,
-        { headers: { Authorization: `${state.token}` } }
-      );
+  // const handleClickOnUser = async (friendId) => {
+  //   console.log("friendId", friendId);
+  //   try {
+  //     const conversation = await axios.get(
+  //       `http://localhost:5000/api/conversations/getFriendConversation/${friendId}`,
+  //       { headers: { Authorization: `${state.token}` } }
+  //     );
 
-      setConversation((prev) => ({
-        ...prev,
-        type: "private",
-        id: conversation.data.id,
-      }));
-    } catch (error) {
-      console.error("Error creating conversation:", error);
-    }
-  };
+  //     setConversation((prev) => ({
+  //       ...prev,
+  //       type: "private",
+  //       id: conversation.data.id,
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error creating conversation:", error);
+  //   }
+  // };
 
   return (
     <div className="friend-list">
@@ -58,7 +58,7 @@ function FriendList({ setConversation }) {
           <UserCard
             key={friend.id}
             user={friend}
-            onClick={() => handleClickOnUser(friend.id)}
+            onClick={() => setSelectedUser(friend)}
           />
         ))
       )}
