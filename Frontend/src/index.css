@@ -270,3 +270,82 @@ body {
 .auth-form span:hover {
   text-decoration: underline;
 }
+
+.message-board {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 60px;
+  background-color: #25272a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.icon {
+  padding: 10px;
+  font-size: 20px;
+  color: #8e9297;
+  cursor: pointer;
+  position: relative;
+}
+
+.icon.active {
+  color: #ffffff;
+}
+
+.icon .badge {
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.icon.logout {
+  margin-top: auto;
+  color: red;
+}
+
+.conversation-list {
+  width: 300px;
+  background-color: #2f3136;
+}
+
+.chat-area {
+  flex: 1;
+  background-color: #36393f;
+}
+
+.user-detail {
+  width: 250px;
+  background-color: #2f3136;
+  text-align: center;
+  padding: 10px;
+}
+
+.user-detail img {
+  width: 80px;
+  border-radius: 50%;
+}
+
+.user-detail button {
+  display: block;
+  width: 100%;
+  padding: 5px;
+  margin-top: 10px;
+  background-color: #7289da;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.user-detail button:hover {
+  background-color: #677bc4;
+}
