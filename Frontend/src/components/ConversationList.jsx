@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 
 function ConversationList({ setConversation }) {
+  const { state } = useContext(AppContext);
   const [privateConversations, setPrivateConversations] = useState([]);
   const [groupConversations, setGroupConversations] = useState([]);
+  const [groupName, setGroupName] = useState("");
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -41,6 +43,23 @@ function ConversationList({ setConversation }) {
     }));
   };
 
+  const createGroup = async () => {
+    if (!groupName.trim()) return;
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/conversations/create-group",
+        { name: groupName, memberIds: [] },
+        { headers: { Authorization: `${state.token}` } }
+      );
+
+      setGroupName("");
+      alert("Group created!");
+    } catch (error) {
+      console.error("Error creating group:", error);
+    }
+  };
+
   return (
     <div className="conversation-list">
       <div className="section">
@@ -72,6 +91,15 @@ function ConversationList({ setConversation }) {
 
       <div className="section">
         <h3>Group Conversations</h3>
+        <div className="create-group">
+          <input
+            type="text"
+            placeholder="Group Name"
+            value={groupName}
+            onChange={(e) => setGroupName(e.target.value)}
+          />
+          <button onClick={createGroup}>Create Group</button>
+        </div>
         {groupConversations.length === 0 ? (
           <p>No group conversations.</p>
         ) : (
@@ -82,6 +110,7 @@ function ConversationList({ setConversation }) {
               onClick={() => handleConversationClick(conversation.id, "group")}
             >
               <p>{conversation.name}</p>
+
               {conversation.messages[0] && (
                 <p className="last-message">
                   {/* {conversation.messages[0].content} */}

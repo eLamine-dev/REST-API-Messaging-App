@@ -8,6 +8,9 @@ import MessageInput from "./MessageInput";
 function ChatArea({ conversation }) {
   const [messages, setMessages] = useState([]);
   const { state } = useContext(AppContext);
+  console.log(state);
+
+  // const isAdmin = conversation.adminId === state.user.id;
 
   const fetchMessages = async () => {
     if (!conversation.id) return;
@@ -32,6 +35,27 @@ function ChatArea({ conversation }) {
 
   return (
     <div className="chat-area">
+      {conversation.isGroup && (
+        <div className="group-controls">
+          {isAdmin ? (
+            <>
+              <button onClick={() => addMember(conversation.id)}>
+                Add Member
+              </button>
+              <button onClick={() => removeMember(conversation.id)}>
+                Remove Member
+              </button>
+              <button onClick={() => deleteGroup(conversation.id)}>
+                Delete Group
+              </button>
+            </>
+          ) : (
+            <button onClick={() => leaveGroup(conversation.id)}>
+              Leave Group
+            </button>
+          )}
+        </div>
+      )}
       {conversation.id ? (
         <>
           <h2>{conversation.type == "chat-room" && "Chat Room"}</h2>

@@ -8,6 +8,9 @@ const {
   getFriendConversation,
   getUserConversations,
   getChatRoomId,
+  createGroup,
+  leaveGroup,
+  deleteGroup,
 } = require("../controllers/conversationController");
 const authenticateJWT = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -18,8 +21,12 @@ router.get("/user", authenticateJWT, getUserConversations);
 router.get("/messages/:id", authenticateJWT, getConversationMessages);
 router.get("/get-chatroom", authenticateJWT, getChatRoomId);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
-router.post("/addMember/:id", authenticateJWT, addMember);
-router.post("/removeMember/:id", authenticateJWT, removeMember);
+
+router.post("/create-group", authenticateJWT, createGroup);
+router.post("/add-member", authenticateJWT, addMember);
+router.post("/remove-member", authenticateJWT, removeMember);
+router.post("/leave-group", authenticateJWT, leaveGroup);
+router.delete("/delete-group/:groupId", authenticateJWT, deleteGroup);
 router.get(
   "/getFriendConversation/:friendId",
   authenticateJWT,
