@@ -8,7 +8,6 @@ import MessageInput from "./MessageInput";
 function ChatArea({ conversation }) {
   const [messages, setMessages] = useState([]);
   const { state } = useContext(AppContext);
-  console.log(state);
 
   // const isAdmin = conversation.adminId === state.user.id;
 

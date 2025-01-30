@@ -8,7 +8,7 @@ const {
   getFriendConversation,
   getUserConversations,
   getChatRoomId,
-  createGroup,
+
   leaveGroup,
   deleteGroup,
 } = require("../controllers/conversationController");
@@ -22,7 +22,6 @@ router.get("/messages/:id", authenticateJWT, getConversationMessages);
 router.get("/get-chatroom", authenticateJWT, getChatRoomId);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
 
-router.post("/create-group", authenticateJWT, createGroup);
 router.post("/add-member", authenticateJWT, addMember);
 router.post("/remove-member", authenticateJWT, removeMember);
 router.post("/leave-group", authenticateJWT, leaveGroup);

@@ -35,7 +35,7 @@ exports.getConversationMessages = async (req, res) => {
       },
     });
 
-    res.json(conversation.messages);
+    res.json(conversation.messages || []);
   } catch (error) {
     console.log("error getting conversation messages", error);
   }
@@ -135,29 +135,6 @@ exports.deleteConversation = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Error deleting conversation." });
-  }
-};
-
-exports.createGroup = async (req, res) => {
-  const { name, memberIds } = req.body;
-  try {
-    const group = await prisma.conversation.create({
-      data: {
-        name,
-        isGroup: true,
-        adminId: req.user.userId,
-        members: {
-          connect: [
-            ...memberIds.map((id) => ({ id })),
-            { id: req.user.userId },
-          ], // Add creator to members
-        },
-      },
-    });
-
-    res.status(201).json(group);
-  } catch (error) {
-    res.status(500).json({ error: "Error creating group." });
   }
 };
 

@@ -71,14 +71,14 @@ exports.validateToken = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      select: { id: true, username: true, email: true },
+      select: { id: true, username: true },
     });
 
     if (!user) {
       return res.status(401).json({ error: "Invalid token." });
     }
 
-    res.json({ user });
+    res.json({ user }); // No need to return token, since it's already stored in localStorage
   } catch (error) {
     console.error("Error validating token:", error);
     res.status(500).json({ error: "Internal server error." });

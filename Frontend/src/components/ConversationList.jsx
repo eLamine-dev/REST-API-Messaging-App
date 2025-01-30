@@ -47,14 +47,19 @@ function ConversationList({ setConversation }) {
     if (!groupName.trim()) return;
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/conversations/create-group",
-        { name: groupName, memberIds: [] },
+      const response = await axios.post(
+        "http://localhost:5000/api/conversations",
+        { name: groupName, isGroup: true, memberIds: [state.user.id] },
         { headers: { Authorization: `${state.token}` } }
       );
 
+      console.log(response.data);
+
       setGroupName("");
-      alert("Group created!");
+      setGroupConversations((prev) => [
+        ...prev,
+        { ...response.data, messages: [] },
+      ]);
     } catch (error) {
       console.error("Error creating group:", error);
     }
