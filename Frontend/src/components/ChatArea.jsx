@@ -9,7 +9,7 @@ function ChatArea({ conversation }) {
   const [messages, setMessages] = useState([]);
   const { state } = useContext(AppContext);
 
-  // const isAdmin = conversation.adminId === state.user.id;
+  const isAdmin = conversation.adminId === state.user.id;
 
   const fetchMessages = async () => {
     if (!conversation.id) return;

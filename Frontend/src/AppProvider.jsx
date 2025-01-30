@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
     token: localStorage.getItem("token") || null,
     user: null,
   });
+  const [loading, setLoading] = useState(true);
 
   const isTokenExpired = (token) => {
     try {
@@ -33,6 +34,7 @@ export const AppProvider = ({ children }) => {
       }
 
       try {
+        setLoading(true);
         const response = await axios.get(
           "http://localhost:5000/api/auth/validate-token",
           {
@@ -52,6 +54,8 @@ export const AppProvider = ({ children }) => {
           token: null,
           user: null,
         });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -60,7 +64,7 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{ state, setState }}>
-      {children}
+      {loading ? <div>Loading...</div> : children}
     </AppContext.Provider>
   );
 };
