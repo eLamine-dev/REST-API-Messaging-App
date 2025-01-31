@@ -15,13 +15,12 @@ function MessageBoard() {
   const { state } = useContext(AppContext);
   const [currConversationId, setCurrConversationId] = useState(null);
   const [userConversations, setUserConversations] = useState({
+    chatRoom: null,
     privateConversations: [],
     groupConversations: [],
   });
 
   useEffect(() => {
-    if (currConversationId !== null) return;
-
     const getChatRoomId = async () => {
       try {
         const response = await axios.get(
@@ -29,14 +28,19 @@ function MessageBoard() {
           { headers: { Authorization: `${state.token}` } }
         );
         console.log("Fetched chat room ID:", response.data);
-        setCurrConversationId(response.data);
+
+        setUserConversations((prev) => ({
+          ...prev,
+          chatRoom: response.data,
+        }));
+        setCurrConversationId((prev) => prev || response.data);
       } catch (error) {
         console.error("Error fetching chat room ID:", error);
       }
     };
 
     getChatRoomId();
-  }, [currConversationId, state.token]);
+  }, [state.token]);
 
   return (
     <div className="message-board">
@@ -49,6 +53,7 @@ function MessageBoard() {
       />
 
       <ChatArea
+        chatRoomId={userConversations.chatRoom}
         currConversationId={currConversationId}
         setCurrConversationId={setCurrConversationId}
         setUserConversations={setUserConversations}

@@ -6,6 +6,7 @@ import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
 function ChatArea({
+  chatRoomId,
   currConversationId,
   setCurrConversationId,
   setUserConversations,
@@ -13,6 +14,13 @@ function ChatArea({
   const [conversation, setConversation] = useState(null);
 
   const { state } = useContext(AppContext);
+
+  useEffect(() => {
+    if (!currConversationId && chatRoomId) {
+      console.log("Setting chat room as default conversation:", chatRoomId);
+      setCurrConversationId(chatRoomId);
+    }
+  }, [chatRoomId, currConversationId]);
 
   const fetchMessages = async () => {
     if (!currConversationId) return;
@@ -45,18 +53,19 @@ function ChatArea({
     try {
       await axios.delete(
         `http://localhost:5000/api/conversations/group/delete/${groupId}`,
-        {
-          headers: { Authorization: `${state.token}` },
-        }
+        { headers: { Authorization: `${state.token}` } }
       );
 
-      setCurrConversationId(null);
       setUserConversations((prev) => ({
         ...prev,
         groupConversations: prev.groupConversations.filter(
           (conversation) => conversation.id !== groupId
         ),
       }));
+
+      console.log("Group deleted, switching back to chat room:", chatRoomId);
+
+      setCurrConversationId(() => chatRoomId);
     } catch (error) {
       console.error("Error deleting group:", error);
     }

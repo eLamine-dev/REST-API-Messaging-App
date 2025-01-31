@@ -9,8 +9,7 @@ function ConversationList({
   setUserConversations,
 }) {
   const { state } = useContext(AppContext);
-  // const [privateConversations, setPrivateConversations] = useState([]);
-  // const [groupConversations, setGroupConversations] = useState([]);
+
   const [groupName, setGroupName] = useState("");
 
   useEffect(() => {
@@ -48,10 +47,6 @@ function ConversationList({
       );
 
       setGroupName("");
-      // setGroupConversations((prev) => [
-      //   ...prev,
-      //   { ...response.data, messages: [] },
-      // ]);
 
       setUserConversations((prev) => ({
         ...prev,
