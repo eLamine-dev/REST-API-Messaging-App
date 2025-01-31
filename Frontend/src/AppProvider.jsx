@@ -30,6 +30,7 @@ export const AppProvider = ({ children }) => {
           token: null,
           user: null,
         });
+        setLoading(false);
         return;
       }
 

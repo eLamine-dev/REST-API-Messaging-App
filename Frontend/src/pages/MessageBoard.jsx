@@ -9,19 +9,13 @@ import { useContext, useEffect } from "react";
 
 import { AppContext } from "../utils/AppContext";
 
-import { useNavigate } from "react-router-dom";
-
 function MessageBoard() {
   const [selectedTab, setSelectedTab] = useState("messages");
   const [selectedUser, setSelectedUser] = useState(null);
-  const { state, setState } = useContext(AppContext);
-  const [conversation, setConversation] = useState({
-    type: "chat-room",
+  const { state } = useContext(AppContext);
+  const [currConversation, setcurrConversation] = useState({
     id: null,
-    chatRoomId: null,
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const getChatRoomId = async () => {
@@ -30,51 +24,26 @@ function MessageBoard() {
           "http://localhost:5000/api/conversations/get-chatroom",
           { headers: { Authorization: `${state.token}` } }
         );
+        console.log(response.data);
 
-        setConversation({
-          type: "chat-room",
+        setcurrConversation({
           id: response.data,
-          chatRoomId: response.data,
         });
       } catch (error) {
         console.error("Error fetching chat room ID:", error);
       }
     };
-    if (conversation.type === "chat-room" && conversation.chatRoomId === null) {
+    if (!currConversation.id) {
       getChatRoomId();
     }
-  });
-
-  // async function logout() {
-  //   const token = localStorage.getItem("token");
-  //   try {
-  //     await axios.post(
-  //       "http://localhost:5000/api/auth/logout",
-  //       {},
-  //       {
-  //         headers: {
-  //           Authorization: `${token}`,
-  //         },
-  //       }
-  //     );
-  //   } catch (error) {
-  //     console.error("Logout failed:", error);
-  //   } finally {
-  //     localStorage.removeItem("token");
-  //     setState({
-  //       token: null,
-  //       user: null,
-  //     });
-  //     navigate("/auth");
-  //   }
-  // }
+  }, []);
 
   return (
     <div className="message-board">
       <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
-      <ConversationList setConversation={setConversation} />
-      <ChatArea conversation={conversation} />
+      <ConversationList setConversation={setcurrConversation} />
+      <ChatArea currConversation={currConversation} />
       {selectedUser ? (
         <UserDetail user={selectedUser} />
       ) : (

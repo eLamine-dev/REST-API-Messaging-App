@@ -5,20 +5,21 @@ import { AppContext } from "../utils/AppContext";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
-function ChatArea({ conversation }) {
-  const [messages, setMessages] = useState([]);
+function ChatArea({ currConversation }) {
+  const [conversation, setConversation] = useState(null);
+
   const { state } = useContext(AppContext);
 
-  const isAdmin = conversation.adminId === state.user.id;
-
   const fetchMessages = async () => {
-    if (!conversation.id) return;
+    if (!currConversation.id) return;
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/conversations/messages/${conversation.id}`,
+        `http://localhost:5000/api/conversations/messages/${currConversation.id}`,
         { headers: { Authorization: `${state.token}` } }
       );
-      setMessages(response.data);
+      console.log(response.data);
+
+      setConversation(response.data);
     } catch (error) {
       console.error("Error fetching conversation messages:", error);
     }
@@ -26,17 +27,21 @@ function ChatArea({ conversation }) {
 
   useEffect(() => {
     fetchMessages();
-  }, [conversation.id, state.token]);
+  }, [currConversation.id, state.token]);
 
   const handleSend = async () => {
-    await fetchMessages(); //
+    await fetchMessages();
   };
+
+  if (!conversation) {
+    return <p>Loading chat...</p>;
+  }
 
   return (
     <div className="chat-area">
       {conversation.isGroup && (
         <div className="group-controls">
-          {isAdmin ? (
+          {conversation.adminId == state.user.id ? (
             <>
               <button onClick={() => addMember(conversation.id)}>
                 Add Member
@@ -55,11 +60,11 @@ function ChatArea({ conversation }) {
           )}
         </div>
       )}
-      {conversation.id ? (
+      {conversation ? (
         <>
-          <h2>{conversation.type == "chat-room" && "Chat Room"}</h2>
+          <h2>{conversation.name}</h2>
           <div className="messages">
-            {messages.map((msg) => (
+            {conversation.messages.map((msg) => (
               <MessageCard
                 key={msg.id}
                 message={msg}
@@ -67,7 +72,7 @@ function ChatArea({ conversation }) {
               />
             ))}
           </div>
-          <MessageInput conversationId={conversation.id} onSend={handleSend} />
+          <MessageInput conversation={conversation.id} onSend={handleSend} />
         </>
       ) : (
         <p>Loading chat room...</p>
@@ -76,10 +81,10 @@ function ChatArea({ conversation }) {
   );
 }
 
-ChatArea.propTypes = {
-  conversation: PropTypes.shape({
-    id: PropTypes.number,
-  }).isRequired,
-};
+// ChatArea.propTypes = {
+//   conversation: PropTypes.shape({
+//     id: PropTypes.number,
+//   }).isRequired,
+// };
 
 export default ChatArea;

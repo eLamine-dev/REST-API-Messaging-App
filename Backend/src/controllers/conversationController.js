@@ -19,25 +19,26 @@ exports.createConversation = async (req, res) => {
 
 exports.getConversationMessages = async (req, res) => {
   const { id } = req.params;
-  console.log("params id", id);
+  console.log("Fetching messages for conversation ID:", id);
 
   try {
     const conversation = await prisma.conversation.findUnique({
-      where: {
-        id: parseInt(id),
-      },
+      where: { id: parseInt(id) },
       include: {
         messages: {
-          orderBy: {
-            timestamp: "asc",
-          },
+          orderBy: { timestamp: "asc" },
         },
       },
     });
 
-    res.json(conversation.messages || []);
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found." });
+    }
+
+    res.json(conversation);
   } catch (error) {
-    console.log("error getting conversation messages", error);
+    console.log("Error fetching conversation messages:", error);
+    res.status(500).json({ error: "Error fetching messages." });
   }
 };
 
