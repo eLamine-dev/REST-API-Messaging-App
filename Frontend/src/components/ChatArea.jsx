@@ -5,16 +5,16 @@ import { AppContext } from "../utils/AppContext";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
-function ChatArea({ currConversation }) {
+function ChatArea({ currConversationId }) {
   const [conversation, setConversation] = useState(null);
 
   const { state } = useContext(AppContext);
 
   const fetchMessages = async () => {
-    if (!currConversation.id) return;
+    if (!currConversationId) return;
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/conversations/messages/${currConversation.id}`,
+        `http://localhost:5000/api/conversations/messages/${currConversationId}`,
         { headers: { Authorization: `${state.token}` } }
       );
       console.log(response.data);
@@ -27,7 +27,7 @@ function ChatArea({ currConversation }) {
 
   useEffect(() => {
     fetchMessages();
-  }, [currConversation.id, state.token]);
+  }, [currConversationId, state.token]);
 
   const handleSend = async () => {
     await fetchMessages();

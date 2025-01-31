@@ -13,9 +13,7 @@ function MessageBoard() {
   const [selectedTab, setSelectedTab] = useState("messages");
   const [selectedUser, setSelectedUser] = useState(null);
   const { state } = useContext(AppContext);
-  const [currConversation, setcurrConversation] = useState({
-    id: null,
-  });
+  const [currConversationId, setcurrConversationId] = useState(null);
 
   useEffect(() => {
     const getChatRoomId = async () => {
@@ -26,14 +24,12 @@ function MessageBoard() {
         );
         console.log(response.data);
 
-        setcurrConversation({
-          id: response.data,
-        });
+        setcurrConversationId(response.data);
       } catch (error) {
         console.error("Error fetching chat room ID:", error);
       }
     };
-    if (!currConversation.id) {
+    if (!currConversationId) {
       getChatRoomId();
     }
   }, []);
@@ -42,8 +38,8 @@ function MessageBoard() {
     <div className="message-board">
       <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
-      <ConversationList setConversation={setcurrConversation} />
-      <ChatArea currConversation={currConversation} />
+      <ConversationList setcurrConversationId={setcurrConversationId} />
+      <ChatArea currConversationId={currConversationId} />
       {selectedUser ? (
         <UserDetail user={selectedUser} />
       ) : (

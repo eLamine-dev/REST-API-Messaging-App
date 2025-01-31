@@ -3,7 +3,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 
-function ConversationList({ setConversation }) {
+function ConversationList({ setcurrConversationId }) {
   const { state } = useContext(AppContext);
   const [privateConversations, setPrivateConversations] = useState([]);
   const [groupConversations, setGroupConversations] = useState([]);
@@ -32,16 +32,6 @@ function ConversationList({ setConversation }) {
 
     fetchConversations();
   }, []);
-
-  const handleConversationClick = (conversationId, conversationType) => {
-    console.log(conversationId, conversationType);
-
-    setConversation((prev) => ({
-      ...prev,
-      type: conversationType,
-      id: conversationId,
-    }));
-  };
 
   const createGroup = async () => {
     if (!groupName.trim()) return;
@@ -76,9 +66,7 @@ function ConversationList({ setConversation }) {
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() =>
-                handleConversationClick(conversation.id, "private")
-              }
+              onClick={() => setcurrConversationId(conversation.id)}
             >
               <p>
                 {conversation.name ||
@@ -112,7 +100,7 @@ function ConversationList({ setConversation }) {
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() => handleConversationClick(conversation.id, "group")}
+              onClick={() => setcurrConversationId(conversation.id)}
             >
               <p>{conversation.name}</p>
 
