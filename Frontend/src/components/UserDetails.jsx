@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "../utils/AppContext";
 import axios from "axios";
 
-function UserDetail({ user }) {
+function UserDetail({ user, setSelectedUser }) {
   const { state } = useContext(AppContext);
 
   const sendFriendRequest = async () => {
@@ -41,6 +41,7 @@ function UserDetail({ user }) {
       <p>Status: {user.status}</p>
       <button onClick={sendFriendRequest}>Send Friend Request</button>
       <button onClick={startConversation}>Start Conversation</button>
+      <button onClick={() => setSelectedUser(null)}>Close</button>
     </div>
   );
 }

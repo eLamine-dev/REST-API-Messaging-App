@@ -152,6 +152,12 @@ exports.deleteGroup = async (req, res) => {
         .json({ error: "Only the admin can delete this group." });
     }
 
+    await prisma.message.deleteMany({
+      where: {
+        conversationId: parseInt(groupId),
+      },
+    });
+
     await prisma.conversation.delete({
       where: { id: parseInt(groupId) },
     });
@@ -209,7 +215,7 @@ exports.removeMember = async (req, res) => {
 };
 
 exports.leaveGroup = async (req, res) => {
-  const { groupId } = req.body;
+  const { groupId } = req.params;
   try {
     const group = await prisma.conversation.findUnique({
       where: { id: parseInt(groupId) },

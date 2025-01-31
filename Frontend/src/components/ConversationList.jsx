@@ -3,10 +3,14 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 
-function ConversationList({ setcurrConversationId }) {
+function ConversationList({
+  setCurrConversationId,
+  userConversations,
+  setUserConversations,
+}) {
   const { state } = useContext(AppContext);
-  const [privateConversations, setPrivateConversations] = useState([]);
-  const [groupConversations, setGroupConversations] = useState([]);
+  // const [privateConversations, setPrivateConversations] = useState([]);
+  // const [groupConversations, setGroupConversations] = useState([]);
   const [groupName, setGroupName] = useState("");
 
   useEffect(() => {
@@ -23,8 +27,8 @@ function ConversationList({ setcurrConversationId }) {
             },
           }
         );
-        setPrivateConversations(response.data.privateConversations);
-        setGroupConversations(response.data.groupConversations);
+
+        setUserConversations(response.data);
       } catch (error) {
         console.error("Error fetching conversations:", error);
       }
@@ -43,13 +47,19 @@ function ConversationList({ setcurrConversationId }) {
         { headers: { Authorization: `${state.token}` } }
       );
 
-      console.log(response.data);
-
       setGroupName("");
-      setGroupConversations((prev) => [
+      // setGroupConversations((prev) => [
+      //   ...prev,
+      //   { ...response.data, messages: [] },
+      // ]);
+
+      setUserConversations((prev) => ({
         ...prev,
-        { ...response.data, messages: [] },
-      ]);
+        groupConversations: [
+          ...prev.groupConversations,
+          { ...response.data, messages: [] },
+        ],
+      }));
     } catch (error) {
       console.error("Error creating group:", error);
     }
@@ -59,14 +69,14 @@ function ConversationList({ setcurrConversationId }) {
     <div className="conversation-list">
       <div className="section">
         <h3>Private Conversations</h3>
-        {privateConversations.length === 0 ? (
+        {userConversations.privateConversations.length === 0 ? (
           <p>No private conversations.</p>
         ) : (
-          privateConversations.map((conversation) => (
+          userConversations.privateConversations.map((conversation) => (
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() => setcurrConversationId(conversation.id)}
+              onClick={() => setCurrConversationId(conversation.id)}
             >
               <p>
                 {conversation.name ||
@@ -93,14 +103,14 @@ function ConversationList({ setcurrConversationId }) {
           />
           <button onClick={createGroup}>Create Group</button>
         </div>
-        {groupConversations.length === 0 ? (
+        {userConversations.groupConversations.length === 0 ? (
           <p>No group conversations.</p>
         ) : (
-          groupConversations.map((conversation) => (
+          userConversations.groupConversations.map((conversation) => (
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() => setcurrConversationId(conversation.id)}
+              onClick={() => setCurrConversationId(conversation.id)}
             >
               <p>{conversation.name}</p>
 

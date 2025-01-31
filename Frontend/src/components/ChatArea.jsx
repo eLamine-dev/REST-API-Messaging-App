@@ -5,7 +5,11 @@ import { AppContext } from "../utils/AppContext";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
-function ChatArea({ currConversationId }) {
+function ChatArea({
+  currConversationId,
+  setCurrConversationId,
+  setUserConversations,
+}) {
   const [conversation, setConversation] = useState(null);
 
   const { state } = useContext(AppContext);
@@ -36,6 +40,40 @@ function ChatArea({ currConversationId }) {
   if (!conversation) {
     return <p>Loading chat...</p>;
   }
+
+  const deleteGroup = async (groupId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/conversations/group/delete/${groupId}`,
+        {
+          headers: { Authorization: `${state.token}` },
+        }
+      );
+
+      setCurrConversationId(null);
+      setUserConversations((prev) => ({
+        ...prev,
+        groupConversations: prev.groupConversations.filter(
+          (conversation) => conversation.id !== groupId
+        ),
+      }));
+    } catch (error) {
+      console.error("Error deleting group:", error);
+    }
+  };
+
+  const leaveGroup = async (groupId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/conversations/group/leave/${groupId}`,
+        { headers: { Authorization: `${state.token}` } }
+      );
+
+      setConversation(null);
+    } catch (error) {
+      console.error("Error leaving group:", error);
+    }
+  };
 
   return (
     <div className="chat-area">
@@ -72,7 +110,7 @@ function ChatArea({ currConversationId }) {
               />
             ))}
           </div>
-          <MessageInput conversation={conversation.id} onSend={handleSend} />
+          <MessageInput conversationId={conversation.id} onSend={handleSend} />
         </>
       ) : (
         <p>Loading chat room...</p>

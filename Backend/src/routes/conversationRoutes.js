@@ -24,8 +24,8 @@ router.post("/delete/:id", authenticateJWT, deleteConversation);
 
 router.post("/add-member", authenticateJWT, addMember);
 router.post("/remove-member", authenticateJWT, removeMember);
-router.post("/leave-group", authenticateJWT, leaveGroup);
-router.delete("/delete-group/:groupId", authenticateJWT, deleteGroup);
+router.post("/group/leave/:groupId", authenticateJWT, leaveGroup);
+router.delete("/group/delete/:groupId", authenticateJWT, deleteGroup);
 router.get(
   "/getFriendConversation/:friendId",
   authenticateJWT,
