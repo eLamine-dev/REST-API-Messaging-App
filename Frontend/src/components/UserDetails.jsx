@@ -1,9 +1,30 @@
-import { useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 import axios from "axios";
 
 function UserDetail({ user, setSelectedUser }) {
   const { state } = useContext(AppContext);
+  const [userDetails, setUserDetails] = useState({});
+  const [isloading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchUserDetails = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/users/${user.id}`,
+          { headers: { Authorization: `${state.token}` } }
+        );
+        setUserDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserDetails();
+  }, [user]);
 
   const sendFriendRequest = async () => {
     try {
@@ -34,14 +55,25 @@ function UserDetail({ user, setSelectedUser }) {
     }
   };
 
+  if (isloading) return <div>Loading...</div>;
+
   return (
     <div className="user-detail">
       {/* <img src={user.profilePic || "default.png"} alt="Profile" /> */}
-      <h3>{user.username}</h3>
-      <p>Status: {user.status}</p>
-      <button onClick={sendFriendRequest}>Send Friend Request</button>
-      <button onClick={startConversation}>Start Conversation</button>
-      <button onClick={() => setSelectedUser(null)}>Close</button>
+
+      <div>
+        <h2>{userDetails.username}</h2>
+        <p>Email: {userDetails.email}</p>
+        <p>Status: {userDetails.status}</p>
+        <p>Bio: {userDetails.bio || "No bio available"}</p>
+        {userDetails.isFriend ? (
+          <button>Remove Friend</button>
+        ) : (
+          <button onClick={sendFriendRequest}>Send Friend Request</button>
+        )}
+        <button onClick={startConversation}>Start Conversation</button>
+        <button onClick={() => setSelectedUser(null)}>Close</button>
+      </div>
     </div>
   );
 }

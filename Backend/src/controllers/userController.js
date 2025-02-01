@@ -11,6 +11,37 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+exports.getUserDetails = async (req, res) => {
+  const { userId } = req.params;
+  console.log("geting user details", userId);
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId) },
+    });
+
+    const isFriend = await prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { senderId: req.user.userId, receiverId: parseInt(userId) },
+          { senderId: parseInt(userId), receiverId: req.user.userId },
+        ],
+        status: "ACCEPTED",
+      },
+    });
+    if (isFriend) {
+      user.isFriend = true;
+    } else {
+      user.isFriend = false;
+    }
+    console.log(user);
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching user." });
+  }
+};
+
 exports.updateStatus = async (req, res) => {
   const { status } = req.body;
   try {

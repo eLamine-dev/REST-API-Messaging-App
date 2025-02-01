@@ -36,7 +36,10 @@ function FriendList({
       ) : (
         friends.map((friend) => (
           <div key={friend.id} className="friend-item">
-            <p onClick={() => setSelectedUser(friend)}>{friend.username}</p>
+            <p onClick={() => setSelectedUser(friend)}>
+              <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>
+              {friend.username}
+            </p>
             {isAddingMembers && (
               <button onClick={() => onAddMember(friend.id)}>+</button>
             )}
