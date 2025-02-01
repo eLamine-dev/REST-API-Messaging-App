@@ -4,49 +4,29 @@ import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 import UserCard from "./UserCard";
 
-function FriendList({ setSelectedUser }) {
+function FriendList({
+  setSelectedUser,
+  isAddingMembers,
+  isRemovingMembers,
+  onAddMember,
+  onRemoveMember,
+}) {
   const [friends, setFriends] = useState([]);
   const { state } = useContext(AppContext);
 
   useEffect(() => {
     const fetchFriends = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:5000/api/friends",
-
-          {
-            headers: {
-              Authorization: `${token}`,
-            },
-          }
-        );
-
+        const response = await axios.get("http://localhost:5000/api/friends", {
+          headers: { Authorization: `${state.token}` },
+        });
         setFriends(response.data);
       } catch (error) {
         console.error("Error fetching friends:", error);
       }
     };
     fetchFriends();
-  }, []);
-
-  // const handleClickOnUser = async (friendId) => {
-  //   console.log("friendId", friendId);
-  //   try {
-  //     const conversation = await axios.get(
-  //       `http://localhost:5000/api/conversations/getFriendConversation/${friendId}`,
-  //       { headers: { Authorization: `${state.token}` } }
-  //     );
-
-  //     setConversation((prev) => ({
-  //       ...prev,
-  //       type: "private",
-  //       id: conversation.data.id,
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error creating conversation:", error);
-  //   }
-  // };
+  }, [state.token]);
 
   return (
     <div className="friend-list">
@@ -55,11 +35,15 @@ function FriendList({ setSelectedUser }) {
         <p>No friends to display.</p>
       ) : (
         friends.map((friend) => (
-          <UserCard
-            key={friend.id}
-            user={friend}
-            onClick={() => setSelectedUser(friend)}
-          />
+          <div key={friend.id} className="friend-item">
+            <p onClick={() => setSelectedUser(friend)}>{friend.username}</p>
+            {isAddingMembers && (
+              <button onClick={() => onAddMember(friend.id)}>+</button>
+            )}
+            {isRemovingMembers && (
+              <button onClick={() => onRemoveMember(friend.id)}>-</button>
+            )}
+          </div>
         ))
       )}
     </div>

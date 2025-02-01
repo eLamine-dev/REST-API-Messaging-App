@@ -50,7 +50,7 @@ function MessageBoard() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/conversations/group/add-member/${currConversationId}`,
+        `http://localhost:5000/api/conversations/members/${currConversationId}`,
         { userId },
         { headers: { Authorization: `${state.token}` } }
       );
@@ -64,7 +64,7 @@ function MessageBoard() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/conversations/group/remove-member/${currConversationId}`,
+        `http://localhost:5000/api/conversations/members/remove/${currConversationId}`,
         { userId },
         { headers: { Authorization: `${state.token}` } }
       );

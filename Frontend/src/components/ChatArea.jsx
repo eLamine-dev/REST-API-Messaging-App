@@ -56,7 +56,7 @@ function ChatArea({
   const deleteGroup = async (groupId) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/conversations/group/delete/${groupId}`,
+        `http://localhost:5000/api/conversations/delete-group/${groupId}`,
         { headers: { Authorization: `${state.token}` } }
       );
 
@@ -67,9 +67,7 @@ function ChatArea({
         ),
       }));
 
-      console.log("Group deleted, switching back to chat room:", chatRoomId);
-
-      setCurrConversationId(() => chatRoomId);
+      setCurrConversationId(chatRoomId);
     } catch (error) {
       console.error("Error deleting group:", error);
     }
@@ -77,12 +75,20 @@ function ChatArea({
 
   const leaveGroup = async (groupId) => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/conversations/group/leave/${groupId}`,
+      await axios.post(
+        `http://localhost:5000/api/conversations/leave/${groupId}`,
+        {},
         { headers: { Authorization: `${state.token}` } }
       );
 
-      setConversation(null);
+      setUserConversations((prev) => ({
+        ...prev,
+        groupConversations: prev.groupConversations.filter(
+          (conversation) => conversation.id !== groupId
+        ),
+      }));
+
+      setCurrConversationId(chatRoomId);
     } catch (error) {
       console.error("Error leaving group:", error);
     }
@@ -108,7 +114,7 @@ function ChatArea({
                   setAddingMembers(false);
                 }}
               >
-                Remove Member
+                {isRemovingMembers ? "Cancel Remove Member" : "Remove Member"}
               </button>
               <button onClick={() => deleteGroup(conversation.id)}>
                 Delete Group

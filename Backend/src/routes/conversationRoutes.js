@@ -22,10 +22,10 @@ router.get("/messages/:id", authenticateJWT, getConversationMessages);
 router.get("/get-chatroom", authenticateJWT, getChatRoomId);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
 
-router.post("/add-member", authenticateJWT, addMember);
-router.post("/remove-member", authenticateJWT, removeMember);
-router.post("/group/leave/:groupId", authenticateJWT, leaveGroup);
-router.delete("/group/delete/:groupId", authenticateJWT, deleteGroup);
+router.post("/members/:groupId", authenticateJWT, addMember);
+router.post("/members/remove/:groupId", authenticateJWT, removeMember);
+router.post("/leave/:groupId", authenticateJWT, leaveGroup);
+router.delete("/delete-group/:groupId", authenticateJWT, deleteGroup);
 router.get(
   "/getFriendConversation/:friendId",
   authenticateJWT,

@@ -169,7 +169,8 @@ exports.deleteGroup = async (req, res) => {
 };
 
 exports.addMember = async (req, res) => {
-  const { groupId, memberId } = req.body;
+  const { groupId } = req.params;
+  const { userId } = req.body;
   try {
     const group = await prisma.conversation.findUnique({
       where: { id: parseInt(groupId) },
@@ -181,7 +182,7 @@ exports.addMember = async (req, res) => {
 
     await prisma.conversation.update({
       where: { id: parseInt(groupId) },
-      data: { members: { connect: { id: memberId } } },
+      data: { members: { connect: { id: userId } } },
     });
 
     res.json({ message: "Member added successfully." });
@@ -191,7 +192,9 @@ exports.addMember = async (req, res) => {
 };
 
 exports.removeMember = async (req, res) => {
-  const { groupId, memberId } = req.body;
+  const { groupId } = req.params;
+  const { userId } = req.body;
+
   try {
     const group = await prisma.conversation.findUnique({
       where: { id: parseInt(groupId) },
@@ -205,7 +208,7 @@ exports.removeMember = async (req, res) => {
 
     await prisma.conversation.update({
       where: { id: parseInt(groupId) },
-      data: { members: { disconnect: { id: memberId } } },
+      data: { members: { disconnect: { id: userId } } },
     });
 
     res.json({ message: "Member removed successfully." });
