@@ -20,6 +20,9 @@ function MessageBoard() {
     groupConversations: [],
   });
 
+  const [isAddingMembers, setAddingMembers] = useState(false);
+  const [isRemovingMembers, setRemovingMembers] = useState(false);
+
   useEffect(() => {
     const getChatRoomId = async () => {
       try {
@@ -42,6 +45,34 @@ function MessageBoard() {
     getChatRoomId();
   }, [state.token]);
 
+  const handleAddMember = async (userId) => {
+    if (!currConversationId) return;
+
+    try {
+      await axios.post(
+        `http://localhost:5000/api/conversations/group/add-member/${currConversationId}`,
+        { userId },
+        { headers: { Authorization: `${state.token}` } }
+      );
+    } catch (error) {
+      console.error("Error adding member:", error);
+    }
+  };
+
+  const handleRemoveMember = async (userId) => {
+    if (!currConversationId) return;
+
+    try {
+      await axios.post(
+        `http://localhost:5000/api/conversations/group/remove-member/${currConversationId}`,
+        { userId },
+        { headers: { Authorization: `${state.token}` } }
+      );
+    } catch (error) {
+      console.error("Error removing member:", error);
+    }
+  };
+
   return (
     <div className="message-board">
       <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
@@ -57,11 +88,23 @@ function MessageBoard() {
         currConversationId={currConversationId}
         setCurrConversationId={setCurrConversationId}
         setUserConversations={setUserConversations}
+        setAddingMembers={setAddingMembers}
+        setRemovingMembers={setRemovingMembers}
+        isAddingMembers={isAddingMembers}
+        isRemovingMembers={isRemovingMembers}
       />
       {selectedUser ? (
         <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
       ) : (
-        <FriendList setSelectedUser={setSelectedUser} />
+        <FriendList
+          setSelectedUser={setSelectedUser}
+          onAddMember={handleAddMember}
+          onRemoveMember={handleRemoveMember}
+          setAddingMembers={setAddingMembers}
+          setRemovingMembers={setRemovingMembers}
+          isAddingMembers={isAddingMembers}
+          isRemovingMembers={isRemovingMembers}
+        />
       )}
     </div>
   );

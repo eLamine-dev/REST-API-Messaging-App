@@ -10,6 +10,10 @@ function ChatArea({
   currConversationId,
   setCurrConversationId,
   setUserConversations,
+  setAddingMembers,
+  setRemovingMembers,
+  isAddingMembers,
+  isRemovingMembers,
 }) {
   const [conversation, setConversation] = useState(null);
 
@@ -90,10 +94,20 @@ function ChatArea({
         <div className="group-controls">
           {conversation.adminId == state.user.id ? (
             <>
-              <button onClick={() => addMember(conversation.id)}>
-                Add Member
+              <button
+                onClick={() => {
+                  setAddingMembers(!isAddingMembers);
+                  setRemovingMembers(false);
+                }}
+              >
+                {isAddingMembers ? "Cancel Add Member" : "Add Member"}
               </button>
-              <button onClick={() => removeMember(conversation.id)}>
+              <button
+                onClick={() => {
+                  setRemovingMembers(!isRemovingMembers);
+                  setAddingMembers(false);
+                }}
+              >
                 Remove Member
               </button>
               <button onClick={() => deleteGroup(conversation.id)}>
