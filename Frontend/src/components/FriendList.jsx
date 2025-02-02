@@ -10,9 +10,14 @@ function FriendList({
   isRemovingMembers,
   onAddMember,
   onRemoveMember,
+  conversationMembers,
 }) {
   const [friends, setFriends] = useState([]);
   const { state } = useContext(AppContext);
+
+  const isMember = (userId) => {
+    return conversationMembers.some((member) => member.id === userId);
+  };
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -40,10 +45,10 @@ function FriendList({
               <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>
               {friend.username}
             </p>
-            {isAddingMembers && (
+            {isAddingMembers && !isMember(friend.id) && (
               <button onClick={() => onAddMember(friend.id)}>+</button>
             )}
-            {isRemovingMembers && (
+            {isRemovingMembers && isMember(friend.id) && (
               <button onClick={() => onRemoveMember(friend.id)}>-</button>
             )}
           </div>

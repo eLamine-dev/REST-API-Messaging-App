@@ -28,6 +28,9 @@ exports.getConversationMessages = async (req, res) => {
         messages: {
           orderBy: { timestamp: "asc" },
         },
+        members: {
+          select: { id: true, username: true, status: true },
+        },
       },
     });
 

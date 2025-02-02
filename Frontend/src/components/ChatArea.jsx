@@ -14,8 +14,10 @@ function ChatArea({
   setRemovingMembers,
   isAddingMembers,
   isRemovingMembers,
+  conversation,
+  setConversation,
 }) {
-  const [conversation, setConversation] = useState(null);
+  // const [conversation, setConversation] = useState(null);
 
   const { state } = useContext(AppContext);
 
@@ -33,7 +35,6 @@ function ChatArea({
         `http://localhost:5000/api/conversations/messages/${currConversationId}`,
         { headers: { Authorization: `${state.token}` } }
       );
-      console.log(response.data);
 
       setConversation(response.data);
     } catch (error) {

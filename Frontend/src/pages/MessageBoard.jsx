@@ -14,6 +14,7 @@ function MessageBoard() {
   const [selectedUser, setSelectedUser] = useState(null);
   const { state } = useContext(AppContext);
   const [currConversationId, setCurrConversationId] = useState(null);
+  const [conversation, setConversation] = useState(null);
   const [userConversations, setUserConversations] = useState({
     chatRoom: null,
     privateConversations: [],
@@ -92,6 +93,8 @@ function MessageBoard() {
         setRemovingMembers={setRemovingMembers}
         isAddingMembers={isAddingMembers}
         isRemovingMembers={isRemovingMembers}
+        conversation={conversation}
+        setConversation={setConversation}
       />
       {selectedUser ? (
         <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
@@ -104,6 +107,7 @@ function MessageBoard() {
           setRemovingMembers={setRemovingMembers}
           isAddingMembers={isAddingMembers}
           isRemovingMembers={isRemovingMembers}
+          conversationMembers={conversation?.members}
         />
       )}
     </div>
