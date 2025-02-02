@@ -46,32 +46,42 @@ function MessageBoard() {
     getChatRoomId();
   }, [state.token]);
 
-  const handleAddMember = async (userId) => {
+  const handleAddMember = async (user) => {
     if (!currConversationId) return;
 
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/${currConversationId}`,
-        { userId },
+        { userId: user.id },
         { headers: { Authorization: `${state.token}` } }
       );
     } catch (error) {
       console.error("Error adding member:", error);
     }
+
+    setConversation((prev) => ({
+      ...prev,
+      members: [...prev.members, user],
+    }));
   };
 
-  const handleRemoveMember = async (userId) => {
+  const handleRemoveMember = async (user) => {
     if (!currConversationId) return;
 
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/remove/${currConversationId}`,
-        { userId },
+        { userId: user.id },
         { headers: { Authorization: `${state.token}` } }
       );
     } catch (error) {
       console.error("Error removing member:", error);
     }
+
+    setConversation((prev) => ({
+      ...prev,
+      members: prev.members.filter((member) => member.id !== user.id),
+    }));
   };
 
   return (

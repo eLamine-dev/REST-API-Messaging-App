@@ -46,10 +46,10 @@ function FriendList({
               {friend.username}
             </p>
             {isAddingMembers && !isMember(friend.id) && (
-              <button onClick={() => onAddMember(friend.id)}>+</button>
+              <button onClick={() => onAddMember(friend)}>+</button>
             )}
             {isRemovingMembers && isMember(friend.id) && (
-              <button onClick={() => onRemoveMember(friend.id)}>-</button>
+              <button onClick={() => onRemoveMember(friend)}>-</button>
             )}
           </div>
         ))
