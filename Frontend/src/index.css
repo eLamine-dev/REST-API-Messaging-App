@@ -349,3 +349,15 @@ body {
 .user-detail button:hover {
   background-color: #677bc4;
 }
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+  background: #ecf0f1;
+
+  overflow-y: auto;
+}

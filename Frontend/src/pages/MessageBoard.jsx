@@ -10,7 +10,6 @@ import { useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 
 function MessageBoard() {
-  const [selectedTab, setSelectedTab] = useState("messages");
   const [selectedUser, setSelectedUser] = useState(null);
   const { state } = useContext(AppContext);
   const [currConversationId, setCurrConversationId] = useState(null);
@@ -86,8 +85,6 @@ function MessageBoard() {
 
   return (
     <div className="message-board">
-      <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
-
       <ConversationList
         setCurrConversationId={setCurrConversationId}
         userConversations={userConversations}
@@ -106,6 +103,7 @@ function MessageBoard() {
         conversation={conversation}
         setConversation={setConversation}
       />
+
       {selectedUser ? (
         <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
       ) : (

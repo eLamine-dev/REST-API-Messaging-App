@@ -6,6 +6,7 @@ import {
   FaUserFriends,
   FaUser,
   FaSignOutAlt,
+  FaUsers,
 } from "react-icons/fa";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -58,7 +59,10 @@ function Sidebar({ selectedTab, setSelectedTab }) {
     <div className="sidebar">
       <div
         className={`icon ${selectedTab === "messages" ? "active" : ""}`}
-        onClick={() => setSelectedTab("messages")}
+        onClick={() => {
+          setSelectedTab("messages");
+          navigate("/messages");
+        }}
       >
         <FaComment />
         {notifications.messages > 0 && (
@@ -73,12 +77,24 @@ function Sidebar({ selectedTab, setSelectedTab }) {
       </div>
       <div
         className={`icon ${selectedTab === "friends" ? "active" : ""}`}
-        onClick={() => setSelectedTab("friends")}
+        onClick={() => {
+          setSelectedTab("friends");
+          navigate("/friends");
+        }}
       >
         <FaUserFriends />
         {notifications.requests > 0 && (
           <span className="badge">{notifications.requests}</span>
         )}
+      </div>
+      <div
+        className={`icon ${selectedTab === "groups" ? "active" : ""}`}
+        onClick={() => {
+          setSelectedTab("groups");
+          navigate("/groups");
+        }}
+      >
+        <FaUsers />
       </div>
       <div
         className={`icon ${selectedTab === "profile" ? "active" : ""}`}
