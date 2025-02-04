@@ -91,6 +91,29 @@ exports.getFriendConversation = async (req, res) => {
   }
 };
 
+exports.getUserGroups = async (req, res) => {
+  try {
+    const groups = await prisma.conversation.findMany({
+      where: {
+        isGroup: true,
+        isChatRoom: false,
+        members: {
+          some: { id: req.user.userId },
+        },
+      },
+      include: {
+        members: {
+          select: { id: true, username: true, status: true },
+        },
+      },
+    });
+
+    res.json(groups);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching user groups." });
+  }
+};
+
 exports.getUserConversations = async (req, res) => {
   try {
     const userId = req.user.userId;

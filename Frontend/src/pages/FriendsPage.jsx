@@ -16,12 +16,9 @@ function FriendsPage() {
 
   const fetchFriends = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/friends/list",
-        {
-          headers: { Authorization: `${state.token}` },
-        }
-      );
+      const response = await axios.get("http://localhost:5000/api/friends", {
+        headers: { Authorization: `${state.token}` },
+      });
       setFriends(response.data);
     } catch (error) {
       console.error("Error fetching friends:", error);
