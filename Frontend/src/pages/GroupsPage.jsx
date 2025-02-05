@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import GroupDetails from "../components/GroupDetails";
 
 function GroupsPage() {
   const { state } = useContext(AppContext);
@@ -8,6 +9,7 @@ function GroupsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   useEffect(() => {
     fetchUserGroups();
@@ -56,42 +58,54 @@ function GroupsPage() {
   };
 
   return (
-    <div className="groups-page">
-      <h2>Create a Group</h2>
-      <input
-        type="text"
-        placeholder="Group name"
-        value={groupName}
-        onChange={(e) => setGroupName(e.target.value)}
-      />
-      <button onClick={createGroup}>Create</button>
+    <div>
+      <div className="groups-page">
+        <h2>Create a Group</h2>
+        <input
+          type="text"
+          placeholder="Group name"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+        />
+        <button onClick={createGroup}>Create</button>
 
-      <h2>Search Groups</h2>
-      <input
-        type="text"
-        placeholder="Search groups..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-      <button onClick={searchGroups}>Search</button>
+        <h2>Search Groups</h2>
+        <input
+          type="text"
+          placeholder="Search groups..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={searchGroups}>Search</button>
 
-      <h3>Search Results</h3>
-      {searchResults.map((group) => (
-        <div key={group.id} className="group-item">
-          <p>{group.name}</p>
-          <button>Join Group</button>
-        </div>
-      ))}
-
-      <h2>Your Groups</h2>
-      {userGroups.length === 0 ? (
-        <p>No groups yet</p>
-      ) : (
-        userGroups.map((group) => (
+        <h3>Search Results</h3>
+        {searchResults.map((group) => (
           <div key={group.id} className="group-item">
             <p>{group.name}</p>
+            <button>Join Group</button>
           </div>
-        ))
+        ))}
+
+        <h2>Your Groups</h2>
+        {userGroups.length === 0 ? (
+          <p>No groups yet</p>
+        ) : (
+          userGroups.map((group) => (
+            <div
+              key={group.id}
+              className="group-item"
+              onClick={() => setSelectedGroup(group)}
+            >
+              <p>{group.name}</p>
+            </div>
+          ))
+        )}
+      </div>
+      {selectedGroup && (
+        <GroupDetails
+          group={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
+        />
       )}
     </div>
   );
