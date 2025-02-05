@@ -103,21 +103,6 @@ function MessageBoard() {
         conversation={conversation}
         setConversation={setConversation}
       />
-
-      {selectedUser ? (
-        <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
-      ) : (
-        <FriendList
-          setSelectedUser={setSelectedUser}
-          onAddMember={handleAddMember}
-          onRemoveMember={handleRemoveMember}
-          setAddingMembers={setAddingMembers}
-          setRemovingMembers={setRemovingMembers}
-          isAddingMembers={isAddingMembers}
-          isRemovingMembers={isRemovingMembers}
-          conversationMembers={conversation?.members}
-        />
-      )}
     </div>
   );
 }
