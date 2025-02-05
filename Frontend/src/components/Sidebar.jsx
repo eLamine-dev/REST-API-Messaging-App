@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Navbar({ selectedTab, setSelectedTab }) {
+function Sidebar({ selectedTab, setSelectedTab }) {
   const { state, setState } = useContext(AppContext);
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
@@ -55,16 +55,14 @@ function Navbar({ selectedTab, setSelectedTab }) {
     }
   };
 
-  const handleNavigate = (tab, path) => {
-    setSelectedTab(tab);
-    navigate(path);
-  };
-
   return (
-    <div className="Navbar">
+    <div className="sidebar">
       <div
         className={`icon ${selectedTab === "messages" ? "active" : ""}`}
-        onClick={() => handleNavigate("messages", "/messages")}
+        onClick={() => {
+          setSelectedTab("messages");
+          navigate("/messages");
+        }}
       >
         <FaComment />
         {notifications.messages > 0 && (
@@ -73,13 +71,16 @@ function Navbar({ selectedTab, setSelectedTab }) {
       </div>
       <div
         className={`icon ${selectedTab === "calls" ? "active" : ""}`}
-        onClick={() => handleNavigate("calls", "/calls")}
+        onClick={() => setSelectedTab("calls")}
       >
         <FaPhone />
       </div>
       <div
         className={`icon ${selectedTab === "friends" ? "active" : ""}`}
-        onClick={() => handleNavigate("friends", "/friends")}
+        onClick={() => {
+          setSelectedTab("friends");
+          navigate("/friends");
+        }}
       >
         <FaUserFriends />
         {notifications.requests > 0 && (
@@ -88,13 +89,16 @@ function Navbar({ selectedTab, setSelectedTab }) {
       </div>
       <div
         className={`icon ${selectedTab === "groups" ? "active" : ""}`}
-        onClick={() => handleNavigate("groups", "/groups")}
+        onClick={() => {
+          setSelectedTab("groups");
+          navigate("/groups");
+        }}
       >
         <FaUsers />
       </div>
       <div
         className={`icon ${selectedTab === "profile" ? "active" : ""}`}
-        onClick={() => handleNavigate("profile", "/profile")}
+        onClick={() => setSelectedTab("profile")}
       >
         <FaUser />
       </div>
@@ -105,4 +109,4 @@ function Navbar({ selectedTab, setSelectedTab }) {
   );
 }
 
-export default Navbar;
+export default Sidebar;

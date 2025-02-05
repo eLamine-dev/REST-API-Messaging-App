@@ -276,7 +276,7 @@ body {
   height: 100vh;
 }
 
-.Navbar {
+.sidebar {
   width: 60px;
   background-color: #25272a;
   display: flex;

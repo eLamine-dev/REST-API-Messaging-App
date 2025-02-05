@@ -3,7 +3,7 @@ import { useState } from "react";
 import ChatArea from "../components/ChatArea";
 import FriendList from "../components/FriendList";
 import ConversationList from "../components/ConversationList";
-import Sidebar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import UserDetail from "../components/UserDetails";
 import { useContext, useEffect } from "react";
 
