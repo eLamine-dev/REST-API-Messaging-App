@@ -17,8 +17,6 @@ function ChatArea({
   conversation,
   setConversation,
 }) {
-  // const [conversation, setConversation] = useState(null);
-
   const { state } = useContext(AppContext);
 
   useEffect(() => {
