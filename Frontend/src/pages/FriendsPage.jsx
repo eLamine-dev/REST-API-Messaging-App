@@ -16,10 +16,19 @@ function FriendsPage() {
 
   const fetchFriends = async () => {
     try {
+<<<<<<< Updated upstream
+      const response = await axios.get(
+        "http://localhost:5000/api/friends/list",
+        {
+          headers: { Authorization: `${state.token}` },
+        }
+      );
+=======
       const response = await axios.get("http://localhost:5000/api/friends", {
         headers: { Authorization: `${state.token}` },
       });
 
+>>>>>>> Stashed changes
       setFriends(response.data);
     } catch (error) {
       console.error("Error fetching friends:", error);

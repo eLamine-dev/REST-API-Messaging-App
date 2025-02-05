@@ -357,6 +357,7 @@ body {
 
 .content {
   flex-grow: 1;
+  background: #ecf0f1;
 
   overflow-y: auto;
 }

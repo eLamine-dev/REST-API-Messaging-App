@@ -17,12 +17,9 @@ function GroupsPage() {
 
   const fetchUserGroups = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/conversations/user-groups",
-        {
-          headers: { Authorization: `${state.token}` },
-        }
-      );
+      const response = await axios.get("http://localhost:5000/api/groups/my", {
+        headers: { Authorization: `${state.token}` },
+      });
       setUserGroups(response.data);
     } catch (error) {
       console.error("Error fetching groups:", error);

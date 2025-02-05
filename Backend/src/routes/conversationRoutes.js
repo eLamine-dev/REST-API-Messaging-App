@@ -8,7 +8,7 @@ const {
   getFriendConversation,
   getUserConversations,
   getChatRoomId,
-  getUserGroups,
+
   leaveGroup,
   deleteGroup,
 } = require("../controllers/conversationController");
@@ -18,7 +18,6 @@ const router = express.Router();
 router.post("/", authenticateJWT, createConversation);
 
 router.get("/user", authenticateJWT, getUserConversations);
-router.get("/user-groups", authenticateJWT, getUserGroups);
 router.get("/messages/:id", authenticateJWT, getConversationMessages);
 router.get("/get-chatroom", authenticateJWT, getChatRoomId);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
