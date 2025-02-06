@@ -2,8 +2,8 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
-function GroupDetails({ group, setSelectedGroup }) {
-  const { state, setState } = useContext(AppContext);
+function GroupDetails({ group }) {
+  const { state, setState, setSelectedGroup } = useContext(AppContext);
   const [newMember, setNewMember] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
@@ -160,7 +160,7 @@ function GroupDetails({ group, setSelectedGroup }) {
       {isAdmin && (
         <>
           <button onClick={handleDeleteGroup}>Delete Group</button>
-          <button onClick={handleDeleteGroup}>Delete Group</button>
+          <button onClick={handleAddMember}>Add Members</button>
         </>
       )}
 

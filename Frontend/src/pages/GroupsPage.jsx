@@ -4,12 +4,11 @@ import { AppContext } from "../utils/AppContext";
 import GroupDetails from "../components/GroupDetails";
 
 function GroupsPage() {
-  const { state } = useContext(AppContext);
+  const { state, setSelectedGroup } = useContext(AppContext);
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
-  const [selectedGroup, setSelectedGroup] = useState(null);
 
   useEffect(() => {
     fetchUserGroups();
@@ -17,9 +16,12 @@ function GroupsPage() {
 
   const fetchUserGroups = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/groups/my", {
-        headers: { Authorization: `${state.token}` },
-      });
+      const response = await axios.get(
+        "http://localhost:5000/api/conversations/user-groups",
+        {
+          headers: { Authorization: `${state.token}` },
+        }
+      );
       setUserGroups(response.data);
     } catch (error) {
       console.error("Error fetching groups:", error);
@@ -98,12 +100,6 @@ function GroupsPage() {
           ))
         )}
       </div>
-      {selectedGroup && (
-        <GroupDetails
-          group={selectedGroup}
-          setSelectedGroup={setSelectedGroup}
-        />
-      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
 function FriendsPage() {
-  const { state } = useContext(AppContext);
+  const { state, setSelectedUser } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [friends, setFriends] = useState([]);
@@ -160,7 +160,11 @@ function FriendsPage() {
         <p>No friends yet</p>
       ) : (
         friends.map((friend) => (
-          <div key={friend.id} className="friend-item">
+          <div
+            key={friend.id}
+            className="friend-item"
+            onClick={() => setSelectedUser(friend)}
+          >
             <p>{friend.username}</p>
           </div>
         ))

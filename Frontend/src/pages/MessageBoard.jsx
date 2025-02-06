@@ -10,7 +10,6 @@ import { useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 
 function MessageBoard() {
-  const [selectedUser, setSelectedUser] = useState(null);
   const { state } = useContext(AppContext);
   const [currConversationId, setCurrConversationId] = useState(null);
   const [conversation, setConversation] = useState(null);

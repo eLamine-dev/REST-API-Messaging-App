@@ -10,6 +10,8 @@ export const AppProvider = ({ children }) => {
     user: null,
   });
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(null);
 
   const isTokenExpired = (token) => {
     try {
@@ -64,7 +66,16 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ state, setState }}>
+    <AppContext.Provider
+      value={{
+        state,
+        setState,
+        selectedUser,
+        setSelectedUser,
+        selectedGroup,
+        setSelectedGroup,
+      }}
+    >
       {loading ? <div>Loading...</div> : children}
     </AppContext.Provider>
   );

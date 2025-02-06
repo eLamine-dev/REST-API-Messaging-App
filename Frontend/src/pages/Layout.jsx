@@ -5,8 +5,6 @@ import { useState } from "react";
 
 function Layout() {
   const [selectedTab, setSelectedTab] = useState("messages");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedGroup, setSelectedGroup] = useState(null);
 
   // const { state, setState } = useContext(AppContext);
   // const location = useLocation();
@@ -53,12 +51,7 @@ function Layout() {
       <div className="content">
         <Outlet />
       </div>
-      <Sidebar
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
-        selectedGroup={selectedGroup}
-        setSelectedGroup={setSelectedGroup}
-      />
+      <Sidebar />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { AppContext } from "../utils/AppContext";
 import UserCard from "./UserCard";
 
 function FriendList({
-  setSelectedUser,
   isAddingMembers,
   isRemovingMembers,
   onAddMember,
@@ -13,7 +12,7 @@ function FriendList({
   conversationMembers,
 }) {
   const [friends, setFriends] = useState([]);
-  const { state } = useContext(AppContext);
+  const { state, setSelectedUser } = useContext(AppContext);
 
   const isMember = (userId) => {
     return conversationMembers.some((member) => member.id === userId);
