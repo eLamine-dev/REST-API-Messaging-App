@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
-import GroupDetails from "../components/GroupDetails";
 
 function GroupsPage() {
   const { state, setSelectedGroup } = useContext(AppContext);

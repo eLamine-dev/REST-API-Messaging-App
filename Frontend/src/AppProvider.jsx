@@ -9,6 +9,11 @@ export const AppProvider = ({ children }) => {
     token: localStorage.getItem("token") || null,
     user: null,
   });
+  const [userConversations, setUserConversations] = useState({
+    chatRoom: null,
+    privateConversations: [],
+    groupConversations: [],
+  });
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -74,6 +79,8 @@ export const AppProvider = ({ children }) => {
         setSelectedUser,
         selectedGroup,
         setSelectedGroup,
+        userConversations,
+        setUserConversations,
       }}
     >
       {loading ? <div>Loading...</div> : children}

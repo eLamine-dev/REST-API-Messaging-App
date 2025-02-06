@@ -19,29 +19,29 @@ function ChatArea({
 }) {
   const { state } = useContext(AppContext);
 
-  useEffect(() => {
-    if (!currConversationId && chatRoomId) {
-      console.log("Setting chat room as default conversation:", chatRoomId);
-      setCurrConversationId(chatRoomId);
-    }
-  }, [chatRoomId, currConversationId]);
-
-  const fetchMessages = async () => {
+  const fetchMessages = async (isMounted) => {
     if (!currConversationId) return;
     try {
       const response = await axios.get(
         `http://localhost:5000/api/conversations/messages/${currConversationId}`,
         { headers: { Authorization: `${state.token}` } }
       );
-
-      setConversation(response.data);
+      if (isMounted) {
+        setConversation(response.data);
+      }
     } catch (error) {
       console.error("Error fetching conversation messages:", error);
     }
   };
 
   useEffect(() => {
-    fetchMessages();
+    let isMounted = true;
+
+    fetchMessages(isMounted);
+
+    return () => {
+      isMounted = false;
+    };
   }, [currConversationId, state.token]);
 
   const handleSend = async () => {

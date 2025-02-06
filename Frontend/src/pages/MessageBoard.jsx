@@ -10,19 +10,16 @@ import { useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 
 function MessageBoard() {
-  const { state } = useContext(AppContext);
+  const { state, userConversations, setUserConversations } =
+    useContext(AppContext);
   const [currConversationId, setCurrConversationId] = useState(null);
   const [conversation, setConversation] = useState(null);
-  const [userConversations, setUserConversations] = useState({
-    chatRoom: null,
-    privateConversations: [],
-    groupConversations: [],
-  });
 
   const [isAddingMembers, setAddingMembers] = useState(false);
   const [isRemovingMembers, setRemovingMembers] = useState(false);
 
   useEffect(() => {
+    if (userConversations.chatRoom) return;
     const getChatRoomId = async () => {
       try {
         const response = await axios.get(
