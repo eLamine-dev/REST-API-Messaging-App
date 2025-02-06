@@ -14,6 +14,7 @@ function FriendsPage() {
     fetchFriendRequests();
   }, [state.token]);
 
+  //TODO: friends are already fetched in the friends list, find a way to reuse that data
   const fetchFriends = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/friends", {

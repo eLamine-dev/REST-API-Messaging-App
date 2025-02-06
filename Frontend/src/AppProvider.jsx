@@ -9,6 +9,9 @@ export const AppProvider = ({ children }) => {
     token: localStorage.getItem("token") || null,
     user: null,
   });
+  //TODO: move user friends state here to share it between friendsList and Friends page
+  // const [userFriends, setUserFriends] = useState([]);
+
   const [userConversations, setUserConversations] = useState({
     chatRoom: null,
     privateConversations: [],

@@ -52,6 +52,7 @@ function ChatArea({
     return <p>Loading chat...</p>;
   }
 
+  //TODO: move management of groups to group details component
   const deleteGroup = async (groupId) => {
     try {
       await axios.delete(

@@ -13,6 +13,7 @@ function GroupsPage() {
     fetchUserGroups();
   }, [state.token]);
 
+  //TODO: groups are already fetched in the conversation list, find a way to reuse that data
   const fetchUserGroups = async () => {
     try {
       const response = await axios.get(

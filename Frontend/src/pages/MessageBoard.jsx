@@ -12,6 +12,10 @@ import { AppContext } from "../utils/AppContext";
 function MessageBoard() {
   const { state, userConversations, setUserConversations } =
     useContext(AppContext);
+
+  //TODO: make conversation fetching simpler without two steps Id->conversation
+  //const [currConversation, setCurrConversation] = useState(null);
+
   const [currConversationId, setCurrConversationId] = useState(null);
   const [conversation, setConversation] = useState(null);
 
@@ -40,44 +44,6 @@ function MessageBoard() {
 
     getChatRoomId();
   }, [state.token]);
-
-  const handleAddMember = async (user) => {
-    if (!currConversationId) return;
-
-    try {
-      await axios.post(
-        `http://localhost:5000/api/conversations/members/${currConversationId}`,
-        { userId: user.id },
-        { headers: { Authorization: `${state.token}` } }
-      );
-    } catch (error) {
-      console.error("Error adding member:", error);
-    }
-
-    setConversation((prev) => ({
-      ...prev,
-      members: [...prev.members, user],
-    }));
-  };
-
-  const handleRemoveMember = async (user) => {
-    if (!currConversationId) return;
-
-    try {
-      await axios.post(
-        `http://localhost:5000/api/conversations/members/remove/${currConversationId}`,
-        { userId: user.id },
-        { headers: { Authorization: `${state.token}` } }
-      );
-    } catch (error) {
-      console.error("Error removing member:", error);
-    }
-
-    setConversation((prev) => ({
-      ...prev,
-      members: prev.members.filter((member) => member.id !== user.id),
-    }));
-  };
 
   return (
     <div className="message-board">
