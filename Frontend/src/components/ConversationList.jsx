@@ -36,6 +36,7 @@ function ConversationList({
     fetchConversations();
   }, []);
 
+  //TODO: move this groups page
   const createGroup = async () => {
     if (!groupName.trim()) return;
 

@@ -11,8 +11,8 @@ function FriendList({
   onRemoveMember,
   conversationMembers,
 }) {
-  const [friends, setFriends] = useState([]);
-  const { state, setSelectedUser } = useContext(AppContext);
+  const { state, setSelectedUser, friends, setFriends } =
+    useContext(AppContext);
 
   const isMember = (userId) => {
     return conversationMembers.some((member) => member.id === userId);

@@ -6,14 +6,18 @@ import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
 function ChatArea({
-  currConversation,
   setUserConversations,
   setAddingMembers,
   setRemovingMembers,
   isAddingMembers,
   isRemovingMembers,
 }) {
-  const { state } = useContext(AppContext);
+  const {
+    state,
+    currConversation,
+    setCurrConversation,
+    setSelectedConversation,
+  } = useContext(AppContext);
 
   // const fetchMessages = async (isMounted) => {
   //   if (!currConversationId) return;
@@ -63,7 +67,7 @@ function ChatArea({
         ),
       }));
 
-      setCurrConversationId(chatRoomId);
+      setCurrConversation(null);
     } catch (error) {
       console.error("Error deleting group:", error);
     }
@@ -96,22 +100,6 @@ function ChatArea({
         <div className="group-controls">
           {currConversation.adminId == state.user.id ? (
             <>
-              <button
-                onClick={() => {
-                  setAddingMembers(!isAddingMembers);
-                  setRemovingMembers(false);
-                }}
-              >
-                {isAddingMembers ? "Cancel Add Member" : "Add Member"}
-              </button>
-              <button
-                onClick={() => {
-                  setRemovingMembers(!isRemovingMembers);
-                  setAddingMembers(false);
-                }}
-              >
-                {isRemovingMembers ? "Cancel Remove Member" : "Remove Member"}
-              </button>
               <button onClick={() => deleteGroup(currConversation.id)}>
                 Delete Group
               </button>
@@ -123,6 +111,8 @@ function ChatArea({
           )}
         </div>
       )}
+
+      <button onClick={() => setSel(currConversation.id)}>Settings</button>
       {currConversation ? (
         <>
           <h2>{currConversation.name}</h2>

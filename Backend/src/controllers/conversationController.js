@@ -46,7 +46,6 @@ exports.getConversationMessages = async (req, res) => {
 };
 
 exports.getChatRoom = async (req, res) => {
-  //get all chatRoom details and last 30 messages
   try {
     const chatRoom = await prisma.conversation.findFirst({
       where: { isChatRoom: true },

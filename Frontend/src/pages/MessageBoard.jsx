@@ -25,11 +25,7 @@ function MessageBoard() {
     isRemovingMembers,
   } = useOutletContext();
 
-  //TODO: make conversation fetching simpler without two steps Id->conversation
-  //const [currConversation, setCurrConversation] = useState(null);
   const [chatRoom, setChatRoom] = useState(null);
-  // const [currConversationId, setCurrConversationId] = useState(null);
-  // const [conversation, setConversation] = useState(null);
 
   useEffect(() => {
     if (chatRoom) return;
@@ -40,13 +36,7 @@ function MessageBoard() {
           "http://localhost:5000/api/conversations/chatroom",
           { headers: { Authorization: `${state.token}` } }
         );
-        console.log("Fetched chat room ID:", response.data);
-
-        // setUserConversations((prev) => ({
-        //   ...prev,
-        //   chatRoom: response.data,
-        // }));
-        // setCurrConversationId((prev) => prev || response.data);
+        console.log("Fetched chat room :", response.data);
 
         setChatRoom(response.data);
         setCurrConversation(response.data);
@@ -57,6 +47,12 @@ function MessageBoard() {
 
     getChatRoom();
   }, [state.token]);
+
+  useEffect(() => {
+    if (!currConversation) {
+      setCurrConversation(chatRoom);
+    }
+  }, [currConversation]);
 
   const handleConversationClick = async (conversationId) => {
     try {

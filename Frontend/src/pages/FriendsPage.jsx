@@ -3,29 +3,14 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
 function FriendsPage() {
-  const { state, setSelectedUser } = useContext(AppContext);
+  const { state, setSelectedUser, friends } = useContext(AppContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState(null);
 
   useEffect(() => {
-    fetchFriends();
     fetchFriendRequests();
   }, [state.token]);
-
-  //TODO: friends are already fetched in the friends list, find a way to reuse that data
-  const fetchFriends = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/friends", {
-        headers: { Authorization: `${state.token}` },
-      });
-
-      setFriends(response.data);
-    } catch (error) {
-      console.error("Error fetching friends:", error);
-    }
-  };
 
   const fetchFriendRequests = async () => {
     try {

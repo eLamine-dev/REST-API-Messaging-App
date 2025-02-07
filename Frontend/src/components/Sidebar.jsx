@@ -11,27 +11,31 @@ function Sidebar({
   isAddingMembers,
   isRemovingMembers,
 }) {
-  const { selectedUser, setSelectedUser, selectedGroup, setSelectedGroup } =
-    useContext(AppContext);
+  const {
+    selectedUser,
+    setSelectedUser,
+    selectedConversation,
+    setSelectedConversation,
+  } = useContext(AppContext);
 
   useEffect(() => {
     if (selectedUser) {
-      setSelectedGroup(null);
+      setSelectedConversation(null);
     }
   }, [selectedUser]);
 
   useEffect(() => {
-    if (selectedGroup) {
+    if (selectedConversation) {
       setSelectedUser(null);
     }
-  }, [selectedGroup]);
+  }, [selectedConversation]);
 
   return (
     <div className="sidebar">
-      {selectedGroup && (
+      {selectedConversation && (
         <GroupDetails
-          group={selectedGroup}
-          setSelectedGroup={setSelectedGroup}
+          group={selectedConversation}
+          setSelectedConversation={setSelectedConversation}
         />
       )}
       {selectedUser && (

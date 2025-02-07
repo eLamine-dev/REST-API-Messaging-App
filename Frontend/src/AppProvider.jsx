@@ -10,7 +10,7 @@ export const AppProvider = ({ children }) => {
     user: null,
   });
   //TODO: move user friends state here to share it between friendsList and Friends page
-  // const [userFriends, setUserFriends] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   const [userConversations, setUserConversations] = useState({
     chatRoom: null,
@@ -21,7 +21,7 @@ export const AppProvider = ({ children }) => {
   const [currConversation, setCurrConversation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedConversation, setSelectedConversation] = useState(null);
 
   const isTokenExpired = (token) => {
     try {
@@ -80,10 +80,12 @@ export const AppProvider = ({ children }) => {
       value={{
         state,
         setState,
+        friends,
+        setFriends,
         selectedUser,
         setSelectedUser,
-        selectedGroup,
-        setSelectedGroup,
+        selectedConversation,
+        setSelectedConversation,
         userConversations,
         setUserConversations,
         currConversation,

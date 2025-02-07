@@ -3,30 +3,11 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
 function GroupsPage() {
-  const { state, setSelectedGroup } = useContext(AppContext);
+  const { state, setSelectedConversation, userConversations } =
+    useContext(AppContext);
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [userGroups, setUserGroups] = useState([]);
-
-  useEffect(() => {
-    fetchUserGroups();
-  }, [state.token]);
-
-  //TODO: groups are already fetched in the conversation list, find a way to reuse that data
-  const fetchUserGroups = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/conversations/user-groups",
-        {
-          headers: { Authorization: `${state.token}` },
-        }
-      );
-      setUserGroups(response.data);
-    } catch (error) {
-      console.error("Error fetching groups:", error);
-    }
-  };
 
   const createGroup = async () => {
     if (!groupName.trim()) return;
@@ -37,7 +18,6 @@ function GroupsPage() {
         { headers: { Authorization: `${state.token}` } }
       );
       setGroupName("");
-      fetchUserGroups();
     } catch (error) {
       console.error("Error creating group:", error);
     }
@@ -86,14 +66,14 @@ function GroupsPage() {
         ))}
 
         <h2>Your Groups</h2>
-        {userGroups.length === 0 ? (
+        {userConversations.groupConversations.length === 0 ? (
           <p>No groups yet</p>
         ) : (
-          userGroups.map((group) => (
+          userConversations.groupConversations.map((group) => (
             <div
               key={group.id}
               className="group-item"
-              onClick={() => setSelectedGroup(group)}
+              onClick={() => setSelectedConversation(group)}
             >
               <p>{group.name}</p>
             </div>
