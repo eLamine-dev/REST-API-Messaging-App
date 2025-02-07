@@ -17,6 +17,8 @@ export const AppProvider = ({ children }) => {
     privateConversations: [],
     groupConversations: [],
   });
+
+  const [currConversation, setCurrConversation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -84,6 +86,8 @@ export const AppProvider = ({ children }) => {
         setSelectedGroup,
         userConversations,
         setUserConversations,
+        currConversation,
+        setCurrConversation,
       }}
     >
       {loading ? <div>Loading...</div> : children}

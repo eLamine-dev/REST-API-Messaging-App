@@ -45,17 +45,27 @@ exports.getConversationMessages = async (req, res) => {
   }
 };
 
-exports.getChatRoomId = async (req, res) => {
+exports.getChatRoom = async (req, res) => {
+  //get all chatRoom details and last 30 messages
   try {
     const chatRoom = await prisma.conversation.findFirst({
       where: { isChatRoom: true },
+      include: {
+        messages: {
+          orderBy: { timestamp: "desc" },
+          take: 30,
+        },
+        members: {
+          select: { id: true, username: true, status: true },
+        },
+      },
     });
 
     if (!chatRoom) {
       return res.status(404).json({ error: "Chat room not found." });
     }
 
-    res.json(chatRoom.id);
+    res.json(chatRoom);
   } catch (error) {
     res.status(500).json({ error: "Internal server error." });
   }

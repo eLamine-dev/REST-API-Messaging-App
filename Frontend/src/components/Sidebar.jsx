@@ -5,7 +5,12 @@ import FriendList from "./FriendList";
 import UserDetail from "./UserDetails";
 import GroupDetails from "./GroupDetails";
 
-function Sidebar() {
+function Sidebar({
+  setAddingMembers,
+  setRemovingMembers,
+  isAddingMembers,
+  isRemovingMembers,
+}) {
   const { selectedUser, setSelectedUser, selectedGroup, setSelectedGroup } =
     useContext(AppContext);
 
@@ -33,7 +38,13 @@ function Sidebar() {
         <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
       )}
 
-      <FriendList setSelectedUser={setSelectedUser} />
+      <FriendList
+        setSelectedUser={setSelectedUser}
+        isAddingMembers={isAddingMembers}
+        isRemovingMembers={isRemovingMembers}
+        setAddingMembers={setAddingMembers}
+        setRemovingMembers={setRemovingMembers}
+      />
     </div>
   );
 }

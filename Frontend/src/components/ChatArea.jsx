@@ -6,49 +6,45 @@ import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
 
 function ChatArea({
-  chatRoomId,
-  currConversationId,
-  setCurrConversationId,
+  currConversation,
   setUserConversations,
   setAddingMembers,
   setRemovingMembers,
   isAddingMembers,
   isRemovingMembers,
-  conversation,
-  setConversation,
 }) {
   const { state } = useContext(AppContext);
 
-  const fetchMessages = async (isMounted) => {
-    if (!currConversationId) return;
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/conversations/messages/${currConversationId}`,
-        { headers: { Authorization: `${state.token}` } }
-      );
-      if (isMounted) {
-        setConversation(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching conversation messages:", error);
-    }
-  };
+  // const fetchMessages = async (isMounted) => {
+  //   if (!currConversationId) return;
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5000/api/conversations/messages/${currConversationId}`,
+  //       { headers: { Authorization: `${state.token}` } }
+  //     );
+  //     if (isMounted) {
+  //       setConversation(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching conversation messages:", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    let isMounted = true;
+  // useEffect(() => {
+  //   let isMounted = true;
 
-    fetchMessages(isMounted);
+  //   fetchMessages(isMounted);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [currConversationId, state.token]);
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [currConversationId, state.token]);
 
   const handleSend = async () => {
-    await fetchMessages();
+    // await fetchMessages();
   };
 
-  if (!conversation) {
+  if (!currConversation) {
     return <p>Loading chat...</p>;
   }
 
@@ -96,9 +92,9 @@ function ChatArea({
 
   return (
     <div className="chat-area">
-      {conversation.isGroup && (
+      {currConversation.isGroup && (
         <div className="group-controls">
-          {conversation.adminId == state.user.id ? (
+          {currConversation.adminId == state.user.id ? (
             <>
               <button
                 onClick={() => {
@@ -116,22 +112,22 @@ function ChatArea({
               >
                 {isRemovingMembers ? "Cancel Remove Member" : "Remove Member"}
               </button>
-              <button onClick={() => deleteGroup(conversation.id)}>
+              <button onClick={() => deleteGroup(currConversation.id)}>
                 Delete Group
               </button>
             </>
           ) : (
-            <button onClick={() => leaveGroup(conversation.id)}>
+            <button onClick={() => leaveGroup(currConversation.id)}>
               Leave Group
             </button>
           )}
         </div>
       )}
-      {conversation ? (
+      {currConversation ? (
         <>
-          <h2>{conversation.name}</h2>
+          <h2>{currConversation.name}</h2>
           <div className="messages">
-            {conversation.messages.map((msg) => (
+            {currConversation.messages.map((msg) => (
               <MessageCard
                 key={msg.id}
                 message={msg}
@@ -139,7 +135,10 @@ function ChatArea({
               />
             ))}
           </div>
-          <MessageInput conversationId={conversation.id} onSend={handleSend} />
+          <MessageInput
+            conversationId={currConversation.id}
+            onSend={handleSend}
+          />
         </>
       ) : (
         <p>Loading chat room...</p>

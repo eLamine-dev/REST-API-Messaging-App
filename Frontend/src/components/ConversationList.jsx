@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { AppContext } from "../utils/AppContext";
 
 function ConversationList({
-  setCurrConversationId,
+  onConversationClick,
   userConversations,
   setUserConversations,
 }) {
@@ -71,7 +71,7 @@ function ConversationList({
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() => setCurrConversationId(conversation.id)}
+              onClick={() => onConversationClick(conversation.id)}
             >
               <p>
                 {conversation.name ||
@@ -105,7 +105,7 @@ function ConversationList({
             <div
               key={conversation.id}
               className="conversation-item"
-              onClick={() => setCurrConversationId(conversation.id)}
+              onClick={() => onConversationClick(conversation.id)}
             >
               <p>{conversation.name}</p>
 

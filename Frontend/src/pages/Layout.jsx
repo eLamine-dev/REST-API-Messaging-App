@@ -6,6 +6,9 @@ import { useState } from "react";
 function Layout() {
   const [selectedTab, setSelectedTab] = useState("messages");
 
+  const [isAddingMembers, setAddingMembers] = useState(false);
+  const [isRemovingMembers, setRemovingMembers] = useState(false);
+
   // const { state, setState } = useContext(AppContext);
   // const location = useLocation();
 
@@ -49,9 +52,21 @@ function Layout() {
     <div className="app-layout">
       <Navbar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
       <div className="content">
-        <Outlet />
+        <Outlet
+          context={{
+            isAddingMembers,
+            setAddingMembers,
+            isRemovingMembers,
+            setRemovingMembers,
+          }}
+        />
       </div>
-      <Sidebar />
+      <Sidebar
+        isAddingMembers={isAddingMembers}
+        isRemovingMembers={isRemovingMembers}
+        setAddingMembers={setAddingMembers}
+        setRemovingMembers={setRemovingMembers}
+      />
     </div>
   );
 }

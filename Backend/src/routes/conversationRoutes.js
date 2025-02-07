@@ -7,7 +7,7 @@ const {
   removeMember,
   getFriendConversation,
   getUserConversations,
-  getChatRoomId,
+  getChatRoom,
   getUserGroups,
   leaveGroup,
   deleteGroup,
@@ -20,7 +20,7 @@ router.post("/", authenticateJWT, createConversation);
 router.get("/user", authenticateJWT, getUserConversations);
 router.get("/user-groups", authenticateJWT, getUserGroups);
 router.get("/messages/:id", authenticateJWT, getConversationMessages);
-router.get("/get-chatroom", authenticateJWT, getChatRoomId);
+router.get("/chatroom", authenticateJWT, getChatRoom);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
 
 router.post("/members/:groupId", authenticateJWT, addMember);
