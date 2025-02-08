@@ -6,9 +6,6 @@ import { useState } from "react";
 function Layout() {
   const [selectedTab, setSelectedTab] = useState("messages");
 
-  const [isAddingMembers, setAddingMembers] = useState(false);
-  const [isRemovingMembers, setRemovingMembers] = useState(false);
-
   return (
     <div className="app-layout">
       <Navbar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
@@ -22,12 +19,7 @@ function Layout() {
           }}
         />
       </div>
-      <Sidebar
-        isAddingMembers={isAddingMembers}
-        isRemovingMembers={isRemovingMembers}
-        setAddingMembers={setAddingMembers}
-        setRemovingMembers={setRemovingMembers}
-      />
+      <Sidebar />
     </div>
   );
 }

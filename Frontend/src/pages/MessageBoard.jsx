@@ -1,102 +1,54 @@
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useState } from "react";
 import ChatArea from "../components/ChatArea";
-
 import ConversationList from "../components/ConversationList";
-
-import { useContext, useEffect } from "react";
+import { AppContext } from "../utils/AppContext";
 import { useOutletContext } from "react-router-dom";
 
-import { AppContext } from "../utils/AppContext";
-
 function MessageBoard() {
-  const {
-    state,
-    userConversations,
-    setUserConversations,
-    setCurrConversation,
-    currConversation,
-  } = useContext(AppContext);
-
+  const { authState, chatState, chatDispatch } = useContext(AppContext);
   const {
     setAddingMembers,
     setRemovingMembers,
     isAddingMembers,
     isRemovingMembers,
   } = useOutletContext();
-
   const [chatRoom, setChatRoom] = useState(null);
 
   useEffect(() => {
     if (chatRoom) return;
 
-    const getChatRoom = async () => {
+    const fetchChatRoom = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/conversations/chatroom",
-          { headers: { Authorization: `${state.token}` } }
+          {
+            headers: { Authorization: authState.token },
+          }
         );
-        console.log("Fetched chat room :", response.data);
 
         setChatRoom(response.data);
-        setCurrConversation(response.data);
+        chatDispatch({ type: "SET_CHATROOM", payload: response.data });
       } catch (error) {
-        console.error("Error fetching chat room ID:", error);
+        console.error("Error fetching chat room:", error);
       }
     };
 
-    getChatRoom();
-  }, [state.token]);
+    fetchChatRoom();
+  }, [authState.token]);
 
-  useEffect(() => {
-    if (!currConversation) {
-      setCurrConversation(chatRoom);
-    }
-  }, [currConversation]);
-
-  const handleConversationClick = async (conversationId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/conversations/messages/${conversationId}`,
-        { headers: { Authorization: `${state.token}` } }
-      );
-
-      setCurrConversation(response.data);
-    } catch (error) {
-      console.error("Error fetching conversation:", error);
-    }
+  const handleConversationClick = async (conversation) => {
+    chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: conversation });
   };
-
-  // const fetchMessages = async (isMounted) => {
-  //   if (!currConversationId) return;
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:5000/api/conversations/messages/${currConversationId}`,
-  //       { headers: { Authorization: `${state.token}` } }
-  //     );
-  //     if (isMounted) {
-  //       setConversation(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching conversation messages:", error);
-  //   }
-  // };
 
   return (
     <div className="message-board">
-      <ConversationList
-        onConversationClick={handleConversationClick}
-        userConversations={userConversations}
-        setUserConversations={setUserConversations}
-      />
-
+      <ConversationList onConversationClick={handleConversationClick} />
       <ChatArea
-        setUserConversations={setUserConversations}
         setAddingMembers={setAddingMembers}
         setRemovingMembers={setRemovingMembers}
         isAddingMembers={isAddingMembers}
         isRemovingMembers={isRemovingMembers}
-        currConversation={currConversation}
       />
     </div>
   );
