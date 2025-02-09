@@ -19,24 +19,6 @@ function Navbar({ selectedTab, setSelectedTab }) {
     requests: 0,
   });
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/notifications",
-          {
-            headers: { Authorization: `${state.token}` },
-          }
-        );
-        setNotifications(response.data);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
-    };
-
-    fetchNotifications();
-  }, []);
-
   const logout = async () => {
     try {
       await axios.post(

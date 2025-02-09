@@ -1,54 +1,30 @@
 import { useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
-
 import FriendList from "./FriendList";
 import UserDetail from "./UserDetails";
 import GroupDetails from "./GroupDetails";
 
-function Sidebar({
-  setAddingMembers,
-  setRemovingMembers,
-  isAddingMembers,
-  isRemovingMembers,
-}) {
-  const {
-    selectedUser,
-    setSelectedUser,
-    selectedConversation,
-    setSelectedConversation,
-  } = useContext(AppContext);
+function Sidebar() {
+  const { chatState, friendsState, chatDispatch, friendsDispatch } =
+    useContext(AppContext);
+  const { selectedConversation } = chatState;
+  const { selectedUser } = friendsState;
 
   useEffect(() => {
-    if (selectedUser) {
-      setSelectedConversation(null);
-    }
+    if (selectedUser)
+      chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: null });
   }, [selectedUser]);
 
   useEffect(() => {
-    if (selectedConversation) {
-      setSelectedUser(null);
-    }
+    if (selectedConversation)
+      friendsDispatch({ type: "SET_SELECTED_USER", payload: null });
   }, [selectedConversation]);
 
   return (
     <div className="sidebar">
-      {selectedConversation && (
-        <GroupDetails
-          group={selectedConversation}
-          setSelectedConversation={setSelectedConversation}
-        />
-      )}
-      {selectedUser && (
-        <UserDetail user={selectedUser} setSelectedUser={setSelectedUser} />
-      )}
-
-      <FriendList
-        setSelectedUser={setSelectedUser}
-        isAddingMembers={isAddingMembers}
-        isRemovingMembers={isRemovingMembers}
-        setAddingMembers={setAddingMembers}
-        setRemovingMembers={setRemovingMembers}
-      />
+      {selectedConversation && <GroupDetails />}
+      {selectedUser && <UserDetail />}
+      <FriendList />
     </div>
   );
 }

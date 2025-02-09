@@ -10,14 +10,7 @@ function Layout() {
     <div className="app-layout">
       <Navbar selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
       <div className="content">
-        <Outlet
-          context={{
-            isAddingMembers,
-            setAddingMembers,
-            isRemovingMembers,
-            setRemovingMembers,
-          }}
-        />
+        <Outlet />
       </div>
       <Sidebar />
     </div>

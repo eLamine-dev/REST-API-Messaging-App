@@ -1,22 +1,15 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 import ChatArea from "../components/ChatArea";
 import ConversationList from "../components/ConversationList";
 import { AppContext } from "../utils/AppContext";
-import { useOutletContext } from "react-router-dom";
 
 function MessageBoard() {
-  const { authState, chatState, chatDispatch } = useContext(AppContext);
-  const {
-    setAddingMembers,
-    setRemovingMembers,
-    isAddingMembers,
-    isRemovingMembers,
-  } = useOutletContext();
-  const [chatRoom, setChatRoom] = useState(null);
+  const { authState, chatState, chatDispatch, uiState, setUiState } =
+    useContext(AppContext);
 
   useEffect(() => {
-    if (chatRoom) return;
+    if (chatState.chatRoom) return;
 
     const fetchChatRoom = async () => {
       try {
@@ -26,8 +19,6 @@ function MessageBoard() {
             headers: { Authorization: authState.token },
           }
         );
-
-        setChatRoom(response.data);
         chatDispatch({ type: "SET_CHATROOM", payload: response.data });
       } catch (error) {
         console.error("Error fetching chat room:", error);
@@ -37,19 +28,14 @@ function MessageBoard() {
     fetchChatRoom();
   }, [authState.token]);
 
-  const handleConversationClick = async (conversation) => {
+  const handleConversationClick = (conversation) => {
     chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: conversation });
   };
 
   return (
     <div className="message-board">
       <ConversationList onConversationClick={handleConversationClick} />
-      <ChatArea
-        setAddingMembers={setAddingMembers}
-        setRemovingMembers={setRemovingMembers}
-        isAddingMembers={isAddingMembers}
-        isRemovingMembers={isRemovingMembers}
-      />
+      <ChatArea />
     </div>
   );
 }

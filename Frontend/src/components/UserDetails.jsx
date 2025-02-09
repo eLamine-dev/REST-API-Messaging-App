@@ -2,18 +2,20 @@ import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 import axios from "axios";
 
-function UserDetail({ user, setSelectedUser }) {
-  const { state } = useContext(AppContext);
+function UserDetail() {
+  const { authState, friendsState, friendsDispatch } = useContext(AppContext);
+  const { selectedUser } = friendsState;
   const [userDetails, setUserDetails] = useState({});
-  const [isloading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!selectedUser) return;
+
     const fetchUserDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/users/${user.id}`,
-          { headers: { Authorization: `${state.token}` } }
+          `http://localhost:5000/api/users/${selectedUser.id}`,
+          { headers: { Authorization: `${authState.token}` } }
         );
         setUserDetails(response.data);
       } catch (error) {
@@ -24,16 +26,14 @@ function UserDetail({ user, setSelectedUser }) {
     };
 
     fetchUserDetails();
-  }, [user]);
+  }, [selectedUser, authState.token]);
 
   const sendFriendRequest = async () => {
     try {
       await axios.post(
         "http://localhost:5000/api/friends",
-        { receiverId: user.id },
-        {
-          headers: { Authorization: `${state.token}` },
-        }
+        { receiverId: selectedUser.id },
+        { headers: { Authorization: `${authState.token}` } }
       );
       alert("Friend request sent!");
     } catch (error) {
@@ -41,39 +41,26 @@ function UserDetail({ user, setSelectedUser }) {
     }
   };
 
-  const startConversation = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/conversations/getFriendConversation/${user.id}`,
-        {
-          headers: { Authorization: `${state.token}` },
-        }
-      );
-      alert("Conversation started!");
-    } catch (error) {
-      console.error("Error starting conversation:", error);
-    }
-  };
-
-  if (isloading) return <div>Loading...</div>;
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="user-detail">
-      {/* <img src={user.profilePic || "default.png"} alt="Profile" /> */}
-
-      <div>
-        <h2>{userDetails.username}</h2>
-        <p>Email: {userDetails.email}</p>
-        <p>Status: {userDetails.status}</p>
-        <p>Bio: {userDetails.bio || "No bio available"}</p>
-        {userDetails.isFriend ? (
-          <button>Remove Friend</button>
-        ) : (
-          <button onClick={sendFriendRequest}>Send Friend Request</button>
-        )}
-        <button onClick={startConversation}>Start Conversation</button>
-        <button onClick={() => setSelectedUser(null)}>Close</button>
-      </div>
+      <h2>{userDetails.username}</h2>
+      <p>Email: {userDetails.email}</p>
+      <p>Status: {userDetails.status}</p>
+      <p>Bio: {userDetails.bio || "No bio available"}</p>
+      {userDetails.isFriend ? (
+        <button>Remove Friend</button>
+      ) : (
+        <button onClick={sendFriendRequest}>Send Friend Request</button>
+      )}
+      <button
+        onClick={() =>
+          friendsDispatch({ type: "SET_SELECTED_USER", payload: null })
+        }
+      >
+        Close
+      </button>
     </div>
   );
 }
