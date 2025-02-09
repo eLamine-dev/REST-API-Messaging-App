@@ -34,6 +34,7 @@ const chatInitialState = {
   chatRoom: null,
   privateConversations: [],
   groupConversations: [],
+  currConversation: null,
   selectedConversation: null,
 };
 
@@ -45,6 +46,8 @@ function chatReducer(state, action) {
         privateConversations: action.payload.private,
         groupConversations: action.payload.group,
       };
+    case "SET_CURRENT_CONVERSATION":
+      return { ...state, currConversation: action.payload };
     case "SET_SELECTED_CONVERSATION":
       return { ...state, selectedConversation: action.payload };
     case "SET_CHATROOM":

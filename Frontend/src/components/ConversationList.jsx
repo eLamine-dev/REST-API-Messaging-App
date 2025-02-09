@@ -42,7 +42,7 @@ function ConversationList() {
             className="conversation-item"
             onClick={() =>
               chatDispatch({
-                type: "SET_SELECTED_CONVERSATION",
+                type: "SET_CURRENT_CONVERSATION",
                 payload: conversation,
               })
             }
@@ -65,7 +65,7 @@ function ConversationList() {
             className="conversation-item"
             onClick={() =>
               chatDispatch({
-                type: "SET_SELECTED_CONVERSATION",
+                type: "SET_CURRENT_CONVERSATION",
                 payload: conversation,
               })
             }

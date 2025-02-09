@@ -5,7 +5,7 @@ import { AppContext } from "../utils/AppContext";
 
 function MessageInput({ conversationId, onSend }) {
   const [message, setMessage] = useState("");
-  const { state } = useContext(AppContext);
+  const { authState } = useContext(AppContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +15,7 @@ function MessageInput({ conversationId, onSend }) {
       await axios.post(
         `http://localhost:5000/api/messages/send/${conversationId}`,
         { content: message },
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: `${authState.token}` } }
       );
       onSend();
       setMessage("");

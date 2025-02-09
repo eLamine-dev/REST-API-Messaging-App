@@ -2,72 +2,37 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
-function GroupDetails({ group }) {
-  const { state, setState, setSelectedGroup } = useContext(AppContext);
+function GroupDetails() {
+  const { authState, chatState, chatDispatch } = useContext(AppContext);
+  const group = chatState.selectedConversation;
   const [newMember, setNewMember] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(group.name);
 
-  const isAdmin = group.adminId === state.user.id;
+  const isAdmin = group.adminId === authState.user.id;
 
-  // const handleAddMember = async (user) => {
-  //   if (!currConversationId) return;
-
-  //   try {
-  //     await axios.post(
-  //       `http://localhost:5000/api/conversations/members/${currConversationId}`,
-  //       { userId: user.id },
-  //       { headers: { Authorization: `${state.token}` } }
-  //     );
-  //   } catch (error) {
-  //     console.error("Error adding member:", error);
-  //   }
-
-  //   setConversation((prev) => ({
-  //     ...prev,
-  //     members: [...prev.members, user],
-  //   }));
-  // };
-
-  // const handleRemoveMember = async (user) => {
-  //   if (!currConversationId) return;
-
-  //   try {
-  //     await axios.post(
-  //       `http://localhost:5000/api/conversations/members/remove/${currConversationId}`,
-  //       { userId: user.id },
-  //       { headers: { Authorization: `${state.token}` } }
-  //     );
-  //   } catch (error) {
-  //     console.error("Error removing member:", error);
-  //   }
-
-  //   setConversation((prev) => ({
-  //     ...prev,
-  //     members: prev.members.filter((member) => member.id !== user.id),
-  //   }));
-  // };
-
-  //FIXME: handleAddMember and handleRemoveMember are not updating the conversation state correctly
   const handleAddMember = async () => {
     if (!newMember.trim()) return;
+
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/${group.id}`,
         { userId: newMember },
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: authState.token } }
       );
-      setState((prev) => ({
-        ...prev,
-        conversations: {
-          ...prev.conversations,
-          groupConversations: prev.conversations.groupConversations.map((g) =>
+
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.map((g) =>
             g.id === group.id
               ? { ...g, members: [...g.members, { id: newMember }] }
               : g
           ),
         },
-      }));
+      });
+
       setNewMember("");
     } catch (error) {
       console.error("Error adding member:", error);
@@ -79,19 +44,20 @@ function GroupDetails({ group }) {
       await axios.post(
         `http://localhost:5000/api/conversations/members/remove/${group.id}`,
         { userId: memberId },
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: authState.token } }
       );
-      setState((prev) => ({
-        ...prev,
-        conversations: {
-          ...prev.conversations,
-          groupConversations: prev.conversations.groupConversations.map((g) =>
+
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.map((g) =>
             g.id === group.id
               ? { ...g, members: g.members.filter((m) => m.id !== memberId) }
               : g
           ),
         },
-      }));
+      });
     } catch (error) {
       console.error("Error removing member:", error);
     }
@@ -101,18 +67,16 @@ function GroupDetails({ group }) {
     try {
       await axios.delete(
         `http://localhost:5000/api/conversations/delete-group/${group.id}`,
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: authState.token } }
       );
-      setState((prev) => ({
-        ...prev,
-        conversations: {
-          ...prev.conversations,
-          groupConversations: prev.conversations.groupConversations.filter(
-            (g) => g.id !== group.id
-          ),
+
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.filter((g) => g.id !== group.id),
         },
-      }));
-      setSelectedGroup(null);
+      });
     } catch (error) {
       console.error("Error deleting group:", error);
     }
@@ -123,18 +87,16 @@ function GroupDetails({ group }) {
       await axios.post(
         `http://localhost:5000/api/conversations/leave/${group.id}`,
         {},
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: authState.token } }
       );
-      setState((prev) => ({
-        ...prev,
-        conversations: {
-          ...prev.conversations,
-          groupConversations: prev.conversations.groupConversations.filter(
-            (g) => g.id !== group.id
-          ),
+
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.filter((g) => g.id !== group.id),
         },
-      }));
-      setSelectedGroup(null);
+      });
     } catch (error) {
       console.error("Error leaving group:", error);
     }
@@ -145,17 +107,19 @@ function GroupDetails({ group }) {
       await axios.put(
         `http://localhost:5000/api/conversations/rename/${group.id}`,
         { name: groupName },
-        { headers: { Authorization: `${state.token}` } }
+        { headers: { Authorization: authState.token } }
       );
-      setState((prev) => ({
-        ...prev,
-        conversations: {
-          ...prev.conversations,
-          groupConversations: prev.conversations.groupConversations.map((g) =>
+
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.map((g) =>
             g.id === group.id ? { ...g, name: groupName } : g
           ),
         },
-      }));
+      });
+
       setIsEditing(false);
     } catch (error) {
       console.error("Error renaming group:", error);
@@ -164,7 +128,13 @@ function GroupDetails({ group }) {
 
   return (
     <div className="group-details">
-      <button onClick={() => setSelectedGroup(null)}>Close</button>
+      <button
+        onClick={() =>
+          chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: null })
+        }
+      >
+        Close
+      </button>
 
       {isEditing ? (
         <>
@@ -187,7 +157,7 @@ function GroupDetails({ group }) {
         {group.members.map((member) => (
           <li key={member.id}>
             {member.username}
-            {isAdmin && member.id !== state.user.id && (
+            {isAdmin && member.id !== authState.user.id && (
               <button onClick={() => handleRemoveMember(member.id)}>
                 Remove
               </button>

@@ -5,19 +5,19 @@ import MessageInput from "./MessageInput";
 
 function ChatArea() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
-  const { selectedConversation } = chatState;
+  const { currConversation } = chatState;
 
-  if (!selectedConversation) return <p>Loading chat...</p>;
+  if (!currConversation) return <p>Loading chat...</p>;
 
   return (
     <div className="chat-area">
-      <h2>{selectedConversation.name}</h2>
+      <h2>{currConversation.name}</h2>
       <div className="messages">
-        {selectedConversation.messages.map((msg) => (
+        {currConversation.messages.map((msg) => (
           <MessageCard key={msg.id} message={msg} />
         ))}
       </div>
-      <MessageInput conversationId={selectedConversation.id} />
+      <MessageInput conversationId={currConversation.id} />
     </div>
   );
 }

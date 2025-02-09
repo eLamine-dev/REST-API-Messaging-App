@@ -10,17 +10,17 @@ import GroupsPage from "./pages/GroupsPage";
 import { AppContext } from "./utils/AppContext";
 
 function App() {
-  const { state } = useContext(AppContext);
+  const { authState } = useContext(AppContext);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/auth"
-          element={state.token ? <Navigate to="/messages" /> : <AuthPage />}
+          element={authState.token ? <Navigate to="/messages" /> : <AuthPage />}
         />
 
-        {state.token && (
+        {authState.token && (
           <Route element={<Layout />}>
             <Route path="/messages" element={<MessageBoard />} />
             <Route path="/friends" element={<FriendsPage />} />
@@ -29,7 +29,9 @@ function App() {
           </Route>
         )}
 
-        {!state.token && <Route path="*" element={<Navigate to="/auth" />} />}
+        {!authState.token && (
+          <Route path="*" element={<Navigate to="/auth" />} />
+        )}
       </Routes>
     </BrowserRouter>
   );
