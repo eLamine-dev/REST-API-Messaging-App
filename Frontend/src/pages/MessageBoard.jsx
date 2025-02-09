@@ -9,7 +9,7 @@ function MessageBoard() {
     useContext(AppContext);
 
   useEffect(() => {
-    if (chatState.chatRoom) return;
+    if (!authState.token || chatState.chatRoom) return;
 
     const fetchChatRoom = async () => {
       try {
@@ -20,6 +20,10 @@ function MessageBoard() {
           }
         );
         chatDispatch({ type: "SET_CHATROOM", payload: response.data });
+        chatDispatch({
+          type: "SET_CURRENT_CONVERSATION",
+          payload: response.data,
+        });
       } catch (error) {
         console.error("Error fetching chat room:", error);
       }

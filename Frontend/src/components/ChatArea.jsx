@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 import MessageCard from "./MessageCard";
 import MessageInput from "./MessageInput";
@@ -7,7 +7,18 @@ function ChatArea() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
   const { currConversation } = chatState;
 
-  if (!currConversation) return <p>Loading chat...</p>;
+  useEffect(() => {
+    if (!currConversation) {
+      chatDispatch({
+        type: "SET_CURRENT_CONVERSATION",
+        payload: chatState.chatRoom,
+      });
+    }
+  }, [authState.token, currConversation]);
+
+  if (!currConversation) {
+    return <div className="chat-area">Loading...</div>;
+  }
 
   return (
     <div className="chat-area">

@@ -36,6 +36,13 @@ function UserDetail() {
         { headers: { Authorization: `${authState.token}` } }
       );
       alert("Friend request sent!");
+      const response = await axios.get(
+        "http://localhost:5000/api/friends/requests",
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+      friendsDispatch({ type: "SET_FRIEND_REQUESTS", payload: response.data });
     } catch (error) {
       console.error("Error sending friend request:", error);
     }

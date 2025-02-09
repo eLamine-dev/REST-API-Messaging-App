@@ -12,7 +12,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Navbar({ selectedTab, setSelectedTab }) {
-  const { state, setState } = useContext(AppContext);
+  const { authDispatch } = useContext(AppContext);
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState({
     messages: 0,
@@ -24,15 +24,13 @@ function Navbar({ selectedTab, setSelectedTab }) {
       await axios.post(
         "http://localhost:5000/api/auth/logout",
         {},
-        {
-          headers: { Authorization: `${state.token}` },
-        }
+        { headers: { Authorization: `${state.token}` } }
       );
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
       localStorage.removeItem("token");
-      setState({ token: null, user: null });
+      authDispatch({ type: "LOGOUT" });
       navigate("/auth");
     }
   };

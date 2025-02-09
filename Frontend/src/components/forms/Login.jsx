@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { AppContext } from "../../utils/AppContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +6,7 @@ import { useNavigate } from "react-router-dom";
 function Login({ toggleForm }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { state, setState } = useContext(AppContext);
-
+  const { authDispatch } = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,17 +23,11 @@ function Login({ toggleForm }) {
 
       const { token, user } = response.data;
 
-      localStorage.setItem("token", token);
-
-      setState((prevState) => ({
-        ...prevState,
-        token,
-        user,
-      }));
+      authDispatch({ type: "LOGIN", payload: { token, user } });
 
       navigate("/messages");
     } catch (e) {
-      alert("Invalid credentials", e);
+      alert("Invalid credentials");
     }
   };
 
