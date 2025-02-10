@@ -59,7 +59,7 @@ function chatReducer(state, action) {
 
 const friendsInitialState = {
   friends: [],
-  pendingRequests: [],
+  pendingRequests: { sent: [], received: [] },
   selectedUser: null,
 };
 
@@ -71,6 +71,27 @@ function friendsReducer(state, action) {
       return { ...state, pendingRequests: action.payload };
     case "SET_SELECTED_USER":
       return { ...state, selectedUser: action.payload };
+    case "ACCEPT_FRIEND_REQUEST":
+      return {
+        ...state,
+        pendingRequests: {
+          ...state.pendingRequests,
+          received: state.pendingRequests.received.filter(
+            (req) => req.id !== action.payload.id
+          ),
+        },
+        friends: [...state.friends, action.payload],
+      };
+    case "REJECT_FRIEND_REQUEST":
+      return {
+        ...state,
+        pendingRequests: {
+          ...state.pendingRequests,
+          received: state.pendingRequests.received.filter(
+            (req) => req.id !== action.payload
+          ),
+        },
+      };
     case "DELETE_FRIEND":
       return {
         ...state,

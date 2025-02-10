@@ -4,7 +4,7 @@ const {
   sendFriendRequest,
   acceptFriendRequest,
   getPendingRequests,
-  deleteFriendship,
+  deleteRequest,
 } = require("../controllers/friendController");
 
 const authenticateJWT = require("../middleware/authMiddleware");
@@ -14,7 +14,7 @@ router.get("/", authenticateJWT, getFriends);
 router.get("/requests", authenticateJWT, getPendingRequests);
 
 router.post("/", authenticateJWT, sendFriendRequest);
-router.post("/accept", authenticateJWT, acceptFriendRequest);
-router.delete("/", authenticateJWT, deleteFriendship);
+router.post("/accept/:requestId", authenticateJWT, acceptFriendRequest);
+router.delete("/delete/:requestId", authenticateJWT, deleteRequest);
 
 module.exports = router;

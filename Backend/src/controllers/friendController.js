@@ -2,7 +2,6 @@ const prisma = require("../utils/prismaClient");
 
 exports.getFriends = async (req, res) => {
   const userId = req.user.userId;
-
   try {
     const friendships = await prisma.friendship.findMany({
       where: {
@@ -27,15 +26,35 @@ exports.getFriends = async (req, res) => {
 
 exports.sendFriendRequest = async (req, res) => {
   const { receiverId } = req.body;
+  const senderId = req.user.userId;
+
   try {
-    const request = await prisma.friendship.create({
-      data: {
-        senderId: req.user.userId,
-        receiverId,
-        status: "PENDING",
+    const existingRequest = await prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { senderId, receiverId },
+          { senderId: receiverId, receiverId: senderId },
+        ],
       },
     });
-    res.json(request);
+
+    if (existingRequest) {
+      return res.status(400).json({ error: "Friend request already exists." });
+    }
+
+    const request = await prisma.friendship.create({
+      data: { senderId, receiverId, status: "PENDING" },
+    });
+
+    const fullRequest = await prisma.friendship.findUnique({
+      where: { id: request.id },
+      include: {
+        sender: { select: { id: true, username: true, status: true } },
+        receiver: { select: { id: true, username: true, status: true } },
+      },
+    });
+
+    res.json(fullRequest);
   } catch (error) {
     res.status(500).json({ error: "Error sending friend request." });
   }
@@ -43,25 +62,19 @@ exports.sendFriendRequest = async (req, res) => {
 
 exports.getPendingRequests = async (req, res) => {
   const userId = req.user.userId;
-
   try {
     const pendingRequests = await prisma.friendship.findMany({
-      where: {
-        status: "PENDING",
-        OR: [{ senderId: userId }, { receiverId: userId }],
-      },
+      where: { status: "PENDING" },
       include: {
         sender: { select: { id: true, username: true, status: true } },
         receiver: { select: { id: true, username: true, status: true } },
       },
     });
 
-    const sentPending = pendingRequests.filter((f) => f.senderId === userId);
-    const receivedPending = pendingRequests.filter(
-      (f) => f.receiverId === userId
-    );
+    const sent = pendingRequests.filter((f) => f.senderId === userId);
+    const received = pendingRequests.filter((f) => f.receiverId === userId);
 
-    res.json({ sent: sentPending, received: receivedPending });
+    res.json({ sent, received });
   } catch (error) {
     res.status(500).json({ error: "Error retrieving pending requests." });
   }
@@ -73,21 +86,36 @@ exports.acceptFriendRequest = async (req, res) => {
     const updatedRequest = await prisma.friendship.update({
       where: { id: parseInt(id) },
       data: { status: "ACCEPTED" },
+      include: {
+        sender: { select: { id: true, username: true, status: true } },
+        receiver: { select: { id: true, username: true, status: true } },
+      },
     });
+
     res.json(updatedRequest);
   } catch (error) {
     res.status(500).json({ error: "Error accepting friend request." });
   }
 };
 
-exports.deleteFriendship = async (req, res) => {
-  const { id } = req.params;
+exports.deleteRequest = async (req, res) => {
+  const { requestId } = req.params;
   try {
-    const deletedRequest = await prisma.friendship.delete({
-      where: { id: parseInt(id) },
+    const friendship = await prisma.friendship.findUnique({
+      where: { id: parseInt(requestId) },
     });
-    res.json(deletedRequest);
+
+    if (!friendship) {
+      return res.status(404).json({ error: "Friendship not found." });
+    }
+
+    await prisma.friendship.delete({
+      where: { id: parseInt(requestId) },
+    });
+
+    res.json({ message: "Friendship deleted." });
   } catch (error) {
-    res.status(500).json({ error: "Error rejecting friend request." });
+    console.error("Error deleting friendship:", error);
+    res.status(500).json({ error: "Error deleting friendship." });
   }
 };

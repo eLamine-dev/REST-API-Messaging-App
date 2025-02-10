@@ -1,9 +1,13 @@
 import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import useFriendActions from "../hooks/useFriendActions";
 
 function FriendsPage() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
+  const { sendFriendRequest, acceptRequest, deleteRequest, deleteFriend } =
+    useFriendActions();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
@@ -38,19 +42,6 @@ function FriendsPage() {
       setSearchResults(response.data);
     } catch (error) {
       console.error("Error searching users:", error);
-    }
-  };
-
-  const sendFriendRequest = async (userId) => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/friends",
-        { receiverId: userId },
-        { headers: { Authorization: authState.token } }
-      );
-      alert("Friend request sent!");
-    } catch (error) {
-      console.error("Error sending friend request:", error);
     }
   };
 
@@ -94,43 +85,25 @@ function FriendsPage() {
               }}
             >
               <p>{request.receiver.username}</p>
-              <button
-                onClick={() =>
-                  friendsDispatch({
-                    type: "CANCEL_FRIEND_REQUEST",
-                    payload: request.id,
-                  })
-                }
-              >
-                Cancel
-              </button>
+              <button onClick={() => deleteRequest(request.id)}>Cancel</button>
             </div>
           ))}
 
           <h4>Received Requests</h4>
           {friendsState.pendingRequests.received.map((request) => (
-            <div key={request.id} className="request-item">
+            <div
+              key={request.id}
+              className="request-item"
+              onClick={() =>
+                friendsDispatch({
+                  type: "SET_SELECTED_USER",
+                  payload: request.sender,
+                })
+              }
+            >
               <p>{request.sender.username}</p>
-              <button
-                onClick={() =>
-                  friendsDispatch({
-                    type: "ACCEPT_FRIEND_REQUEST",
-                    payload: request.id,
-                  })
-                }
-              >
-                Accept
-              </button>
-              <button
-                onClick={() =>
-                  friendsDispatch({
-                    type: "REJECT_FRIEND_REQUEST",
-                    payload: request.id,
-                  })
-                }
-              >
-                Reject
-              </button>
+              <button onClick={() => acceptRequest(request.id)}>Accept</button>
+              <button onClick={() => deleteRequest(request.id)}>Reject</button>
             </div>
           ))}
         </>

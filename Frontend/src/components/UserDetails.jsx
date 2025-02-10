@@ -1,10 +1,13 @@
 import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
 import axios from "axios";
+import useFriendActions from "../hooks/useFriendActions";
 
 function UserDetail() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
   const { selectedUser } = friendsState;
+  const { sendFriendRequest, acceptRequest, deleteRequest, deleteFriend } =
+    useFriendActions();
   const [userDetails, setUserDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -15,7 +18,7 @@ function UserDetail() {
       try {
         const response = await axios.get(
           `http://localhost:5000/api/users/${selectedUser.id}`,
-          { headers: { Authorization: `${authState.token}` } }
+          { headers: { Authorization: authState.token } }
         );
         setUserDetails(response.data);
       } catch (error) {
@@ -28,38 +31,6 @@ function UserDetail() {
     fetchUserDetails();
   }, [selectedUser, authState.token]);
 
-  const sendFriendRequest = async () => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/friends",
-        { receiverId: selectedUser.id },
-        { headers: { Authorization: `${authState.token}` } }
-      );
-
-      const response = await axios.get(
-        "http://localhost:5000/api/friends/requests",
-        {
-          headers: { Authorization: authState.token },
-        }
-      );
-      friendsDispatch({ type: "SET_PENDING_REQUESTS", payload: response.data });
-    } catch (error) {
-      console.error("Error sending friend request:", error);
-    }
-  };
-
-  const deleteFriendship = async () => {
-    try {
-      await axios.delete("http://localhost:5000/api/friends", {
-        data: { friendshipId: userDetails.friendship.id },
-        headers: { Authorization: `${authState.token}` },
-      });
-
-      friendsDispatch({ type: "DELETE_FRIEND", payload: userDetails.id });
-    } catch (error) {
-      console.error("Error deleting friendship:", error);
-    }
-  };
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -68,15 +39,33 @@ function UserDetail() {
       <p>Email: {userDetails.email}</p>
       <p>Status: {userDetails.status}</p>
       <p>Bio: {userDetails.bio || "No bio available"}</p>
-      {userDetails.friendship.status === "ACCEPTED" && (
-        <button onClick={deleteFriendship}>Unfriend</button>
+
+      {userDetails.friendship?.status === "ACCEPTED" && (
+        <button
+          onClick={() =>
+            deleteFriend(userDetails.id, userDetails.friendship.id)
+          }
+        >
+          Unfriend
+        </button>
       )}
 
-      {userDetails.friendship.status === "PENDING" && (
-        <button onClick={deleteFriendship}>Cancel friend request</button>
+      {userDetails.friendship?.status === "PENDING" && (
+        <>
+          <button onClick={() => deleteRequest(userDetails.friendship.id)}>
+            {userDetails.friendship.senderId === userDetails.id
+              ? "Reject Friend Request"
+              : "Cancel Friend Request"}
+          </button>
+          {userDetails.friendship.receiverId !== userDetails.id && (
+            <button onClick={() => acceptRequest(userDetails.friendship.id)}>
+              Accept Friend Request
+            </button>
+          )}
+        </>
       )}
 
-      {!userDetails.friendship.status && (
+      {!userDetails.friendship?.status && (
         <button onClick={sendFriendRequest}>Send Friend Request</button>
       )}
 
