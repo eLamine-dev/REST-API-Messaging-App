@@ -80,13 +80,13 @@ exports.acceptFriendRequest = async (req, res) => {
   }
 };
 
-exports.ignoreRequest = async (req, res) => {
+exports.deleteFriendship = async (req, res) => {
   const { id } = req.params;
   try {
-    await prisma.friendship.delete({
+    const deletedRequest = await prisma.friendship.delete({
       where: { id: parseInt(id) },
     });
-    res.json({ message: "Friend request deleted." });
+    res.json(deletedRequest);
   } catch (error) {
     res.status(500).json({ error: "Error rejecting friend request." });
   }

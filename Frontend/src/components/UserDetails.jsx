@@ -35,19 +35,31 @@ function UserDetail() {
         { receiverId: selectedUser.id },
         { headers: { Authorization: `${authState.token}` } }
       );
-      alert("Friend request sent!");
+
       const response = await axios.get(
         "http://localhost:5000/api/friends/requests",
         {
           headers: { Authorization: authState.token },
         }
       );
-      friendsDispatch({ type: "SET_FRIEND_REQUESTS", payload: response.data });
+      friendsDispatch({ type: "SET_PENDING_REQUESTS", payload: response.data });
     } catch (error) {
       console.error("Error sending friend request:", error);
     }
   };
 
+  const deleteFriendship = async () => {
+    try {
+      await axios.delete("http://localhost:5000/api/friends", {
+        data: { friendshipId: userDetails.friendship.id },
+        headers: { Authorization: `${authState.token}` },
+      });
+
+      friendsDispatch({ type: "DELETE_FRIEND", payload: userDetails.id });
+    } catch (error) {
+      console.error("Error deleting friendship:", error);
+    }
+  };
   if (isLoading) return <div>Loading...</div>;
 
   return (
@@ -56,11 +68,18 @@ function UserDetail() {
       <p>Email: {userDetails.email}</p>
       <p>Status: {userDetails.status}</p>
       <p>Bio: {userDetails.bio || "No bio available"}</p>
-      {userDetails.isFriend ? (
-        <button>Remove Friend</button>
-      ) : (
+      {userDetails.friendship.status === "ACCEPTED" && (
+        <button onClick={deleteFriendship}>Unfriend</button>
+      )}
+
+      {userDetails.friendship.status === "PENDING" && (
+        <button onClick={deleteFriendship}>Cancel friend request</button>
+      )}
+
+      {!userDetails.friendship.status && (
         <button onClick={sendFriendRequest}>Send Friend Request</button>
       )}
+
       <button
         onClick={() =>
           friendsDispatch({ type: "SET_SELECTED_USER", payload: null })

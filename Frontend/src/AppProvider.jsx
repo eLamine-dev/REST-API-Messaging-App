@@ -59,7 +59,7 @@ function chatReducer(state, action) {
 
 const friendsInitialState = {
   friends: [],
-  friendRequests: [],
+  pendingRequests: [],
   selectedUser: null,
 };
 
@@ -68,9 +68,14 @@ function friendsReducer(state, action) {
     case "SET_FRIENDS":
       return { ...state, friends: action.payload };
     case "SET_FRIEND_REQUESTS":
-      return { ...state, friendRequests: action.payload };
+      return { ...state, pendingRequests: action.payload };
     case "SET_SELECTED_USER":
       return { ...state, selectedUser: action.payload };
+    case "DELETE_FRIEND":
+      return {
+        ...state,
+        friends: state.friends.filter((f) => f.id !== action.payload),
+      };
     default:
       return state;
   }
@@ -159,7 +164,7 @@ export function AppProvider({ children }) {
       }
     };
 
-    const fetchFriendRequests = async () => {
+    const fetchpendingRequests = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/friends/requests",
@@ -178,7 +183,7 @@ export function AppProvider({ children }) {
     };
 
     fetchFriends();
-    fetchFriendRequests();
+    fetchpendingRequests();
   }, [authState.token]);
 
   function isTokenExpired(token) {

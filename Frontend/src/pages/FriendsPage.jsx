@@ -75,6 +75,67 @@ function FriendsPage() {
         </div>
       ))}
 
+      <h3>Pending Requests</h3>
+      {friendsState.pendingRequests.sent.length === 0 &&
+      friendsState.pendingRequests.received.length === 0 ? (
+        <p>No pending requests</p>
+      ) : (
+        <>
+          <h4>Sent Requests</h4>
+          {friendsState.pendingRequests.sent.map((request) => (
+            <div
+              key={request.id}
+              className="request-item"
+              onClick={() => {
+                friendsDispatch({
+                  type: "SET_SELECTED_USER",
+                  payload: request.receiver,
+                });
+              }}
+            >
+              <p>{request.receiver.username}</p>
+              <button
+                onClick={() =>
+                  friendsDispatch({
+                    type: "CANCEL_FRIEND_REQUEST",
+                    payload: request.id,
+                  })
+                }
+              >
+                Cancel
+              </button>
+            </div>
+          ))}
+
+          <h4>Received Requests</h4>
+          {friendsState.pendingRequests.received.map((request) => (
+            <div key={request.id} className="request-item">
+              <p>{request.sender.username}</p>
+              <button
+                onClick={() =>
+                  friendsDispatch({
+                    type: "ACCEPT_FRIEND_REQUEST",
+                    payload: request.id,
+                  })
+                }
+              >
+                Accept
+              </button>
+              <button
+                onClick={() =>
+                  friendsDispatch({
+                    type: "REJECT_FRIEND_REQUEST",
+                    payload: request.id,
+                  })
+                }
+              >
+                Reject
+              </button>
+            </div>
+          ))}
+        </>
+      )}
+
       <h2>Your Friends</h2>
       {friendsState.friends.length === 0 ? (
         <p>No friends yet</p>

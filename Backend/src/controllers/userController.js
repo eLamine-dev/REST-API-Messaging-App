@@ -20,21 +20,16 @@ exports.getUserDetails = async (req, res) => {
       where: { id: parseInt(userId) },
     });
 
-    const isFriend = await prisma.friendship.findFirst({
+    const friendship = await prisma.friendship.findFirst({
       where: {
         OR: [
           { senderId: req.user.userId, receiverId: parseInt(userId) },
           { senderId: parseInt(userId), receiverId: req.user.userId },
         ],
-        status: "ACCEPTED",
       },
     });
-    if (isFriend) {
-      user.isFriend = true;
-    } else {
-      user.isFriend = false;
-    }
-    console.log(user);
+
+    user.friendship = friendship;
 
     res.json(user);
   } catch (error) {
