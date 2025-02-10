@@ -5,8 +5,13 @@ import useFriendActions from "../hooks/useFriendActions";
 
 function FriendsPage() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
-  const { sendFriendRequest, acceptRequest, deleteRequest, deleteFriend } =
-    useFriendActions();
+  const {
+    sendFriendRequest,
+    acceptRequest,
+    cancelRequest,
+    rejectRequest,
+    deleteFriend,
+  } = useFriendActions();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -85,7 +90,7 @@ function FriendsPage() {
               }}
             >
               <p>{request.receiver.username}</p>
-              <button onClick={() => deleteRequest(request.id)}>Cancel</button>
+              <button onClick={() => cancelRequest(request.id)}>Cancel</button>
             </div>
           ))}
 
@@ -103,7 +108,7 @@ function FriendsPage() {
             >
               <p>{request.sender.username}</p>
               <button onClick={() => acceptRequest(request.id)}>Accept</button>
-              <button onClick={() => deleteRequest(request.id)}>Reject</button>
+              <button onClick={() => rejectRequest(request.id)}>Reject</button>
             </div>
           ))}
         </>

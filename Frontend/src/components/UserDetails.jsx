@@ -6,8 +6,13 @@ import useFriendActions from "../hooks/useFriendActions";
 function UserDetail() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
   const { selectedUser } = friendsState;
-  const { sendFriendRequest, acceptRequest, deleteRequest, deleteFriend } =
-    useFriendActions();
+  const {
+    sendFriendRequest,
+    acceptRequest,
+    cancelRequest,
+    rejectRequest,
+    deleteFriend,
+  } = useFriendActions();
   const [userDetails, setUserDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -50,19 +55,22 @@ function UserDetail() {
         </button>
       )}
 
-      {userDetails.friendship?.status === "PENDING" && (
-        <>
-          <button onClick={() => deleteRequest(userDetails.friendship.id)}>
-            {userDetails.friendship.senderId === userDetails.id
-              ? "Reject Friend Request"
-              : "Cancel Friend Request"}
+      {userDetails.friendship?.status === "PENDING" &&
+        userDetails.friendship.senderId === userDetails.id && (
+          <button onClick={() => rejectRequest(userDetails.friendship.id)}>
+            Reject Friend Request
           </button>
-          {userDetails.friendship.receiverId !== userDetails.id && (
-            <button onClick={() => acceptRequest(userDetails.friendship.id)}>
-              Accept Friend Request
-            </button>
-          )}
-        </>
+        )}
+      {userDetails.friendship?.status === "PENDING" &&
+        userDetails.friendship.receiverId === userDetails.id && (
+          <button onClick={() => cancelRequest(userDetails.friendship.id)}>
+            Cancel Friend Request
+          </button>
+        )}
+      {userDetails.friendship.receiverId !== userDetails.id && (
+        <button onClick={() => acceptRequest(userDetails.friendship.id)}>
+          Accept Friend Request
+        </button>
       )}
 
       {!userDetails.friendship?.status && (

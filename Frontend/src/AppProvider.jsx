@@ -92,6 +92,17 @@ function friendsReducer(state, action) {
           ),
         },
       };
+
+    case "CANCEL_FRIEND_REQUEST":
+      return {
+        ...state,
+        pendingRequests: {
+          ...state.pendingRequests,
+          sent: state.pendingRequests.sent.filter(
+            (req) => req.id !== action.payload
+          ),
+        },
+      };
     case "DELETE_FRIEND":
       return {
         ...state,

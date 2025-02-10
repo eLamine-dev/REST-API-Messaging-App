@@ -35,7 +35,7 @@ export default function useFriendActions() {
     }
   };
 
-  const deleteRequest = async (requestId) => {
+  const rejectRequest = async (requestId) => {
     try {
       await axios.delete(
         `http://localhost:5000/api/friends/delete/${requestId}`,
@@ -47,6 +47,21 @@ export default function useFriendActions() {
       friendsDispatch({ type: "REJECT_FRIEND_REQUEST", payload: requestId });
     } catch (error) {
       console.error("Error rejecting friend request:", error);
+    }
+  };
+
+  const cancelRequest = async (requestId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/friends/delete/${requestId}`,
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+
+      friendsDispatch({ type: "CANCEL_FRIEND_REQUEST", payload: requestId });
+    } catch (error) {
+      console.error("Error canceling friend request:", error);
     }
   };
 
