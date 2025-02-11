@@ -5,18 +5,19 @@ import { AppContext } from "../utils/AppContext";
 function GroupDetails() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
   const group = chatState.selectedConversation;
-  const [newMember, setNewMember] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [groupName, setGroupName] = useState(group.name);
+  const { selectedConversation } = chatState;
 
-  const isAdmin = group.adminId === authState.user.id;
+  const [isEditing, setIsEditing] = useState(false);
+  const [groupName, setGroupName] = useState(selectedConversation.name);
+
+  const isAdmin = selectedConversation.adminId === authState.user.id;
 
   const handleAddMember = async () => {
     if (!newMember.trim()) return;
 
     try {
       await axios.post(
-        `http://localhost:5000/api/conversations/members/${group.id}`,
+        `http://localhost:5000/api/conversations/members/${selectedConversation.id}`,
         { userId: newMember },
         { headers: { Authorization: authState.token } }
       );
@@ -42,7 +43,7 @@ function GroupDetails() {
   const handleRemoveMember = async (memberId) => {
     try {
       await axios.post(
-        `http://localhost:5000/api/conversations/members/remove/${group.id}`,
+        `http://localhost:5000/api/conversations/members/remove/${selectedConversation.id}`,
         { userId: memberId },
         { headers: { Authorization: authState.token } }
       );
@@ -52,7 +53,7 @@ function GroupDetails() {
         payload: {
           private: chatState.privateConversations,
           group: chatState.groupConversations.map((g) =>
-            g.id === group.id
+            g.id === selectedConversation.id
               ? { ...g, members: g.members.filter((m) => m.id !== memberId) }
               : g
           ),
@@ -66,7 +67,7 @@ function GroupDetails() {
   const handleDeleteGroup = async () => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/conversations/delete-group/${group.id}`,
+        `http://localhost:5000/api/conversations/delete-group/${selectedConversation.id}`,
         { headers: { Authorization: authState.token } }
       );
 
@@ -74,7 +75,9 @@ function GroupDetails() {
         type: "SET_CONVERSATIONS",
         payload: {
           private: chatState.privateConversations,
-          group: chatState.groupConversations.filter((g) => g.id !== group.id),
+          group: chatState.groupConversations.filter(
+            (g) => g.id !== selectedConversation.id
+          ),
         },
       });
     } catch (error) {
@@ -85,7 +88,7 @@ function GroupDetails() {
   const handleLeaveGroup = async () => {
     try {
       await axios.post(
-        `http://localhost:5000/api/conversations/leave/${group.id}`,
+        `http://localhost:5000/api/conversations/leave/${selectedConversation.id}`,
         {},
         { headers: { Authorization: authState.token } }
       );
@@ -94,7 +97,9 @@ function GroupDetails() {
         type: "SET_CONVERSATIONS",
         payload: {
           private: chatState.privateConversations,
-          group: chatState.groupConversations.filter((g) => g.id !== group.id),
+          group: chatState.groupConversations.filter(
+            (g) => g.id !== selectedConversation.id
+          ),
         },
       });
     } catch (error) {
@@ -140,21 +145,21 @@ function GroupDetails() {
         <>
           <input
             type="text"
-            value={groupName}
+            value={selectedConversation.name}
             onChange={(e) => setGroupName(e.target.value)}
           />
           <button onClick={handleRenameGroup}>Save</button>
         </>
       ) : (
         <h2>
-          {group.name}{" "}
+          {selectedConversation.name}{" "}
           {isAdmin && <button onClick={() => setIsEditing(true)}>✏️</button>}
         </h2>
       )}
 
       <h3>Members</h3>
       <ul>
-        {group.members.map((member) => (
+        {selectedConversation.members.map((member) => (
           <li key={member.id}>
             {member.username}
             {isAdmin && member.id !== authState.user.id && (

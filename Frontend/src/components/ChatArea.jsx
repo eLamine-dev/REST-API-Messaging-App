@@ -23,6 +23,16 @@ function ChatArea() {
   return (
     <div className="chat-area">
       <h2>{currConversation.name}</h2>
+      <button
+        onClick={() =>
+          chatDispatch({
+            type: "SET_SELECTED_CONVERSATION",
+            payload: currConversation,
+          })
+        }
+      >
+        settings
+      </button>
       <div className="messages">
         {currConversation.messages.map((msg) => (
           <MessageCard key={msg.id} message={msg} />
