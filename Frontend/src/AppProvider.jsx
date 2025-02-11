@@ -38,7 +38,7 @@ const chatInitialState = {
   selectedConversation: null,
 };
 
-function chatReducer(state, action) {
+const chatReducer = (state, action) => {
   switch (action.type) {
     case "SET_CONVERSATIONS":
       return {
@@ -46,16 +46,69 @@ function chatReducer(state, action) {
         privateConversations: action.payload.private,
         groupConversations: action.payload.group,
       };
+
     case "SET_CURRENT_CONVERSATION":
       return { ...state, currConversation: action.payload };
-    case "SET_SELECTED_CONVERSATION":
-      return { ...state, selectedConversation: action.payload };
+
     case "SET_CHATROOM":
       return { ...state, chatRoom: action.payload };
+
+    case "DELETE_CONVERSATION":
+      return {
+        ...state,
+        privateConversations: state.privateConversations.filter(
+          (c) => c.id !== action.payload
+        ),
+        groupConversations: state.groupConversations.filter(
+          (c) => c.id !== action.payload
+        ),
+        currConversation:
+          state.currConversation?.id === action.payload
+            ? null
+            : state.currConversation,
+      };
+
+    case "LEAVE_GROUP":
+      return {
+        ...state,
+        groupConversations: state.groupConversations.filter(
+          (g) => g.id !== action.payload
+        ),
+        currConversation:
+          state.currConversation?.id === action.payload
+            ? null
+            : state.currConversation,
+      };
+
+    case "ADD_MEMBER":
+      return {
+        ...state,
+        groupConversations: state.groupConversations.map((g) =>
+          g.id === action.payload.groupId
+            ? { ...g, members: [...g.members, { id: action.payload.userId }] }
+            : g
+        ),
+      };
+
+    case "REMOVE_MEMBER":
+      return {
+        ...state,
+        groupConversations: state.groupConversations.map((g) =>
+          g.id === action.payload.groupId
+            ? {
+                ...g,
+                members: g.members.filter(
+                  (member) => member.id !== action.payload.userId
+                ),
+              }
+            : g
+        ),
+      };
+
     default:
       return state;
   }
-}
+};
 
 const friendsInitialState = {
   friends: [],

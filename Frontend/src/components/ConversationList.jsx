@@ -6,30 +6,6 @@ function ConversationList() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
   const { privateConversations, groupConversations } = chatState;
 
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/conversations/user",
-          {
-            headers: { Authorization: authState.token },
-          }
-        );
-        chatDispatch({
-          type: "SET_CONVERSATIONS",
-          payload: {
-            private: response.data.privateConversations,
-            group: response.data.groupConversations,
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-      }
-    };
-
-    fetchConversations();
-  }, [authState.token]);
-
   return (
     <div className="conversation-list">
       <h3>Private Conversations</h3>
