@@ -7,7 +7,7 @@ exports.createConversation = async (req, res) => {
       data: {
         name,
         isGroup,
-        adminId: req.user.userId,
+        adminId: isGroup ? req.user.userId : null,
         members: { connect: memberIds.map((id) => ({ id })) },
       },
     });

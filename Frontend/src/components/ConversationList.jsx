@@ -1,10 +1,17 @@
 import { useContext, useEffect } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import { useConversations } from "../hooks/useConversations";
 
 function ConversationList() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
   const { privateConversations, groupConversations } = chatState;
+
+  const { fetchConversations } = useConversations();
+
+  useEffect(() => {
+    fetchConversations();
+  }, [authState.token]);
 
   return (
     <div className="conversation-list">

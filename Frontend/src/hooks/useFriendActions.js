@@ -79,5 +79,11 @@ export default function useFriendActions() {
     }
   };
 
-  return { sendFriendRequest, acceptRequest, deleteRequest, deleteFriend };
+  return {
+    sendFriendRequest,
+    acceptRequest,
+    rejectRequest,
+    cancelRequest,
+    deleteFriend,
+  };
 }

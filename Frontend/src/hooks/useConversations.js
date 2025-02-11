@@ -109,6 +109,31 @@ export function useConversations() {
     }
   };
 
+  //  FIXME : THIS
+  // const handleRenameGroup = async () => {
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:5000/api/conversations/rename/${group.id}`,
+  //       { name: groupName },
+  //       { headers: { Authorization: authState.token } }
+  //     );
+
+  //     chatDispatch({
+  //       type: "SET_CONVERSATIONS",
+  //       payload: {
+  //         private: chatState.privateConversations,
+  //         group: chatState.groupConversations.map((g) =>
+  //           g.id === group.id ? { ...g, name: groupName } : g
+  //         ),
+  //       },
+  //     });
+
+  //     setIsEditing(false);
+  //   } catch (error) {
+  //     console.error("Error renaming group:", error);
+  //   }
+  // };
+
   return {
     fetchConversations,
     fetchChatRoom,

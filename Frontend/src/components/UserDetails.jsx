@@ -67,11 +67,12 @@ function UserDetail() {
             Cancel Friend Request
           </button>
         )}
-      {userDetails.friendship.receiverId !== userDetails.id && (
-        <button onClick={() => acceptRequest(userDetails.friendship.id)}>
-          Accept Friend Request
-        </button>
-      )}
+      {userDetails.friendship?.status === "PENDING" &&
+        userDetails.friendship.receiverId !== userDetails.id && (
+          <button onClick={() => acceptRequest(userDetails.friendship.id)}>
+            Accept Friend Request
+          </button>
+        )}
 
       {!userDetails.friendship?.status && (
         <button onClick={sendFriendRequest}>Send Friend Request</button>

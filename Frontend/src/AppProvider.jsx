@@ -50,6 +50,9 @@ const chatReducer = (state, action) => {
     case "SET_CURRENT_CONVERSATION":
       return { ...state, currConversation: action.payload };
 
+    case "SET_SELECTED_CONVERSATION":
+      return { ...state, selectedConversation: action.payload };
+
     case "SET_CHATROOM":
       return { ...state, chatRoom: action.payload };
 
