@@ -1,8 +1,10 @@
 import { useContext } from "react";
 import { AppContext } from "../utils/AppContext";
+import useFriendActions from "../hooks/useFriendActions";
 
 function FriendList() {
   const { friendsState, friendsDispatch } = useContext(AppContext);
+  const { openUserDetails } = useFriendActions();
   const { friends } = friendsState;
 
   return (
@@ -15,9 +17,7 @@ function FriendList() {
           <div
             key={friend.id}
             className="friend-item"
-            onClick={() =>
-              friendsDispatch({ type: "SET_SELECTED_USER", payload: friend })
-            }
+            onClick={() => openUserDetails(friend.id)}
           >
             <p>
               <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>

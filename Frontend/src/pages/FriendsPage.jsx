@@ -12,7 +12,7 @@ function FriendsPage() {
     rejectRequest,
     deleteFriend,
     searchUsers,
-    fetchUserDetails,
+    openUserDetails,
   } = useFriendActions();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,11 +43,6 @@ function FriendsPage() {
     const response = await searchUsers(searchQuery);
     setSearchResults(response);
     setSearchQuery("");
-  };
-
-  const openUserDetails = async (userId) => {
-    const userDetails = await fetchUserDetails(userId);
-    friendsDispatch({ type: "SET_SELECTED_USER", payload: userDetails });
   };
 
   return (

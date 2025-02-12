@@ -81,10 +81,10 @@ exports.getPendingRequests = async (req, res) => {
 };
 
 exports.acceptFriendRequest = async (req, res) => {
-  const { id } = req.params;
+  const { requestId } = req.params;
   try {
     const updatedRequest = await prisma.friendship.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(requestId) },
       data: { status: "ACCEPTED" },
       include: {
         sender: { select: { id: true, username: true, status: true } },
@@ -92,7 +92,7 @@ exports.acceptFriendRequest = async (req, res) => {
       },
     });
 
-    res.json(updatedRequest);
+    res.json(updatedRequest.sender);
   } catch (error) {
     res.status(500).json({ error: "Error accepting friend request." });
   }

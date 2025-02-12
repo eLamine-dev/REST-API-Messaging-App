@@ -93,16 +93,14 @@ export default function useFriendActions() {
     }
   };
 
-  const fetchUserDetails = async (userId) => {
+  const openUserDetails = async (userId) => {
     try {
       const response = await axios.get(
         `http://localhost:5000/api/users/${userId}`,
         { headers: { Authorization: authState.token } }
       );
 
-      console.log(response.data);
-
-      return response.data;
+      friendsDispatch({ type: "SET_SELECTED_USER", payload: response.data });
     } catch (error) {
       console.error("Error fetching user info:", error);
     }
@@ -115,6 +113,6 @@ export default function useFriendActions() {
     cancelRequest,
     deleteFriend,
     searchUsers,
-    fetchUserDetails,
+    openUserDetails,
   };
 }
