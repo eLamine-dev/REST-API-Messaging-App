@@ -12,6 +12,7 @@ function FriendsPage() {
     rejectRequest,
     deleteFriend,
     searchUsers,
+    fetchUserDetails,
   } = useFriendActions();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,6 +45,11 @@ function FriendsPage() {
     setSearchQuery("");
   };
 
+  const openUserDetails = async (userId) => {
+    const userDetails = await fetchUserDetails(userId);
+    friendsDispatch({ type: "SET_SELECTED_USER", payload: userDetails });
+  };
+
   return (
     <div className="friends-page">
       <h2>Find Friends</h2>
@@ -61,13 +67,7 @@ function FriendsPage() {
           <div
             key={user.id}
             className="user-item"
-            onClick={() => {
-              friendsDispatch({
-                type: "SET_SELECTED_USER",
-                payload: user,
-              });
-            }}
-            n
+            onClick={() => openUserDetails(user.id)}
           >
             <p>{user.username}</p>
           </div>
@@ -84,12 +84,7 @@ function FriendsPage() {
             <div
               key={request.id}
               className="request-item"
-              onClick={() => {
-                friendsDispatch({
-                  type: "SET_SELECTED_USER",
-                  payload: request.receiver,
-                });
-              }}
+              onClick={() => openUserDetails(request.receiver.id)}
             >
               <p>{request.receiver.username}</p>
               <button onClick={() => cancelRequest(request.id)}>Cancel</button>
@@ -101,12 +96,7 @@ function FriendsPage() {
             <div
               key={request.id}
               className="request-item"
-              onClick={() =>
-                friendsDispatch({
-                  type: "SET_SELECTED_USER",
-                  payload: request.sender,
-                })
-              }
+              onClick={() => openUserDetails(request.sender.id)}
             >
               <p>{request.sender.username}</p>
               <button onClick={() => acceptRequest(request.id)}>Accept</button>
@@ -124,9 +114,7 @@ function FriendsPage() {
           <div
             key={friend.id}
             className="friend-item"
-            onClick={() =>
-              friendsDispatch({ type: "SET_SELECTED_USER", payload: friend })
-            }
+            onClick={() => openUserDetails(friend.id)}
           >
             <p>{friend.username}</p>
           </div>
