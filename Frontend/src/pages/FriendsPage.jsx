@@ -11,6 +11,7 @@ function FriendsPage() {
     cancelRequest,
     rejectRequest,
     deleteFriend,
+    searchUsers,
   } = useFriendActions();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,17 +38,10 @@ function FriendsPage() {
     fetchFriendRequests();
   }, [authState.token]);
 
-  const searchUsers = async () => {
-    if (!searchQuery.trim()) return;
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/search?query=${searchQuery}`,
-        { headers: { Authorization: authState.token } }
-      );
-      setSearchResults(response.data);
-    } catch (error) {
-      console.error("Error searching users:", error);
-    }
+  const getSearchResults = async () => {
+    const response = await searchUsers(searchQuery);
+    setSearchResults(response);
+    setSearchQuery("");
   };
 
   return (
@@ -59,17 +53,25 @@ function FriendsPage() {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <button onClick={searchUsers}>Search</button>
+      <button onClick={getSearchResults}>Search</button>
 
       <h3>Search Results</h3>
-      {searchResults.map((user) => (
-        <div key={user.id} className="user-item">
-          <p>{user.username}</p>
-          <button onClick={() => sendFriendRequest(user.id)}>
-            Send Friend Request
-          </button>
-        </div>
-      ))}
+      {searchResults.length !== 0 &&
+        searchResults.map((user) => (
+          <div
+            key={user.id}
+            className="user-item"
+            onClick={() => {
+              friendsDispatch({
+                type: "SET_SELECTED_USER",
+                payload: user,
+              });
+            }}
+            n
+          >
+            <p>{user.username}</p>
+          </div>
+        ))}
 
       <h3>Pending Requests</h3>
       {friendsState.pendingRequests.sent.length === 0 &&

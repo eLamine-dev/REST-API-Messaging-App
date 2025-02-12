@@ -138,6 +138,14 @@ function friendsReducer(state, action) {
       return { ...state, friends: action.payload };
     case "SET_FRIEND_REQUESTS":
       return { ...state, pendingRequests: action.payload };
+    case "SEND_FRIEND_REQUEST":
+      return {
+        ...state,
+        pendingRequests: {
+          ...state.pendingRequests,
+          sent: [...state.pendingRequests.sent, action.payload],
+        },
+      };
     case "SET_SELECTED_USER":
       return { ...state, selectedUser: action.payload };
     case "ACCEPT_FRIEND_REQUEST":

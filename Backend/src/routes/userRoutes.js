@@ -7,8 +7,8 @@ const {
 const authenticateJWT = require("../middleware/authMiddleware");
 const router = express.Router();
 
-router.get("/:userId", authenticateJWT, getUserDetails);
 router.get("/search", authenticateJWT, searchUsers);
+router.get("/:userId", authenticateJWT, getUserDetails);
 
 router.patch("/status", authenticateJWT, updateStatus);
 

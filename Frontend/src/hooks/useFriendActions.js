@@ -13,7 +13,7 @@ export default function useFriendActions() {
         { headers: { Authorization: authState.token } }
       );
 
-      friendsDispatch({ type: "SET_FRIEND_REQUESTS", payload: response.data });
+      friendsDispatch({ type: "SEND_FRIEND_REQUEST", payload: response.data });
     } catch (error) {
       console.error("Error sending friend request:", error);
     }
@@ -79,11 +79,26 @@ export default function useFriendActions() {
     }
   };
 
+  const searchUsers = async (searchQuery) => {
+    if (!searchQuery.trim()) return;
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/users/search?query=${searchQuery}`,
+        { headers: { Authorization: authState.token } }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error("Error searching users:", error);
+    }
+  };
+
   return {
     sendFriendRequest,
     acceptRequest,
     rejectRequest,
     cancelRequest,
     deleteFriend,
+    searchUsers,
   };
 }

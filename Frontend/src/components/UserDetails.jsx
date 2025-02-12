@@ -75,7 +75,9 @@ function UserDetail() {
         )}
 
       {!userDetails.friendship?.status && (
-        <button onClick={sendFriendRequest}>Send Friend Request</button>
+        <button onClick={() => sendFriendRequest(userDetails.id)}>
+          Send Friend Request
+        </button>
       )}
 
       <button
