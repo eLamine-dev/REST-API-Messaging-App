@@ -10,7 +10,9 @@ function ConversationList() {
   const { fetchConversations } = useConversations();
 
   useEffect(() => {
-    fetchConversations();
+    if (authState.token) {
+      fetchConversations();
+    }
   }, [authState.token]);
 
   return (

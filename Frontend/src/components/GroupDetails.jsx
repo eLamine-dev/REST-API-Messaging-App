@@ -1,16 +1,23 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import { useConversations } from "../hooks/useConversations";
 
 function GroupDetails() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
 
   const { selectedConversation } = chatState;
+  const { renameGroup } = useConversations();
 
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(selectedConversation.name);
 
   const isAdmin = selectedConversation.adminId === authState.user.id;
+
+  const handleSave = async () => {
+    await renameGroup(selectedConversation.id, groupName);
+    setIsEditing(false);
+  };
 
   return (
     <div className="group-details">
@@ -21,19 +28,19 @@ function GroupDetails() {
       >
         Close
       </button>
-
       {isEditing ? (
         <>
           <input
             type="text"
-            value={selectedConversation.name}
+            value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
           />
-          <button>Save</button>
+          <button onClick={handleSave}>Save</button>
         </>
       ) : (
         <h2>
-          {selectedConversation.name}{" "}
+          {selectedConversation.name}
+          {""}
           {isAdmin && <button onClick={() => setIsEditing(true)}>✏️</button>}
         </h2>
       )}

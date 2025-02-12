@@ -1,26 +1,14 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
+import { useConversations } from "../hooks/useConversations";
 
 function GroupsPage() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
-  const createGroup = async () => {
-    if (!groupName.trim()) return;
-    try {
-      await axios.post(
-        "http://localhost:5000/api/groups",
-        { name: groupName },
-        { headers: { Authorization: authState.token } }
-      );
-      setGroupName("");
-    } catch (error) {
-      console.error("Error creating group:", error);
-    }
-  };
+  const { createGroup } = useConversations();
 
   const searchGroups = async () => {
     if (!searchQuery.trim()) return;
@@ -44,7 +32,7 @@ function GroupsPage() {
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
       />
-      <button onClick={createGroup}>Create</button>
+      <button onClick={() => createGroup(groupName, true)}>Create</button>
 
       <h2>Search Groups</h2>
       <input
@@ -59,7 +47,7 @@ function GroupsPage() {
       {searchResults.map((group) => (
         <div key={group.id} className="group-item">
           <p>{group.name}</p>
-          <button>Join Group</button>
+          <button onClick={() => joinGroup(group.id)}>Join Group</button>
         </div>
       ))}
 

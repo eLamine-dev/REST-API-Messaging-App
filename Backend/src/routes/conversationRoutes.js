@@ -11,6 +11,7 @@ const {
   getUserGroups,
   leaveGroup,
   deleteGroup,
+  renameGroup,
 } = require("../controllers/conversationController");
 const authenticateJWT = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -22,7 +23,7 @@ router.get("/user-groups", authenticateJWT, getUserGroups);
 router.get("/messages/:id", authenticateJWT, getConversationMessages);
 router.get("/chatroom", authenticateJWT, getChatRoom);
 router.post("/delete/:id", authenticateJWT, deleteConversation);
-
+router.put("/rename/:groupId", authenticateJWT, renameGroup);
 router.post("/members/:groupId", authenticateJWT, addMember);
 router.post("/members/remove/:groupId", authenticateJWT, removeMember);
 router.post("/leave/:groupId", authenticateJWT, leaveGroup);

@@ -56,6 +56,19 @@ const chatReducer = (state, action) => {
     case "SET_CHATROOM":
       return { ...state, chatRoom: action.payload };
 
+    case "CREATE_CONVERSATION":
+      if (action.payload.isGroup) {
+        return {
+          ...state,
+          groupConversations: [...state.groupConversations, action.payload],
+        };
+      } else {
+        return {
+          ...state,
+          privateConversations: [...state.privateConversations, action.payload],
+        };
+      }
+
     case "DELETE_CONVERSATION":
       return {
         ...state,

@@ -1,14 +1,14 @@
 const prisma = require("../utils/prismaClient");
 
 exports.createConversation = async (req, res) => {
-  const { name, isGroup, memberIds } = req.body;
+  const { name, isGroup } = req.body;
   try {
     const conversation = await prisma.conversation.create({
       data: {
         name,
         isGroup,
         adminId: isGroup ? req.user.userId : null,
-        members: { connect: memberIds.map((id) => ({ id })) },
+        members: { connect: req.user.userId },
       },
     });
     res.json(conversation);
@@ -276,5 +276,27 @@ exports.leaveGroup = async (req, res) => {
     res.json({ message: "Left group successfully." });
   } catch (error) {
     res.status(500).json({ error: "Error leaving group." });
+  }
+};
+
+exports.renameGroup = async (req, res) => {
+  const { groupId } = req.params;
+  const { name } = req.body;
+  try {
+    const group = await prisma.conversation.findUnique({
+      where: { id: parseInt(groupId) },
+    });
+    if (!group || !group.isGroup || group.adminId !== req.user.userId) {
+      return res
+        .status(403)
+        .json({ error: "Only the admin can rename this group." });
+    }
+    const updatedGroup = await prisma.conversation.update({
+      where: { id: parseInt(groupId) },
+      data: { name },
+    });
+    res.json(updatedGroup);
+  } catch (error) {
+    res.status(500).json({ error: "Error renaming group." });
   }
 };

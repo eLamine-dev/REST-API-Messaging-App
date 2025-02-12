@@ -5,6 +5,23 @@ import { AppContext } from "../utils/AppContext";
 export function useConversations() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
 
+  const createConversation = async (groupName, isGroup) => {
+    if (!groupName.trim()) return;
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/conversations",
+        { name: groupName, isGroup: isGroup },
+        { headers: { Authorization: authState.token } }
+      );
+      chatDispatch({
+        type: "CREATE_CONVERSATION",
+        payload: response.data,
+      });
+    } catch (error) {
+      console.error("Error creating group:", error);
+    }
+  };
+
   const fetchConversations = async () => {
     try {
       const response = await axios.get(
@@ -77,6 +94,24 @@ export function useConversations() {
     }
   };
 
+  const joinGroup = async (groupId) => {
+    try {
+      await axios.post(
+        `http://localhost:5000/api/conversations/members/${groupId}`,
+        {},
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+      chatDispatch({
+        type: "ADD_MEMBER",
+        payload: { groupId, userId: authState.user.id },
+      });
+    } catch (error) {
+      console.error("Error joining group:", error);
+    }
+  };
+
   const addMember = async (groupId, userId) => {
     try {
       await axios.post(
@@ -109,30 +144,28 @@ export function useConversations() {
     }
   };
 
-  //  FIXME : THIS
-  // const handleRenameGroup = async () => {
-  //   try {
-  //     await axios.put(
-  //       `http://localhost:5000/api/conversations/rename/${group.id}`,
-  //       { name: groupName },
-  //       { headers: { Authorization: authState.token } }
-  //     );
-
-  //     chatDispatch({
-  //       type: "SET_CONVERSATIONS",
-  //       payload: {
-  //         private: chatState.privateConversations,
-  //         group: chatState.groupConversations.map((g) =>
-  //           g.id === group.id ? { ...g, name: groupName } : g
-  //         ),
-  //       },
-  //     });
-
-  //     setIsEditing(false);
-  //   } catch (error) {
-  //     console.error("Error renaming group:", error);
-  //   }
-  // };
+  const renameGroup = async (groupId, newName) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/api/conversations/rename/${groupId}`,
+        { name: newName },
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+      chatDispatch({
+        type: "SET_CONVERSATIONS",
+        payload: {
+          private: chatState.privateConversations,
+          group: chatState.groupConversations.map((g) =>
+            g.id === groupId ? { ...g, name: newName } : g
+          ),
+        },
+      });
+    } catch (error) {
+      console.error("Error renaming group:", error);
+    }
+  };
 
   return {
     fetchConversations,
@@ -142,5 +175,8 @@ export function useConversations() {
     leaveGroup,
     addMember,
     removeMember,
+    createConversation,
+    joinGroup,
+    renameGroup,
   };
 }
