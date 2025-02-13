@@ -5,20 +5,16 @@ import { AppContext } from "../utils/AppContext";
 export function useConversations() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
 
-  const createConversation = async (groupName, isGroup) => {
-    if (!groupName.trim()) return;
+  const createConversation = async (name, isGroup) => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/conversations",
-        { name: groupName, isGroup: isGroup },
+        { name, isGroup },
         { headers: { Authorization: authState.token } }
       );
-      chatDispatch({
-        type: "CREATE_CONVERSATION",
-        payload: response.data,
-      });
+      chatDispatch({ type: "CREATE_CONVERSATION", payload: response.data });
     } catch (error) {
-      console.error("Error creating group:", error);
+      console.error("Error creating conversation:", error);
     }
   };
 

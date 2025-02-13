@@ -8,7 +8,9 @@ exports.createConversation = async (req, res) => {
         name,
         isGroup,
         adminId: isGroup ? req.user.userId : null,
-        members: { connect: req.user.userId },
+        members: {
+          connect: { id: req.user.userId },
+        },
       },
     });
     res.json(conversation);

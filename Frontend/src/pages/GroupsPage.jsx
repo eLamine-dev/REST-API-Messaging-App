@@ -8,7 +8,7 @@ function GroupsPage() {
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { createGroup } = useConversations();
+  const { createConversation } = useConversations();
 
   const searchGroups = async () => {
     if (!searchQuery.trim()) return;
@@ -32,7 +32,9 @@ function GroupsPage() {
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
       />
-      <button onClick={() => createGroup(groupName, true)}>Create</button>
+      <button onClick={() => createConversation(groupName, true)}>
+        Create
+      </button>
 
       <h2>Search Groups</h2>
       <input
