@@ -99,26 +99,45 @@ const chatReducer = (state, action) => {
     case "ADD_MEMBER":
       return {
         ...state,
-        groupConversations: state.groupConversations.map((g) =>
-          g.id === action.payload.groupId
-            ? { ...g, members: [...g.members, action.payload.user] }
-            : g
+        groupConversations: state.groupConversations.map((group) =>
+          group.id === action.payload.groupId
+            ? { ...group, members: [...group.members, action.payload.user] }
+            : group
         ),
+        selectedConversation:
+          state.selectedConversation?.id === action.payload.groupId
+            ? {
+                ...state.selectedConversation,
+                members: [
+                  ...state.selectedConversation.members,
+                  action.payload.user,
+                ],
+              }
+            : state.selectedConversation,
       };
 
     case "REMOVE_MEMBER":
       return {
         ...state,
-        groupConversations: state.groupConversations.map((g) =>
-          g.id === action.payload.groupId
+        groupConversations: state.groupConversations.map((group) =>
+          group.id === action.payload.groupId
             ? {
-                ...g,
-                members: g.members.filter(
+                ...group,
+                members: group.members.filter(
                   (member) => member.id !== action.payload.userId
                 ),
               }
-            : g
+            : group
         ),
+        selectedConversation:
+          state.selectedConversation?.id === action.payload.groupId
+            ? {
+                ...state.selectedConversation,
+                members: state.selectedConversation.members.filter(
+                  (member) => member.id !== action.payload.userId
+                ),
+              }
+            : state.selectedConversation,
       };
 
     default:

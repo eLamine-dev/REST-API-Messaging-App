@@ -112,7 +112,7 @@ export default function useConversations() {
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/${groupId}`,
-        { userId },
+        { userId: user.id },
         {
           headers: { Authorization: authState.token },
         }

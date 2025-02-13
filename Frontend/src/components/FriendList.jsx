@@ -19,8 +19,9 @@ function FriendList() {
           <>
             <div key={friend.id} className="friend-item">
               <p>
-                {/* <span onClick={() => openUserDetails(friend.id)}> */}
-                <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>
+                <span onClick={() => openUserDetails(friend.id)}>
+                  {friend.status === "ONLINE" ? "🟢" : "⚪"}
+                </span>
                 {friend.username}
               </p>
             </div>

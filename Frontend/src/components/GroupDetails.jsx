@@ -8,7 +8,7 @@ function GroupDetails() {
     useContext(AppContext);
 
   const { selectedConversation } = chatState;
-  const { renameGroup } = useConversations();
+  const { renameGroup, removeMember } = useConversations();
 
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(selectedConversation.name);
@@ -53,7 +53,13 @@ function GroupDetails() {
               <li key={member.id}>
                 {member.username}
                 {isAdmin && member.id !== authState.user.id && (
-                  <button>Remove</button>
+                  <button
+                    onClick={() => {
+                      removeMember(selectedConversation.id, member.id);
+                    }}
+                  >
+                    Remove
+                  </button>
                 )}
               </li>
             ))}
