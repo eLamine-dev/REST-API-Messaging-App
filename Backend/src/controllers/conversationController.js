@@ -213,6 +213,8 @@ exports.deleteGroup = async (req, res) => {
 exports.addMember = async (req, res) => {
   const { groupId } = req.params;
   const { userId } = req.body;
+  console.log(groupId, userId);
+
   try {
     const group = await prisma.conversation.findUnique({
       where: { id: parseInt(groupId) },

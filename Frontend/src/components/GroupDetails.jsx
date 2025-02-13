@@ -1,10 +1,11 @@
 import { useContext, useState } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
-import { useConversations } from "../hooks/useConversations";
+import useConversations from "../hooks/useConversations";
 
 function GroupDetails() {
-  const { authState, chatState, chatDispatch } = useContext(AppContext);
+  const { authState, chatState, chatDispatch, setUiState } =
+    useContext(AppContext);
 
   const { selectedConversation } = chatState;
   const { renameGroup } = useConversations();
@@ -63,7 +64,13 @@ function GroupDetails() {
       {isAdmin && (
         <>
           <button onClick>Delete Group</button>
-          <button onClick>Add Members</button>
+          <button
+            onClick={() =>
+              setUiState((prev) => ({ ...prev, isAddingMembers: true }))
+            }
+          >
+            Add Members
+          </button>
         </>
       )}
 

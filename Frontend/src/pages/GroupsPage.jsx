@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
-import { useConversations } from "../hooks/useConversations";
+import useConversations from "../hooks/useConversations";
 
 function GroupsPage() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);

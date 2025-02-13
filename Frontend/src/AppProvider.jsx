@@ -101,7 +101,7 @@ const chatReducer = (state, action) => {
         ...state,
         groupConversations: state.groupConversations.map((g) =>
           g.id === action.payload.groupId
-            ? { ...g, members: [...g.members, { id: action.payload.userId }] }
+            ? { ...g, members: [...g.members, action.payload.user] }
             : g
         ),
       };

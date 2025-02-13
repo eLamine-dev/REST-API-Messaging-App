@@ -2,7 +2,7 @@ import { useContext } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
-export function useConversations() {
+export default function useConversations() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
 
   const createConversation = async (name, isGroup) => {
@@ -108,7 +108,7 @@ export function useConversations() {
     }
   };
 
-  const addMember = async (groupId, userId) => {
+  const addMember = async (groupId, user) => {
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/${groupId}`,
@@ -118,7 +118,7 @@ export function useConversations() {
         }
       );
 
-      chatDispatch({ type: "ADD_MEMBER", payload: { groupId, userId } });
+      chatDispatch({ type: "ADD_MEMBER", payload: { groupId, user } });
     } catch (error) {
       console.error("Error adding member:", error);
     }
