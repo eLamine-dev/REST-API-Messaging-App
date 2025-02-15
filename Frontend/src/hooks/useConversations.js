@@ -109,6 +109,11 @@ export default function useConversations() {
   };
 
   const addMember = async (groupId, user) => {
+    const group = chatState.groupConversations.find((g) => g.id === groupId);
+    if (group.members.some((member) => member.id === user.id)) {
+      console.warn("User is already a member.");
+      return;
+    }
     try {
       await axios.post(
         `http://localhost:5000/api/conversations/members/${groupId}`,

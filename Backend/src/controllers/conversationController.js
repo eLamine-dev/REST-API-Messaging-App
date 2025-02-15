@@ -224,6 +224,10 @@ exports.addMember = async (req, res) => {
       return res.status(403).json({ error: "Only the admin can add members." });
     }
 
+    if (group.members.some((member) => member.id === userId)) {
+      return res.status(400).json({ error: "User is already a member." });
+    }
+
     await prisma.conversation.update({
       where: { id: parseInt(groupId) },
       data: { members: { connect: { id: userId } } },
