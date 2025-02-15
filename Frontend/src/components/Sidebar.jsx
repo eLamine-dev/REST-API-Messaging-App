@@ -5,14 +5,16 @@ import UserDetail from "./UserDetails";
 import GroupDetails from "./GroupDetails";
 
 function Sidebar() {
-  const { chatState, friendsState, chatDispatch, friendsDispatch } =
+  const { chatState, friendsState, chatDispatch, friendsDispatch, setUiState } =
     useContext(AppContext);
   const { selectedConversation } = chatState;
   const { selectedUser } = friendsState;
 
   useEffect(() => {
-    if (selectedUser)
+    if (selectedUser) {
       chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: null });
+      setUiState({ isAddingMembers: false });
+    }
   }, [selectedUser]);
 
   useEffect(() => {

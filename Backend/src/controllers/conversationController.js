@@ -218,6 +218,7 @@ exports.addMember = async (req, res) => {
   try {
     const group = await prisma.conversation.findUnique({
       where: { id: parseInt(groupId) },
+      include: { members: true },
     });
 
     if (!group || !group.isGroup || group.adminId !== req.user.userId) {

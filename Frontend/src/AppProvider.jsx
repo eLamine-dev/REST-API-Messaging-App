@@ -219,7 +219,6 @@ export function AppProvider({ children }) {
 
   const [uiState, setUiState] = useState({
     isAddingMembers: false,
-    isRemovingMembers: false,
   });
 
   useEffect(() => {
