@@ -3,7 +3,7 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 
 export default function useFriendActions() {
-  const { authState, friendsDispatch } = useContext(AppContext);
+  const { authState, friendsState, friendsDispatch } = useContext(AppContext);
 
   const sendFriendRequest = async (userId) => {
     try {
@@ -14,6 +14,13 @@ export default function useFriendActions() {
       );
 
       friendsDispatch({ type: "SEND_FRIEND_REQUEST", payload: response.data });
+
+      if (friendsState.selectedUser?.id === userId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: response.data },
+        });
+      }
     } catch (error) {
       console.error("Error sending friend request:", error);
     }
@@ -26,10 +33,21 @@ export default function useFriendActions() {
         {},
         { headers: { Authorization: authState.token } }
       );
+
       friendsDispatch({
         type: "ACCEPT_FRIEND_REQUEST",
         payload: response.data,
       });
+
+      if (friendsState.selectedUser?.id === response.data.id) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: {
+            ...friendsState.selectedUser,
+            friendship: { status: "ACCEPTED" },
+          },
+        });
+      }
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
@@ -39,12 +57,17 @@ export default function useFriendActions() {
     try {
       await axios.delete(
         `http://localhost:5000/api/friends/delete/${requestId}`,
-        {
-          headers: { Authorization: authState.token },
-        }
+        { headers: { Authorization: authState.token } }
       );
 
       friendsDispatch({ type: "REJECT_FRIEND_REQUEST", payload: requestId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
     } catch (error) {
       console.error("Error rejecting friend request:", error);
     }
@@ -60,6 +83,13 @@ export default function useFriendActions() {
       );
 
       friendsDispatch({ type: "CANCEL_FRIEND_REQUEST", payload: requestId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
     } catch (error) {
       console.error("Error canceling friend request:", error);
     }
@@ -74,6 +104,13 @@ export default function useFriendActions() {
         }
       );
       friendsDispatch({ type: "DELETE_FRIEND", payload: friendId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
     } catch (error) {
       console.error("Error deleting friend:", error);
     }

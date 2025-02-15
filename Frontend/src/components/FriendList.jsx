@@ -9,6 +9,12 @@ function FriendList() {
   const { addMember } = useConversations();
   const { friends } = friendsState;
 
+  const isMember = (friend) => {
+    return chatState.selectedConversation.members.some(
+      (member) => member.id === friend.id
+    );
+  };
+
   return (
     <div className="friend-list">
       <h3>Friends</h3>
@@ -25,7 +31,7 @@ function FriendList() {
                 {friend.username}
               </p>
             </div>
-            {uiState.isAddingMembers && (
+            {uiState.isAddingMembers && !isMember(friend) && (
               <button
                 onClick={() =>
                   addMember(chatState.selectedConversation.id, friend)
