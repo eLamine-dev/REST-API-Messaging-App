@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../utils/AppContext";
+import useAuth from "../hooks/useAuth";
 import {
   FaComment,
   FaPhone,
@@ -19,21 +20,7 @@ function Navbar({ selectedTab, setSelectedTab }) {
     requests: 0,
   });
 
-  const logout = async () => {
-    try {
-      await axios.post(
-        "http://localhost:5000/api/auth/logout",
-        {},
-        { headers: { Authorization: `${state.token}` } }
-      );
-    } catch (error) {
-      console.error("Logout failed:", error);
-    } finally {
-      localStorage.removeItem("token");
-      authDispatch({ type: "LOGOUT" });
-      navigate("/auth");
-    }
-  };
+  const { logout } = useAuth();
 
   const handleNavigate = (tab, path) => {
     setSelectedTab(tab);
