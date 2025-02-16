@@ -1,19 +1,11 @@
-import { useContext, useEffect } from "react";
-import axios from "axios";
-import { AppContext } from "../utils/AppContext";
+import { useContext } from "react";
 import useConversations from "../hooks/useConversations";
+import { AppContext } from "../utils/AppContext";
 
 function ConversationList() {
-  const { authState, chatState, chatDispatch } = useContext(AppContext);
+  const { chatState } = useContext(AppContext);
   const { privateConversations, groupConversations } = chatState;
-
-  const { fetchConversations } = useConversations();
-
-  useEffect(() => {
-    if (authState.token) {
-      fetchConversations();
-    }
-  }, [authState.token]);
+  const { openConversation } = useConversations();
 
   return (
     <div className="conversation-list">
@@ -25,12 +17,7 @@ function ConversationList() {
           <div
             key={conversation.id}
             className="conversation-item"
-            onClick={() =>
-              chatDispatch({
-                type: "SET_CURRENT_CONVERSATION",
-                payload: conversation,
-              })
-            }
+            onClick={() => openConversation(conversation)}
           >
             <p>
               {conversation.name ||
@@ -48,12 +35,7 @@ function ConversationList() {
           <div
             key={conversation.id}
             className="conversation-item"
-            onClick={() =>
-              chatDispatch({
-                type: "SET_CURRENT_CONVERSATION",
-                payload: conversation,
-              })
-            }
+            onClick={() => openConversation(conversation)}
           >
             <p>{conversation.name}</p>
           </div>

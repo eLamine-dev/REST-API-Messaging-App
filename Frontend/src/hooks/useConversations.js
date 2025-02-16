@@ -26,7 +26,6 @@ export default function useConversations() {
           headers: { Authorization: authState.token },
         }
       );
-
       chatDispatch({
         type: "SET_CONVERSATIONS",
         payload: {
@@ -36,6 +35,51 @@ export default function useConversations() {
       });
     } catch (error) {
       console.error("Error fetching conversations:", error);
+    }
+  };
+
+  const fetchConversationMessages = async (conversationId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/conversations/messages/${conversationId}`,
+        { headers: { Authorization: authState.token } }
+      );
+
+      chatDispatch({
+        type: "UPDATE_CONVERSATION_MESSAGES",
+        payload: { conversationId, messages: response.data.messages },
+      });
+
+      chatDispatch({
+        type: "SET_CURRENT_CONVERSATION",
+        payload: conversationId,
+      });
+    } catch (error) {
+      console.error("Error fetching conversation messages:", error);
+    }
+  };
+
+  const openConversation = async (conversation) => {
+    chatDispatch({
+      type: "SET_CURRENT_CONVERSATION",
+      payload: conversation.id,
+    });
+  };
+
+  const sendMessage = async (conversationId, content) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/messages/send/${conversationId}`,
+        { content },
+        { headers: { Authorization: authState.token } }
+      );
+
+      chatDispatch({
+        type: "ADD_MESSAGE",
+        payload: { conversationId, message: response.data },
+      });
+    } catch (error) {
+      console.error("Error sending message:", error);
     }
   };
 
@@ -52,10 +96,6 @@ export default function useConversations() {
     } catch (error) {
       console.error("Error fetching chat room:", error);
     }
-  };
-
-  const selectConversation = (conversation) => {
-    chatDispatch({ type: "SET_CURRENT_CONVERSATION", payload: conversation });
   };
 
   const deleteConversation = async (conversationId) => {
@@ -171,7 +211,6 @@ export default function useConversations() {
   return {
     fetchConversations,
     fetchChatRoom,
-    selectConversation,
     deleteConversation,
     leaveGroup,
     addMember,
@@ -179,5 +218,8 @@ export default function useConversations() {
     createConversation,
     joinGroup,
     renameGroup,
+    sendMessage,
+    fetchConversationMessages,
+    openConversation,
   };
 }

@@ -34,7 +34,7 @@ const chatInitialState = {
   chatRoom: null,
   privateConversations: [],
   groupConversations: [],
-  currConversation: null,
+  currConversationId: null,
   selectedConversation: null,
 };
 
@@ -48,10 +48,53 @@ const chatReducer = (state, action) => {
       };
 
     case "SET_CURRENT_CONVERSATION":
-      return { ...state, currConversation: action.payload };
+      return {
+        ...state,
+        currConversationId: action.payload,
+      };
 
     case "SET_SELECTED_CONVERSATION":
       return { ...state, selectedConversation: action.payload };
+
+    case "UPDATE_CONVERSATION_MESSAGES":
+      return {
+        ...state,
+        privateConversations: state.privateConversations.map((conv) =>
+          conv.id === action.payload.conversationId
+            ? { ...conv, messages: action.payload.messages }
+            : conv
+        ),
+        groupConversations: state.groupConversations.map((conv) =>
+          conv.id === action.payload.conversationId
+            ? { ...conv, messages: action.payload.messages }
+            : conv
+        ),
+      };
+
+    case "ADD_MESSAGE":
+      return {
+        ...state,
+        privateConversations: state.privateConversations.map((conv) =>
+          conv.id === action.payload.conversationId
+            ? { ...conv, messages: [...conv.messages, action.payload.message] }
+            : conv
+        ),
+        groupConversations: state.groupConversations.map((conv) =>
+          conv.id === action.payload.conversationId
+            ? { ...conv, messages: [...conv.messages, action.payload.message] }
+            : conv
+        ),
+        currConversation:
+          state.currConversation?.id === action.payload.conversationId
+            ? {
+                ...state.currConversation,
+                messages: [
+                  ...state.currConversation.messages,
+                  action.payload.message,
+                ],
+              }
+            : state.currConversation,
+      };
 
     case "SET_CHATROOM":
       return { ...state, chatRoom: action.payload };

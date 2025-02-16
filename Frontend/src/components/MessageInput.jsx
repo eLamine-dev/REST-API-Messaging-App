@@ -1,27 +1,18 @@
 import { useState, useContext } from "react";
-import PropTypes from "prop-types";
-import axios from "axios";
+import useConversations from "../hooks/useConversations";
 import { AppContext } from "../utils/AppContext";
 
-function MessageInput({ conversationId, onSend }) {
+function MessageInput() {
   const [message, setMessage] = useState("");
-  const { authState } = useContext(AppContext);
+  const { chatState } = useContext(AppContext);
+  const { sendMessage } = useConversations();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!message.trim()) return;
 
-    try {
-      await axios.post(
-        `http://localhost:5000/api/messages/send/${conversationId}`,
-        { content: message },
-        { headers: { Authorization: `${authState.token}` } }
-      );
-      onSend();
-      setMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+    await sendMessage(chatState.currConversation.id, message);
+    setMessage("");
   };
 
   return (
@@ -36,10 +27,5 @@ function MessageInput({ conversationId, onSend }) {
     </form>
   );
 }
-
-MessageInput.propTypes = {
-  conversationId: PropTypes.number.isRequired,
-  onSend: PropTypes.func.isRequired,
-};
 
 export default MessageInput;

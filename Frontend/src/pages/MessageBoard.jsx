@@ -5,8 +5,7 @@ import ConversationList from "../components/ConversationList";
 import { AppContext } from "../utils/AppContext";
 
 function MessageBoard() {
-  const { authState, chatState, chatDispatch, uiState, setUiState } =
-    useContext(AppContext);
+  const { authState, chatState, chatDispatch } = useContext(AppContext);
 
   useEffect(() => {
     if (!authState.token || chatState.chatRoom) return;
@@ -22,7 +21,7 @@ function MessageBoard() {
         chatDispatch({ type: "SET_CHATROOM", payload: response.data });
         chatDispatch({
           type: "SET_CURRENT_CONVERSATION",
-          payload: response.data,
+          payload: response.data.id,
         });
       } catch (error) {
         console.error("Error fetching chat room:", error);
@@ -32,13 +31,9 @@ function MessageBoard() {
     fetchChatRoom();
   }, [authState.token]);
 
-  const handleConversationClick = (conversation) => {
-    chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: conversation });
-  };
-
   return (
     <div className="message-board">
-      <ConversationList onConversationClick={handleConversationClick} />
+      <ConversationList />
       <ChatArea />
     </div>
   );

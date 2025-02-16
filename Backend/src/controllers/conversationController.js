@@ -30,9 +30,6 @@ exports.getConversationMessages = async (req, res) => {
         messages: {
           orderBy: { timestamp: "asc" },
         },
-        members: {
-          select: { id: true, username: true, status: true },
-        },
       },
     });
 
@@ -53,7 +50,7 @@ exports.getChatRoom = async (req, res) => {
       where: { isChatRoom: true },
       include: {
         messages: {
-          orderBy: { timestamp: "desc" },
+          orderBy: { timestamp: "asc" },
           take: 30,
         },
         members: {
