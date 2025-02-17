@@ -39,7 +39,7 @@ export default function useFriendActions() {
         payload: response.data,
       });
 
-      if (friendsState.selectedUser?.id === response.data.id) {
+      if (friendsState.selectedUser?.id === response.data.sender.id) {
         friendsDispatch({
           type: "SET_SELECTED_USER",
           payload: {

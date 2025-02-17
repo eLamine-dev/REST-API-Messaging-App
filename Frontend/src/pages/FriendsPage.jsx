@@ -6,11 +6,9 @@ import useFriendActions from "../hooks/useFriendActions";
 function FriendsPage() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
   const {
-    sendFriendRequest,
     acceptRequest,
     cancelRequest,
     rejectRequest,
-    deleteFriend,
     searchUsers,
     openUserDetails,
   } = useFriendActions();

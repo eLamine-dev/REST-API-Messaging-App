@@ -219,7 +219,7 @@ function friendsReducer(state, action) {
             (req) => req.id !== action.payload.id
           ),
         },
-        friends: [...state.friends, action.payload],
+        friends: [...state.friends, action.payload.sender],
       };
     case "REJECT_FRIEND_REQUEST":
       return {

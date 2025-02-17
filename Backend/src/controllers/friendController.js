@@ -92,7 +92,7 @@ exports.acceptFriendRequest = async (req, res) => {
       },
     });
 
-    res.json(updatedRequest.sender);
+    res.json(updatedRequest);
   } catch (error) {
     res.status(500).json({ error: "Error accepting friend request." });
   }
