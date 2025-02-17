@@ -7,7 +7,7 @@ import GroupDetails from "./GroupDetails";
 function Sidebar() {
   const { chatState, friendsState, chatDispatch, friendsDispatch, setUiState } =
     useContext(AppContext);
-  const { selectedConversation } = chatState;
+  const { selectedConversationId } = chatState;
   const { selectedUser } = friendsState;
 
   useEffect(() => {
@@ -18,13 +18,13 @@ function Sidebar() {
   }, [selectedUser]);
 
   useEffect(() => {
-    if (selectedConversation)
+    if (selectedConversationId)
       friendsDispatch({ type: "SET_SELECTED_USER", payload: null });
-  }, [selectedConversation]);
+  }, [selectedConversationId]);
 
   return (
     <div className="sidebar">
-      {selectedConversation && <GroupDetails />}
+      {selectedConversationId && <GroupDetails />}
       {selectedUser && <UserDetail />}
       <FriendList />
     </div>

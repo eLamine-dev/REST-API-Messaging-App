@@ -5,10 +5,11 @@ import MessageInput from "./MessageInput";
 import useConversations from "../hooks/useConversations";
 
 function ChatArea() {
-  const { chatState } = useContext(AppContext);
+  const { chatState, chatDispatch } = useContext(AppContext);
   const { currConversationId, privateConversations, groupConversations } =
     chatState;
-  const { fetchConversationMessages } = useConversations();
+  const { fetchConversationMessages, openConversationDetails } =
+    useConversations();
 
   const currConversation =
     privateConversations.find((conv) => conv.id === currConversationId) ||
@@ -28,6 +29,9 @@ function ChatArea() {
   return (
     <div className="chat-area">
       <h2>{currConversation.name}</h2>
+      <button onClick={() => openConversationDetails(currConversation)}>
+        settings
+      </button>
       <div className="messages">
         {currConversation.messages?.map((msg) => (
           <MessageCard key={msg.id} message={msg} />

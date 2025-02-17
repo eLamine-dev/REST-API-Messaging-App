@@ -8,7 +8,7 @@ function GroupsPage() {
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { createConversation } = useConversations();
+  const { createConversation, openConversationDetails } = useConversations();
 
   const searchGroups = async () => {
     if (!searchQuery.trim()) return;
@@ -61,12 +61,7 @@ function GroupsPage() {
           <div
             key={group.id}
             className="group-item"
-            onClick={() =>
-              chatDispatch({
-                type: "SET_SELECTED_CONVERSATION",
-                payload: group,
-              })
-            }
+            onClick={() => openConversationDetails(group)}
           >
             <p>{group.name}</p>
           </div>

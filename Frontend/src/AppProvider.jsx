@@ -35,7 +35,7 @@ const chatInitialState = {
   privateConversations: [],
   groupConversations: [],
   currConversationId: null,
-  selectedConversation: null,
+  selectedConversationId: null,
 };
 
 const chatReducer = (state, action) => {
@@ -54,7 +54,7 @@ const chatReducer = (state, action) => {
       };
 
     case "SET_SELECTED_CONVERSATION":
-      return { ...state, selectedConversation: action.payload };
+      return { ...state, selectedConversationId: action.payload };
 
     case "UPDATE_CONVERSATION_MESSAGES":
       return {

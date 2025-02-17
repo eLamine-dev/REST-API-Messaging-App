@@ -7,13 +7,18 @@ function GroupDetails() {
   const { authState, chatState, chatDispatch, setUiState } =
     useContext(AppContext);
 
-  const { selectedConversation } = chatState;
+  const { selectedConversationId, privateConversations, groupConversations } =
+    chatState;
   const { renameGroup, removeMember } = useConversations();
+
+  const selectedConversation =
+    privateConversations.find((conv) => conv.id === selectedConversationId) ||
+    groupConversations.find((conv) => conv.id === selectedConversationId);
+
+  const isAdmin = selectedConversation.adminId === authState.user.id;
 
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(selectedConversation.name);
-
-  const isAdmin = selectedConversation.adminId === authState.user.id;
 
   const handleSave = async () => {
     await renameGroup(selectedConversation.id, groupName);

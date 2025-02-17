@@ -208,6 +208,13 @@ export default function useConversations() {
     }
   };
 
+  const openConversationDetails = async (conversation) => {
+    chatDispatch({
+      type: "SET_SELECTED_CONVERSATION",
+      payload: conversation.id,
+    });
+  };
+
   return {
     fetchConversations,
     fetchChatRoom,
@@ -221,5 +228,6 @@ export default function useConversations() {
     sendMessage,
     fetchConversationMessages,
     openConversation,
+    openConversationDetails,
   };
 }
