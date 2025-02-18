@@ -8,14 +8,14 @@ function Sidebar() {
   const { chatState, friendsState, chatDispatch, friendsDispatch, setUiState } =
     useContext(AppContext);
   const { selectedConversationId } = chatState;
-  const { selectedUser } = friendsState;
+  const { selectedUserId } = friendsState;
 
   useEffect(() => {
-    if (selectedUser) {
+    if (selectedUserId) {
       chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: null });
       setUiState({ isAddingMembers: false });
     }
-  }, [selectedUser]);
+  }, [selectedUserId]);
 
   useEffect(() => {
     if (selectedConversationId)
@@ -25,7 +25,7 @@ function Sidebar() {
   return (
     <div className="sidebar">
       {selectedConversationId && <GroupDetails />}
-      {selectedUser && <UserDetail />}
+      {selectedUserId && <UserDetail />}
       <FriendList />
     </div>
   );

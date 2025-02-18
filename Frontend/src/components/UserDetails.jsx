@@ -20,7 +20,6 @@ function UserDetail() {
   useEffect(() => {
     if (!selectedUserId) return;
 
-    // Check if the user exists in friends list
     let user = friends.find((f) => f.id === selectedUserId);
 
     if (user) {
@@ -29,7 +28,6 @@ function UserDetail() {
       return;
     }
 
-    // Fetch user details if not found locally
     const fetchUser = async () => {
       try {
         const response = await axios.get(
