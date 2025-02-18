@@ -4,22 +4,21 @@ import { AppContext } from "../utils/AppContext";
 import useConversations from "../hooks/useConversations";
 
 function GroupsPage() {
-  const { authState, chatState, chatDispatch } = useContext(AppContext);
+  const { authState, chatState } = useContext(AppContext);
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { createConversation, openConversationDetails } = useConversations();
+  const { createConversation, openConversationDetails, searchGroups } =
+    useConversations();
 
-  const searchGroups = async () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
+
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/groups/search?query=${searchQuery}`,
-        { headers: { Authorization: authState.token } }
-      );
-      setSearchResults(response.data);
+      const results = await searchGroups(searchQuery);
+      setSearchResults(results);
     } catch (error) {
-      console.error("Error searching groups:", error);
+      console.error("Error searching users:", error);
     }
   };
 
@@ -43,7 +42,7 @@ function GroupsPage() {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <button onClick={searchGroups}>Search</button>
+      <button onClick={handleSearch}>Search</button>
 
       <h3>Search Results</h3>
       {searchResults.map((group) => (

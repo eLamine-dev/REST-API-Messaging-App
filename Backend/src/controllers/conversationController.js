@@ -306,3 +306,26 @@ exports.renameGroup = async (req, res) => {
     res.status(500).json({ error: "Error renaming group." });
   }
 };
+
+exports.searchGroups = async (req, res) => {
+  const { query } = req.query;
+  try {
+    const groups = await prisma.conversation.findMany({
+      where: {
+        isGroup: true,
+        name: {
+          contains: query,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    res.json(groups);
+  } catch (error) {
+    res.status(500).json({ error: "Error searching groups." });
+  }
+};

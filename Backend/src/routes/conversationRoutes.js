@@ -12,13 +12,14 @@ const {
   leaveGroup,
   deleteGroup,
   renameGroup,
+  searchGroups,
 } = require("../controllers/conversationController");
 
 const authenticateJWT = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.post("/", authenticateJWT, createConversation);
-
+router.get("/search", authenticateJWT, searchGroups);
 router.get("/user", authenticateJWT, getUserConversations);
 router.get("/user-groups", authenticateJWT, getUserGroups);
 router.get("/messages/:id", authenticateJWT, getConversationMessages);

@@ -59,7 +59,7 @@ function FriendList() {
               {uiState.isAddingMembers && !isMember(user) && (
                 <button
                   onClick={() =>
-                    addMember(chatState.selectedConversation.id, user)
+                    addMember(chatState.selectedConversationId, user)
                   }
                 >
                   +
@@ -77,6 +77,15 @@ function FriendList() {
               <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>{" "}
               {friend.username}
             </p>
+            {uiState.isAddingMembers && !isMember(friend) && (
+              <button
+                onClick={() =>
+                  addMember(chatState.selectedConversationId, friend)
+                }
+              >
+                +
+              </button>
+            )}
           </div>
         ))
       )}
