@@ -2,11 +2,9 @@ import { useContext, useState } from "react";
 import { AppContext } from "../utils/AppContext";
 import useFriendActions from "../hooks/useFriendActions";
 import useConversations from "../hooks/useConversations";
-import axios from "axios";
 
 function FriendList() {
-  const { friendsState, uiState, chatState, authState } =
-    useContext(AppContext);
+  const { friendsState, uiState, chatState } = useContext(AppContext);
   const { openUserDetails, searchUsers } = useFriendActions();
   const { addMember } = useConversations();
   const { friends } = friendsState;
@@ -72,26 +70,15 @@ function FriendList() {
         ) : (
           <p>No users found.</p>
         )
-      ) : friends.length > 0 ? (
+      ) : (
         friends.map((friend) => (
           <div key={friend.id} className="friend-item">
             <p onClick={() => openUserDetails(friend.id)}>
               <span>{friend.status === "ONLINE" ? "🟢" : "⚪"}</span>{" "}
               {friend.username}
             </p>
-            {uiState.isAddingMembers && !isMember(friend) && (
-              <button
-                onClick={() =>
-                  addMember(chatState.selectedConversation.id, friend)
-                }
-              >
-                +
-              </button>
-            )}
           </div>
         ))
-      ) : (
-        <p>No friends to display.</p>
       )}
     </div>
   );

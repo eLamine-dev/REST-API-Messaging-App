@@ -5,7 +5,7 @@ import useFriendActions from "../hooks/useFriendActions";
 
 function UserDetail() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
-  const { selectedUser } = friendsState;
+  const { selectedUserId, friends } = friendsState;
   const {
     sendFriendRequest,
     acceptRequest,
@@ -13,30 +13,44 @@ function UserDetail() {
     rejectRequest,
     deleteFriend,
   } = useFriendActions();
-  // const [selectedUser, setselectedUser] = useState({});
-  // const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   if (!selectedUser) return;
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  //   const fetchselectedUser = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `http://localhost:5000/api/users/${selectedUser.id}`,
-  //         { headers: { Authorization: authState.token } }
-  //       );
-  //       setselectedUser(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching user info:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    if (!selectedUserId) return;
 
-  //   fetchselectedUser();
-  // }, [selectedUser, authState.token]);
+    // Check if the user exists in friends list
+    let user = friends.find((f) => f.id === selectedUserId);
 
-  // if (isLoading) return <div>Loading...</div>;
+    if (user) {
+      setSelectedUser(user);
+      setIsLoading(false);
+      return;
+    }
+
+    // Fetch user details if not found locally
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/users/${selectedUserId}`,
+          {
+            headers: { Authorization: authState.token },
+          }
+        );
+        setSelectedUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [selectedUserId, friends, authState.token]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!selectedUser) return <div>User not found</div>;
 
   return (
     <div className="user-detail">
@@ -61,12 +75,14 @@ function UserDetail() {
             Reject Friend Request
           </button>
         )}
+
       {selectedUser.friendship?.status === "PENDING" &&
         selectedUser.friendship.receiverId === selectedUser.id && (
           <button onClick={() => cancelRequest(selectedUser.friendship.id)}>
             Cancel Friend Request
           </button>
         )}
+
       {selectedUser.friendship?.status === "PENDING" &&
         selectedUser.friendship.receiverId !== selectedUser.id && (
           <button onClick={() => acceptRequest(selectedUser.friendship.id)}>

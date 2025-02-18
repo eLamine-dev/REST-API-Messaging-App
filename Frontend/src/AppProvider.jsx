@@ -191,7 +191,7 @@ const chatReducer = (state, action) => {
 const friendsInitialState = {
   friends: [],
   pendingRequests: { sent: [], received: [] },
-  selectedUser: null,
+  selectedUserId: null,
 };
 
 function friendsReducer(state, action) {
@@ -209,7 +209,7 @@ function friendsReducer(state, action) {
         },
       };
     case "SET_SELECTED_USER":
-      return { ...state, selectedUser: action.payload };
+      return { ...state, selectedUserId: action.payload };
     case "ACCEPT_FRIEND_REQUEST":
       return {
         ...state,

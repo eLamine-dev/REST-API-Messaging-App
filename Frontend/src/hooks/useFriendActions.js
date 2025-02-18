@@ -131,16 +131,7 @@ export default function useFriendActions() {
   };
 
   const openUserDetails = async (userId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/${userId}`,
-        { headers: { Authorization: authState.token } }
-      );
-
-      friendsDispatch({ type: "SET_SELECTED_USER", payload: response.data });
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
+    friendsDispatch({ type: "SET_SELECTED_USER", payload: userId });
   };
 
   return {
