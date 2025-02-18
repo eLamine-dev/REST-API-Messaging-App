@@ -4,18 +4,24 @@ import { AppContext } from "../utils/AppContext";
 import useConversations from "../hooks/useConversations";
 
 function GroupsPage() {
-  const { authState, chatState } = useContext(AppContext);
+  const { chatState } = useContext(AppContext);
   const [groupName, setGroupName] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { createConversation, openConversationDetails, searchGroups } =
-    useConversations();
+  const {
+    createConversation,
+    openConversationDetails,
+    searchGroups,
+    joinGroup,
+  } = useConversations();
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
     try {
       const results = await searchGroups(searchQuery);
+      console.log(results);
+
       setSearchResults(results);
     } catch (error) {
       console.error("Error searching users:", error);
@@ -48,7 +54,7 @@ function GroupsPage() {
       {searchResults.map((group) => (
         <div key={group.id} className="group-item">
           <p>{group.name}</p>
-          <button onClick={() => joinGroup(group.id)}>Join Group</button>
+          <button onClick={() => joinGroup(group)}>Join Group</button>
         </div>
       ))}
 

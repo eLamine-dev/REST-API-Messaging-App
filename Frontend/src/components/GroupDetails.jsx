@@ -9,7 +9,7 @@ function GroupDetails() {
 
   const { selectedConversationId, privateConversations, groupConversations } =
     chatState;
-  const { renameGroup, removeMember } = useConversations();
+  const { renameGroup, removeMember, leaveGroup } = useConversations();
 
   const selectedConversation =
     privateConversations.find((conv) => conv.id === selectedConversationId) ||
@@ -85,7 +85,16 @@ function GroupDetails() {
         </>
       )}
 
-      {!isAdmin && <button onClick>Leave Group</button>}
+      {!isAdmin && (
+        <button
+          onClick={() => {
+            leaveGroup(selectedConversationId);
+            chatDispatch({ type: "SET_SELECTED_CONVERSATION", payload: null });
+          }}
+        >
+          Leave Group
+        </button>
+      )}
     </div>
   );
 }

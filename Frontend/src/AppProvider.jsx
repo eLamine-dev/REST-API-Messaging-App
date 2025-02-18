@@ -84,16 +84,6 @@ const chatReducer = (state, action) => {
             ? { ...conv, messages: [...conv.messages, action.payload.message] }
             : conv
         ),
-        currConversation:
-          state.currConversation?.id === action.payload.conversationId
-            ? {
-                ...state.currConversation,
-                messages: [
-                  ...state.currConversation.messages,
-                  action.payload.message,
-                ],
-              }
-            : state.currConversation,
       };
 
     case "SET_CHATROOM":
@@ -121,10 +111,6 @@ const chatReducer = (state, action) => {
         groupConversations: state.groupConversations.filter(
           (c) => c.id !== action.payload
         ),
-        currConversation:
-          state.currConversation?.id === action.payload
-            ? null
-            : state.currConversation,
       };
 
     case "LEAVE_GROUP":
@@ -133,10 +119,6 @@ const chatReducer = (state, action) => {
         groupConversations: state.groupConversations.filter(
           (g) => g.id !== action.payload
         ),
-        currConversation:
-          state.currConversation?.id === action.payload
-            ? null
-            : state.currConversation,
       };
 
     case "ADD_MEMBER":
@@ -147,16 +129,16 @@ const chatReducer = (state, action) => {
             ? { ...group, members: [...group.members, action.payload.user] }
             : group
         ),
-        selectedConversation:
-          state.selectedConversation?.id === action.payload.groupId
-            ? {
-                ...state.selectedConversation,
-                members: [
-                  ...state.selectedConversation.members,
-                  action.payload.user,
-                ],
-              }
-            : state.selectedConversation,
+      };
+
+    case "JOIN_GROUP":
+      return {
+        ...state,
+        groupConversations: state.groupConversations.some(
+          (group) => group.id === action.payload.id
+        )
+          ? state.groupConversations
+          : [...state.groupConversations, action.payload],
       };
 
     case "REMOVE_MEMBER":
@@ -172,15 +154,6 @@ const chatReducer = (state, action) => {
               }
             : group
         ),
-        selectedConversation:
-          state.selectedConversation?.id === action.payload.groupId
-            ? {
-                ...state.selectedConversation,
-                members: state.selectedConversation.members.filter(
-                  (member) => member.id !== action.payload.userId
-                ),
-              }
-            : state.selectedConversation,
       };
 
     default:

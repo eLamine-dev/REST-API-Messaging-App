@@ -210,7 +210,6 @@ exports.deleteGroup = async (req, res) => {
 exports.addMember = async (req, res) => {
   const { groupId } = req.params;
   const { userId } = req.body;
-  console.log(groupId, userId);
 
   try {
     const group = await prisma.conversation.findUnique({
@@ -218,20 +217,21 @@ exports.addMember = async (req, res) => {
       include: { members: true },
     });
 
-    if (!group || !group.isGroup || group.adminId !== req.user.userId) {
-      return res.status(403).json({ error: "Only the admin can add members." });
-    }
+    // if (!group || !group.isGroup || group.adminId !== req.user.userId) {
+    //   return res.status(403).json({ error: "Only the admin can add members." });
+    // }
 
-    if (group.members.some((member) => member.id === userId)) {
-      return res.status(400).json({ error: "User is already a member." });
-    }
+    // if (group.members.some((member) => member.id === parseInt(userId))) {
+    //   return res.status(400).json({ error: "User is already a member." });
+    // }
 
-    await prisma.conversation.update({
+    const response = await prisma.conversation.update({
       where: { id: parseInt(groupId) },
-      data: { members: { connect: { id: userId } } },
+      data: { members: { connect: { id: parseInt(userId) } } },
+      include: { members: true },
     });
 
-    res.json({ message: "Member added successfully." });
+    res.json(response);
   } catch (error) {
     res.status(500).json({ error: "Error adding member." });
   }
@@ -276,7 +276,7 @@ exports.leaveGroup = async (req, res) => {
 
     await prisma.conversation.update({
       where: { id: parseInt(groupId) },
-      data: { members: { disconnect: { id: req.user.userId } } },
+      data: { members: { disconnect: { id: parseInt(req.user.userId) } } },
     });
 
     res.json({ message: "Left group successfully." });
@@ -310,7 +310,7 @@ exports.renameGroup = async (req, res) => {
 exports.searchGroups = async (req, res) => {
   const { query } = req.query;
   try {
-    const groups = await prisma.conversation.findMany({
+    const response = await prisma.conversation.findMany({
       where: {
         isGroup: true,
         name: {
@@ -318,13 +318,14 @@ exports.searchGroups = async (req, res) => {
           mode: "insensitive",
         },
       },
-      select: {
-        id: true,
-        name: true,
+      include: {
+        members: {
+          select: { id: true, username: true, status: true },
+        },
       },
     });
 
-    res.json(groups);
+    res.json(response);
   } catch (error) {
     res.status(500).json({ error: "Error searching groups." });
   }

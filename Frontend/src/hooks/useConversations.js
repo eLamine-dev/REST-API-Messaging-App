@@ -130,18 +130,20 @@ export default function useConversations() {
     }
   };
 
-  const joinGroup = async (groupId) => {
+  const joinGroup = async (group) => {
     try {
-      await axios.post(
-        `http://localhost:5000/api/conversations/members/${groupId}`,
-        {},
+      const response = await axios.post(
+        `http://localhost:5000/api/conversations/members/${group.id}`,
+        { userId: authState.user.id },
         {
           headers: { Authorization: authState.token },
         }
       );
+      console.log(response.data);
+
       chatDispatch({
-        type: "ADD_MEMBER",
-        payload: { groupId, userId: authState.user.id },
+        type: "JOIN_GROUP",
+        payload: response.data,
       });
     } catch (error) {
       console.error("Error joining group:", error);
