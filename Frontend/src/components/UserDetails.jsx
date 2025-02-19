@@ -5,7 +5,7 @@ import useFriendActions from "../hooks/useFriendActions";
 
 function UserDetail() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
-  const { selectedUserId, friends } = friendsState;
+  const { selectedUserId, friends, pendingRequests } = friendsState;
   const {
     sendFriendRequest,
     acceptRequest,
@@ -20,7 +20,12 @@ function UserDetail() {
   useEffect(() => {
     if (!selectedUserId) return;
 
-    let user = friends.find((f) => f.id === selectedUserId);
+    let user =
+      friends.find((f) => f.id === selectedUserId) ||
+      pendingRequests.sent.find((r) => r.receiver.id === selectedUserId)
+        ?.receiver ||
+      pendingRequests.received.find((r) => r.sender.id === selectedUserId)
+        ?.sender;
 
     if (user) {
       setSelectedUser(user);
@@ -32,9 +37,7 @@ function UserDetail() {
       try {
         const response = await axios.get(
           `http://localhost:5000/api/users/${selectedUserId}`,
-          {
-            headers: { Authorization: authState.token },
-          }
+          { headers: { Authorization: authState.token } }
         );
         setSelectedUser(response.data);
       } catch (error) {
@@ -45,10 +48,18 @@ function UserDetail() {
     };
 
     fetchUser();
-  }, [selectedUserId, friends, authState.token]);
+  }, [selectedUserId, friends, pendingRequests, authState.token]);
 
   if (isLoading) return <div>Loading...</div>;
   if (!selectedUser) return <div>User not found</div>;
+
+  const isFriend = friends.some((f) => f.id === selectedUser.id);
+  const sentRequest = pendingRequests.sent.find(
+    (r) => r.receiver.id === selectedUser.id
+  );
+  const receivedRequest = pendingRequests.received.find(
+    (r) => r.sender.id === selectedUser.id
+  );
 
   return (
     <div className="user-detail">
@@ -57,38 +68,25 @@ function UserDetail() {
       <p>Status: {selectedUser.status}</p>
       <p>Bio: {selectedUser.bio || "No bio available"}</p>
 
-      {selectedUser.friendship?.status === "ACCEPTED" && (
-        <button
-          onClick={() =>
-            deleteFriend(selectedUser.id, selectedUser.friendship.id)
-          }
-        >
-          Unfriend
-        </button>
+      {isFriend && (
+        <button onClick={() => deleteFriend(selectedUser.id)}>Unfriend</button>
       )}
-
-      {selectedUser.friendship?.status === "PENDING" &&
-        selectedUser.friendship.senderId === selectedUser.id && (
-          <button onClick={() => rejectRequest(selectedUser.friendship.id)}>
-            Reject Friend Request
-          </button>
-        )}
-
-      {selectedUser.friendship?.status === "PENDING" &&
-        selectedUser.friendship.receiverId === selectedUser.id && (
-          <button onClick={() => cancelRequest(selectedUser.friendship.id)}>
-            Cancel Friend Request
-          </button>
-        )}
-
-      {selectedUser.friendship?.status === "PENDING" &&
-        selectedUser.friendship.receiverId !== selectedUser.id && (
-          <button onClick={() => acceptRequest(selectedUser.friendship.id)}>
+      {receivedRequest && (
+        <>
+          <button onClick={() => acceptRequest(receivedRequest.id)}>
             Accept Friend Request
           </button>
-        )}
-
-      {!selectedUser.friendship?.status && (
+          <button onClick={() => rejectRequest(receivedRequest.id)}>
+            Reject
+          </button>
+        </>
+      )}
+      {sentRequest && (
+        <button onClick={() => cancelRequest(sentRequest.id)}>
+          Cancel Request
+        </button>
+      )}
+      {!isFriend && !sentRequest && !receivedRequest && (
         <button onClick={() => sendFriendRequest(selectedUser.id)}>
           Send Friend Request
         </button>
