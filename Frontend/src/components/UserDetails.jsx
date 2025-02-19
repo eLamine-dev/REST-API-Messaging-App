@@ -1,12 +1,18 @@
 import { useState, useContext, useEffect } from "react";
 import { AppContext } from "../utils/AppContext";
+import axios from "axios";
 import useFriendActions from "../hooks/useFriendActions";
 
 function UserDetail() {
   const { authState, friendsState, friendsDispatch } = useContext(AppContext);
-  const { selectedUserId, userCache, friendRequests } = friendsState;
-  const { sendFriendRequest, acceptRequest, deleteFriendship } =
-    useFriendActions();
+  const { selectedUserId, friends, pendingRequests } = friendsState;
+  const {
+    sendFriendRequest,
+    acceptRequest,
+    cancelRequest,
+    rejectRequest,
+    deleteFriend,
+  } = useFriendActions();
 
   const [selectedUser, setSelectedUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,9 +21,11 @@ function UserDetail() {
     if (!selectedUserId) return;
 
     let user =
-      userCache[selectedUserId] ||
-      friendRequests.find((r) => r.sender.id === selectedUserId)?.sender ||
-      friendRequests.find((r) => r.receiver.id === selectedUserId)?.receiver;
+      friends.find((f) => f.id === selectedUserId) ||
+      pendingRequests.sent.find((r) => r.receiver.id === selectedUserId)
+        ?.receiver ||
+      pendingRequests.received.find((r) => r.sender.id === selectedUserId)
+        ?.sender;
 
     if (user) {
       setSelectedUser(user);
@@ -32,7 +40,6 @@ function UserDetail() {
           { headers: { Authorization: authState.token } }
         );
         setSelectedUser(response.data);
-        friendsDispatch({ type: "CACHE_USER_DETAILS", payload: response.data });
       } catch (error) {
         console.error("Error fetching user info:", error);
       } finally {
@@ -41,47 +48,57 @@ function UserDetail() {
     };
 
     fetchUser();
-  }, [selectedUserId, friendRequests, userCache]);
+  }, [selectedUserId, friends, pendingRequests, authState.token]);
 
   if (isLoading) return <div>Loading...</div>;
   if (!selectedUser) return <div>User not found</div>;
 
-  const acceptedRequest = friendRequests.find(
-    (req) =>
-      req.status === "ACCEPTED" &&
-      (req.sender.id === selectedUser.id || req.receiver.id === selectedUser.id)
+  const isFriend = friends.some((f) => f.id === selectedUser.id);
+  const sentRequest = pendingRequests.sent.find(
+    (r) => r.receiver.id === selectedUser.id
   );
-  const sentRequest = friendRequests.find(
-    (req) => req.status === "PENDING" && req.sender.id === selectedUser.id
-  );
-  const receivedRequest = friendRequests.find(
-    (req) => req.status === "PENDING" && req.receiver.id === selectedUser.id
+  const receivedRequest = pendingRequests.received.find(
+    (r) => r.sender.id === selectedUser.id
   );
 
   return (
     <div className="user-detail">
       <h2>{selectedUser.username}</h2>
       <p>Email: {selectedUser.email}</p>
-      {acceptedRequest && (
-        <button onClick={() => deleteFriendship(acceptedRequest.id)}>
-          Unfriend
-        </button>
+      <p>Status: {selectedUser.status}</p>
+      <p>Bio: {selectedUser.bio || "No bio available"}</p>
+
+      {isFriend && (
+        <button onClick={() => deleteFriend(selectedUser.id)}>Unfriend</button>
       )}
       {receivedRequest && (
         <>
           <button onClick={() => acceptRequest(receivedRequest.id)}>
-            Accept
+            Accept Friend Request
           </button>
-          <button onClick={() => deleteFriendship(receivedRequest.id)}>
+          <button onClick={() => rejectRequest(receivedRequest.id)}>
             Reject
           </button>
         </>
       )}
-      {!acceptedRequest && !sentRequest && !receivedRequest && (
+      {sentRequest && (
+        <button onClick={() => cancelRequest(sentRequest.id)}>
+          Cancel Request
+        </button>
+      )}
+      {!isFriend && !sentRequest && !receivedRequest && (
         <button onClick={() => sendFriendRequest(selectedUser.id)}>
           Send Friend Request
         </button>
       )}
+
+      <button
+        onClick={() =>
+          friendsDispatch({ type: "SET_SELECTED_USER", payload: null })
+        }
+      >
+        Close
+      </button>
     </div>
   );
 }

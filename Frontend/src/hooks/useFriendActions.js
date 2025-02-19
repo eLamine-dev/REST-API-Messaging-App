@@ -12,7 +12,15 @@ export default function useFriendActions() {
         { receiverId: userId },
         { headers: { Authorization: authState.token } }
       );
+
       friendsDispatch({ type: "SEND_FRIEND_REQUEST", payload: response.data });
+
+      if (friendsState.selectedUser?.id === userId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: response.data },
+        });
+      }
     } catch (error) {
       console.error("Error sending friend request:", error);
     }
@@ -25,24 +33,86 @@ export default function useFriendActions() {
         {},
         { headers: { Authorization: authState.token } }
       );
+
       friendsDispatch({
         type: "ACCEPT_FRIEND_REQUEST",
         payload: response.data,
       });
+
+      if (friendsState.selectedUser?.id === response.data.sender.id) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: {
+            ...friendsState.selectedUser,
+            friendship: { status: "ACCEPTED" },
+          },
+        });
+      }
     } catch (error) {
       console.error("Error accepting friend request:", error);
     }
   };
 
-  const deleteFriendship = async (requestId) => {
+  const rejectRequest = async (requestId) => {
     try {
       await axios.delete(
         `http://localhost:5000/api/friends/delete/${requestId}`,
         { headers: { Authorization: authState.token } }
       );
-      friendsDispatch({ type: "DELETE_FRIEND_REQUEST", payload: requestId });
+
+      friendsDispatch({ type: "REJECT_FRIEND_REQUEST", payload: requestId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
     } catch (error) {
       console.error("Error rejecting friend request:", error);
+    }
+  };
+
+  const cancelRequest = async (requestId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/friends/delete/${requestId}`,
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+
+      friendsDispatch({ type: "CANCEL_FRIEND_REQUEST", payload: requestId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
+    } catch (error) {
+      console.error("Error canceling friend request:", error);
+    }
+  };
+
+  const deleteFriend = async (friendId, requestId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/friends/delete/${requestId}`,
+        {
+          headers: { Authorization: authState.token },
+        }
+      );
+      friendsDispatch({ type: "DELETE_FRIEND", payload: friendId });
+
+      if (friendsState.selectedUser?.friendship?.id === requestId) {
+        friendsDispatch({
+          type: "SET_SELECTED_USER",
+          payload: { ...friendsState.selectedUser, friendship: null },
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting friend:", error);
     }
   };
 
@@ -67,7 +137,9 @@ export default function useFriendActions() {
   return {
     sendFriendRequest,
     acceptRequest,
-    deleteFriendship,
+    rejectRequest,
+    cancelRequest,
+    deleteFriend,
     searchUsers,
     openUserDetails,
   };
