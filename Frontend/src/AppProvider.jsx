@@ -126,7 +126,14 @@ const chatReducer = (state, action) => {
         ...state,
         groupConversations: state.groupConversations.map((group) =>
           group.id === action.payload.groupId
-            ? { ...group, members: [...group.members, action.payload.user] }
+            ? {
+                ...group,
+                members: group.members.some(
+                  (m) => m.id === action.payload.user.id
+                )
+                  ? group.members
+                  : [...group.members, action.payload.user],
+              }
             : group
         ),
       };
@@ -162,63 +169,42 @@ const chatReducer = (state, action) => {
 };
 
 const friendsInitialState = {
-  friends: [],
-  pendingRequests: { sent: [], received: [] },
+  friendsRequests: [],
   selectedUserId: null,
+  userCache: {},
 };
 
 function friendsReducer(state, action) {
   switch (action.type) {
-    case "SET_FRIENDS":
-      return { ...state, friends: action.payload };
     case "SET_FRIEND_REQUESTS":
       return { ...state, pendingRequests: action.payload };
+    case "SET_SELECTED_USER":
+      return { ...state, selectedUserId: action.payload };
     case "SEND_FRIEND_REQUEST":
       return {
         ...state,
-        pendingRequests: {
-          ...state.pendingRequests,
-          sent: [...state.pendingRequests.sent, action.payload],
-        },
+        friendRequests: [...state.friendRequests, action.payload],
       };
-    case "SET_SELECTED_USER":
-      return { ...state, selectedUserId: action.payload };
     case "ACCEPT_FRIEND_REQUEST":
       return {
         ...state,
-        pendingRequests: {
-          ...state.pendingRequests,
-          received: state.pendingRequests.received.filter(
-            (req) => req.id !== action.payload.id
-          ),
-        },
-        friends: [...state.friends, action.payload.sender],
-      };
-    case "REJECT_FRIEND_REQUEST":
-      return {
-        ...state,
-        pendingRequests: {
-          ...state.pendingRequests,
-          received: state.pendingRequests.received.filter(
-            (req) => req.id !== action.payload
-          ),
-        },
+        friendRequests: state.friendRequests.map((req) =>
+          req.id === action.payload.id ? { ...req, status: "ACCEPTED" } : req
+        ),
       };
 
-    case "CANCEL_FRIEND_REQUEST":
+    case "DELETE_FRIEND_REQUEST":
       return {
         ...state,
-        pendingRequests: {
-          ...state.pendingRequests,
-          sent: state.pendingRequests.sent.filter(
-            (req) => req.id !== action.payload
-          ),
-        },
+        friendRequests: state.friendRequests.filter(
+          (req) => req.id !== action.payload
+        ),
       };
-    case "DELETE_FRIEND":
+
+    case "CACHE_USER_DETAILS":
       return {
         ...state,
-        friends: state.friends.filter((f) => f.id !== action.payload),
+        userCache: { ...state.userCache, [action.payload.id]: action.payload },
       };
     default:
       return state;
