@@ -104,13 +104,6 @@ export default function useFriendActions() {
         }
       );
       friendsDispatch({ type: "DELETE_FRIEND", payload: friendId });
-
-      if (friendsState.selectedUser?.friendship?.id === requestId) {
-        friendsDispatch({
-          type: "SET_SELECTED_USER",
-          payload: { ...friendsState.selectedUser, friendship: null },
-        });
-      }
     } catch (error) {
       console.error("Error deleting friend:", error);
     }

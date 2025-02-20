@@ -4,9 +4,43 @@ exports.getProfile = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
+      include: {
+        sentFriendships: {
+          include: {
+            receiver: { select: { id: true, username: true, status: true } },
+          },
+        },
+        receivedFriendships: {
+          include: {
+            sender: { select: { id: true, username: true, status: true } },
+          },
+        },
+        conversations: {
+          include: {
+            members: { select: { id: true, username: true, status: true } },
+            messages: { orderBy: { timestamp: "desc" }, take: 1 },
+          },
+        },
+      },
     });
-    res.json(user);
+
+    const acceptedRequests = [
+      ...user.sentFriendships.filter((f) => f.status === "ACCEPTED"),
+      ...user.receivedFriendships.filter((f) => f.status === "ACCEPTED"),
+    ];
+
+    const pendingRequests = {
+      sent: user.sentFriendships.filter((f) => f.status === "PENDING"),
+      received: user.receivedFriendships.filter((f) => f.status === "PENDING"),
+    };
+
+    res.json({
+      ...user,
+      acceptedRequests,
+      pendingRequests,
+    });
   } catch (error) {
+    console.error("Error fetching user profile:", error);
     res.status(500).json({ error: "Error fetching profile." });
   }
 };

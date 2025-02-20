@@ -1,17 +1,29 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../utils/AppContext";
 import useFriendActions from "../hooks/useFriendActions";
 import useConversations from "../hooks/useConversations";
 
 function FriendList() {
-  const { friendsState, uiState, chatState } = useContext(AppContext);
+  const { friendsState, uiState, chatState, authState } =
+    useContext(AppContext);
   const { openUserDetails, searchUsers } = useFriendActions();
   const { addMember } = useConversations();
-  const { friends } = friendsState;
+  const { acceptedRequests } = friendsState;
 
+  const [friends, setFriends] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    if (acceptedRequests) {
+      const friends = acceptedRequests.map((req) =>
+        req.sender ? req.sender : req.receiver
+      );
+
+      setFriends(friends);
+    }
+  }, [acceptedRequests]);
 
   const isMember = (user) => {
     return chatState.selectedConversation?.members.some(

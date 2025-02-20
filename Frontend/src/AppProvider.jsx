@@ -162,7 +162,7 @@ const chatReducer = (state, action) => {
 };
 
 const friendsInitialState = {
-  friends: [],
+  acceptedRequests: [],
   pendingRequests: { sent: [], received: [] },
   selectedUserId: null,
 };
@@ -172,7 +172,14 @@ function friendsReducer(state, action) {
     case "SET_FRIENDS":
       return { ...state, friends: action.payload };
     case "SET_FRIEND_REQUESTS":
-      return { ...state, pendingRequests: action.payload };
+      return {
+        ...state,
+        acceptedRequests: action.payload.acceptedRequests,
+        pendingRequests: {
+          sent: action.payload.pendingRequests.sent,
+          received: action.payload.pendingRequests.received,
+        },
+      };
     case "SEND_FRIEND_REQUEST":
       return {
         ...state,
@@ -186,13 +193,13 @@ function friendsReducer(state, action) {
     case "ACCEPT_FRIEND_REQUEST":
       return {
         ...state,
+        acceptedRequests: [...state.acceptedRequests, action.payload],
         pendingRequests: {
           ...state.pendingRequests,
           received: state.pendingRequests.received.filter(
             (req) => req.id !== action.payload.id
           ),
         },
-        friends: [...state.friends, action.payload.sender],
       };
     case "REJECT_FRIEND_REQUEST":
       return {
@@ -253,9 +260,11 @@ export function AppProvider({ children }) {
           }
         );
 
+        const user = response.data.user;
+
         authDispatch({
           type: "LOGIN",
-          payload: { token, user: response.data.user },
+          payload: { token, user },
         });
       } catch (error) {
         authDispatch({ type: "LOGOUT" });
@@ -266,67 +275,38 @@ export function AppProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!authState.token) return;
+    if (!authState.token || authState.user) return;
 
-    const fetchConversations = async () => {
+    const fetchUserProfile = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/conversations/user",
+          "http://localhost:5000/api/users/profile",
           {
             headers: { Authorization: authState.token },
           }
         );
+
+        const { acceptedRequests, pendingRequests, conversations, ...user } =
+          response.data;
+
+        friendsDispatch({
+          type: "SET_FRIEND_REQUESTS",
+          payload: { acceptedRequests, pendingRequests },
+        });
 
         chatDispatch({
           type: "SET_CONVERSATIONS",
           payload: {
-            private: response.data.privateConversations,
-            group: response.data.groupConversations,
+            private: conversations.filter((c) => !c.isGroup),
+            group: conversations.filter((c) => c.isGroup),
           },
         });
       } catch (error) {
-        console.error("Error fetching conversations:", error);
+        console.error("Error fetching profile:", error);
       }
     };
 
-    fetchConversations();
-  }, [authState.token]);
-
-  useEffect(() => {
-    if (!authState.token) return;
-
-    const fetchFriends = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/friends", {
-          headers: { Authorization: authState.token },
-        });
-
-        friendsDispatch({ type: "SET_FRIENDS", payload: response.data });
-      } catch (error) {
-        console.error("Error fetching friends:", error);
-      }
-    };
-
-    const fetchpendingRequests = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/friends/requests",
-          {
-            headers: { Authorization: authState.token },
-          }
-        );
-
-        friendsDispatch({
-          type: "SET_FRIEND_REQUESTS",
-          payload: response.data,
-        });
-      } catch (error) {
-        console.error("Error fetching friend requests:", error);
-      }
-    };
-
-    fetchFriends();
-    fetchpendingRequests();
+    fetchUserProfile();
   }, [authState.token]);
 
   function isTokenExpired(token) {

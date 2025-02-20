@@ -34,7 +34,7 @@ const useAuth = () => {
         password,
       });
       alert("Account created! Please log in.");
-      toggleForm(); // Switch to login form
+      toggleForm();
     } catch (error) {
       alert("User already exists");
     }

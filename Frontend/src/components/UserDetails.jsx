@@ -53,7 +53,7 @@ function UserDetail() {
   if (isLoading) return <div>Loading...</div>;
   if (!selectedUser) return <div>User not found</div>;
 
-  const isFriend = friends.some((f) => f.id === selectedUser.id);
+  const isFriend = friends.some((f) => f.id === selectedUserId);
   const sentRequest = pendingRequests.sent.find(
     (r) => r.receiver.id === selectedUser.id
   );
@@ -69,7 +69,7 @@ function UserDetail() {
       <p>Bio: {selectedUser.bio || "No bio available"}</p>
 
       {isFriend && (
-        <button onClick={() => deleteFriend(selectedUser.id)}>Unfriend</button>
+        <button onClick={() => deleteFriend(selectedUserId)}>Unfriend</button>
       )}
       {receivedRequest && (
         <>
