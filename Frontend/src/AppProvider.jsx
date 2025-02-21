@@ -155,6 +155,8 @@ const chatReducer = (state, action) => {
             : group
         ),
       };
+    case "RESET_CHAT_STATE":
+      return { ...chatInitialState };
 
     default:
       return state;
@@ -227,6 +229,8 @@ function friendsReducer(state, action) {
         ...state,
         friends: state.friends.filter((f) => f.id !== action.payload),
       };
+    case "RESET_FRIENDS_STATE":
+      return { ...friendsInitialState };
     default:
       return state;
   }
@@ -274,41 +278,41 @@ export function AppProvider({ children }) {
     validateToken();
   }, []);
 
-  useEffect(() => {
-    if (!authState.token || authState.user) return;
+  // useEffect(() => {
+  //   if (!authState.token || authState.user) return;
 
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/users/profile",
-          {
-            headers: { Authorization: authState.token },
-          }
-        );
-        console.log(response.data);
+  //   const fetchUserProfile = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:5000/api/users/profile",
+  //         {
+  //           headers: { Authorization: authState.token },
+  //         }
+  //       );
+  //       console.log(response.data);
 
-        const { acceptedRequests, pendingRequests, conversations } =
-          response.data;
+  //       const { acceptedRequests, pendingRequests, conversations } =
+  //         response.data;
 
-        friendsDispatch({
-          type: "SET_FRIEND_REQUESTS",
-          payload: { acceptedRequests, pendingRequests },
-        });
+  //       friendsDispatch({
+  //         type: "SET_FRIEND_REQUESTS",
+  //         payload: { acceptedRequests, pendingRequests },
+  //       });
 
-        chatDispatch({
-          type: "SET_CONVERSATIONS",
-          payload: {
-            private: conversations.filter((c) => !c.isGroup),
-            group: conversations.filter((c) => c.isGroup),
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
+  //       chatDispatch({
+  //         type: "SET_CONVERSATIONS",
+  //         payload: {
+  //           private: conversations.filter((c) => !c.isGroup),
+  //           group: conversations.filter((c) => c.isGroup),
+  //         },
+  //       });
+  //     } catch (error) {
+  //       console.error("Error fetching profile:", error);
+  //     }
+  //   };
 
-    fetchUserProfile();
-  }, [authState.token]);
+  //   fetchUserProfile();
+  // }, [authState.token]);
 
   function isTokenExpired(token) {
     try {
