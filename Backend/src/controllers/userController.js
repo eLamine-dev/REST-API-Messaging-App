@@ -30,8 +30,9 @@ exports.getProfile = async (req, res) => {
     ];
 
     const pendingRequests = {
-      sent: user.sentFriendships.filter((f) => f.status === "PENDING"),
-      received: user.receivedFriendships.filter((f) => f.status === "PENDING"),
+      sent: user.sentFriendships.filter((f) => f.status === "PENDING") || [],
+      received:
+        user.receivedFriendships.filter((f) => f.status === "PENDING") || [],
     };
 
     res.json({

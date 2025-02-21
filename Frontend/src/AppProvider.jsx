@@ -285,8 +285,9 @@ export function AppProvider({ children }) {
             headers: { Authorization: authState.token },
           }
         );
+        console.log(response.data);
 
-        const { acceptedRequests, pendingRequests, conversations, ...user } =
+        const { acceptedRequests, pendingRequests, conversations } =
           response.data;
 
         friendsDispatch({

@@ -4,7 +4,8 @@ import { AppContext } from "../utils/AppContext";
 import useFriendActions from "../hooks/useFriendActions";
 
 function FriendsPage() {
-  const { authState, friendsState, friendsDispatch } = useContext(AppContext);
+  const { friendsState } = useContext(AppContext);
+  const { acceptedRequests } = friendsState;
   const {
     acceptRequest,
     cancelRequest,
@@ -16,26 +17,16 @@ function FriendsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  const [friends, setFriends] = useState([]);
   useEffect(() => {
-    const fetchFriendRequests = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/friends/requests",
-          {
-            headers: { Authorization: authState.token },
-          }
-        );
-        friendsDispatch({
-          type: "SET_FRIEND_REQUESTS",
-          payload: response.data,
-        });
-      } catch (error) {
-        console.error("Error fetching friend requests:", error);
-      }
-    };
+    if (acceptedRequests) {
+      const friends = acceptedRequests.map((req) =>
+        req.sender ? req.sender : req.receiver
+      );
 
-    fetchFriendRequests();
-  }, [authState.token]);
+      setFriends(friends);
+    }
+  }, [acceptedRequests]);
 
   const getSearchResults = async () => {
     const response = await searchUsers(searchQuery);
@@ -100,10 +91,10 @@ function FriendsPage() {
       )}
 
       <h2>Your Friends</h2>
-      {friendsState.friends.length === 0 ? (
+      {friends.length === 0 ? (
         <p>No friends yet</p>
       ) : (
-        friendsState.friends.map((friend) => (
+        friends.map((friend) => (
           <div
             key={friend.id}
             className="friend-item"
