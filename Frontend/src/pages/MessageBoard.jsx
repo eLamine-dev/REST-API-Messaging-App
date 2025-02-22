@@ -8,6 +8,15 @@ function MessageBoard() {
   const { authState, chatState, chatDispatch } = useContext(AppContext);
 
   useEffect(() => {
+    if (!chatState.currentConversation) {
+      chatDispatch({
+        type: "SET_CURRENT_CONVERSATION",
+        payload: chatState.chatRoom,
+      });
+    }
+  }, [chatState.currentConversation]);
+
+  useEffect(() => {
     if (!authState.token || chatState.chatRoom) return;
 
     const fetchChatRoom = async () => {

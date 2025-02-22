@@ -9,11 +9,13 @@ function GroupDetails() {
 
   const { selectedConversationId, privateConversations, groupConversations } =
     chatState;
-  const { renameGroup, removeMember, leaveGroup } = useConversations();
+  const { renameGroup, removeMember, leaveGroup, deleteConversation } =
+    useConversations();
 
   const selectedConversation =
     privateConversations.find((conv) => conv.id === selectedConversationId) ||
-    groupConversations.find((conv) => conv.id === selectedConversationId);
+    groupConversations.find((conv) => conv.id === selectedConversationId) ||
+    null;
 
   const isAdmin = selectedConversation.adminId === authState.user.id;
 
@@ -74,7 +76,17 @@ function GroupDetails() {
 
       {isAdmin && (
         <>
-          <button onClick>Delete Group</button>
+          <button
+            onClick={() => {
+              deleteConversation(selectedConversation.id);
+              chatDispatch({
+                type: "SET_SELECTED_CONVERSATION",
+                payload: null,
+              });
+            }}
+          >
+            Delete Group
+          </button>
           <button
             onClick={() =>
               setUiState((prev) => ({ ...prev, isAddingMembers: true }))

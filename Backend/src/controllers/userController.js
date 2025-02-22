@@ -4,6 +4,7 @@ exports.getProfile = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user.userId },
+
       include: {
         sentFriendships: {
           include: {

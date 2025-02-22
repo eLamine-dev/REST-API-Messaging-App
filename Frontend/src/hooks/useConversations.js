@@ -12,6 +12,9 @@ export default function useConversations() {
         { name, isGroup },
         { headers: { Authorization: authState.token } }
       );
+
+      console.log(response.data);
+
       chatDispatch({ type: "CREATE_CONVERSATION", payload: response.data });
     } catch (error) {
       console.error("Error creating conversation:", error);
