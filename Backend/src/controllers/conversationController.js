@@ -12,6 +12,9 @@ exports.createConversation = async (req, res) => {
           connect: { id: req.user.userId },
         },
       },
+      include: {
+        members: { select: { id: true, username: true, status: true } },
+      },
     });
     res.json(conversation);
   } catch (error) {
