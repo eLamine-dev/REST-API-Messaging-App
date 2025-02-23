@@ -333,3 +333,22 @@ exports.searchGroups = async (req, res) => {
     res.status(500).json({ error: "Error searching groups." });
   }
 };
+
+exports.getConversation = async (req, res) => {
+  const { id } = req.id;
+  try {
+    const response = await prisma.conversation.findUnique({
+      where: { id: parseInt(id) },
+
+      include: {
+        members: {
+          select: { id: true, username: true, status: true },
+        },
+      },
+    });
+
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: "Error searching groups." });
+  }
+};

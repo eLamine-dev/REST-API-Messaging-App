@@ -3,7 +3,7 @@ import { AppContext } from "../utils/AppContext";
 import useFriendActions from "../hooks/useFriendActions";
 import useConversations from "../hooks/useConversations";
 
-function FriendList() {
+function FriendList({ selectedConversation }) {
   const { friendsState, uiState, chatState } = useContext(AppContext);
   const { openUserDetails, searchUsers } = useFriendActions();
   const { addMember } = useConversations();
@@ -25,9 +25,7 @@ function FriendList() {
   }, [acceptedRequests]);
 
   const isMember = (user) => {
-    return chatState.selectedConversation?.members.some(
-      (member) => member.id === user.id
-    );
+    return selectedConversation.members.some((member) => member.id === user.id);
   };
 
   const handleSearch = async () => {

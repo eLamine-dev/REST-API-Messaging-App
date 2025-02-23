@@ -3,7 +3,7 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 import useConversations from "../hooks/useConversations";
 
-function GroupDetails({}) {
+function GroupDetails({ selectedConversation }) {
   const { authState, chatState, chatDispatch, setUiState } =
     useContext(AppContext);
 
@@ -11,11 +11,6 @@ function GroupDetails({}) {
     chatState;
   const { renameGroup, removeMember, leaveGroup, deleteConversation } =
     useConversations();
-
-  const selectedConversation =
-    privateConversations.find((conv) => conv.id === selectedConversationId) ||
-    groupConversations.find((conv) => conv.id === selectedConversationId) ||
-    null;
 
   const isAdmin = selectedConversation.adminId === authState.user.id;
 
