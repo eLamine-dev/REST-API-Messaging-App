@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 import useConversations from "../hooks/useConversations";
@@ -17,8 +17,13 @@ function GroupDetails({ selectedConversation }) {
   const [isEditing, setIsEditing] = useState(false);
   const [groupName, setGroupName] = useState(selectedConversation.name);
 
+  useEffect(() => {
+    setGroupName(selectedConversation.name);
+  }, [selectedConversation, groupConversations]);
+
   const handleSave = async () => {
     await renameGroup(selectedConversation.id, groupName);
+
     setIsEditing(false);
   };
 

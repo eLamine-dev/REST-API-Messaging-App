@@ -195,13 +195,8 @@ export default function useConversations() {
         }
       );
       chatDispatch({
-        type: "SET_CONVERSATIONS",
-        payload: {
-          private: chatState.privateConversations,
-          group: chatState.groupConversations.map((g) =>
-            g.id === groupId ? { ...g, name: newName } : g
-          ),
-        },
+        type: "RENAME_GROUP",
+        payload: { groupId, newName },
       });
     } catch (error) {
       console.error("Error renaming group:", error);

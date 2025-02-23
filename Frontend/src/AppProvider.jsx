@@ -121,6 +121,16 @@ const chatReducer = (state, action) => {
         ),
       };
 
+    case "RENAME_GROUP":
+      return {
+        ...state,
+        groupConversations: state.groupConversations.map((group) =>
+          group.id === action.payload.groupId
+            ? { ...group, name: action.payload.newName }
+            : group
+        ),
+      };
+
     case "ADD_MEMBER":
       return {
         ...state,

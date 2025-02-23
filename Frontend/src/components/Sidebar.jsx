@@ -20,6 +20,7 @@ function Sidebar() {
   const [selectedConversation, setSelectedConversation] = useState(null);
 
   useEffect(() => {
+    if (!selectedConversationId) return;
     const conversation =
       privateConversations.find((conv) => conv.id === selectedConversationId) ||
       groupConversations.find((conv) => conv.id === selectedConversationId) ||
@@ -28,7 +29,7 @@ function Sidebar() {
     const fetchConversation = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/users/${selectedUserId}`,
+          `http://localhost:5000/api/conversations/${selectedConversationId}`,
           {
             headers: { Authorization: authState.token },
           }
