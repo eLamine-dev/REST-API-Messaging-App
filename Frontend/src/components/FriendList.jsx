@@ -4,8 +4,7 @@ import useFriendActions from "../hooks/useFriendActions";
 import useConversations from "../hooks/useConversations";
 
 function FriendList() {
-  const { friendsState, uiState, chatState, authState } =
-    useContext(AppContext);
+  const { friendsState, uiState, chatState } = useContext(AppContext);
   const { openUserDetails, searchUsers } = useFriendActions();
   const { addMember } = useConversations();
   const { acceptedRequests } = friendsState;

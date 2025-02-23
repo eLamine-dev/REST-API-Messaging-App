@@ -21,34 +21,16 @@ function UserDetail() {
   useEffect(() => {
     if (!selectedUserId) return;
 
-    const getRelatedRequest = () => {
-      const acceptedRequest = acceptedRequests.find(
-        (r) =>
-          r.receiver?.id === selectedUserId || r.sender?.id === selectedUserId
+    const findRelatedRequest = () => {
+      return (
+        acceptedRequests.find(
+          (r) =>
+            r.receiver?.id === selectedUserId || r.sender?.id === selectedUserId
+        ) ||
+        pendingRequests.sent.find((r) => r.receiver.id === selectedUserId) ||
+        pendingRequests.received.find((r) => r.sender.id === selectedUserId) ||
+        null
       );
-
-      if (acceptedRequest) {
-        setRelatedRequest(acceptedRequest);
-        return;
-      }
-
-      const sentRequest = pendingRequests.sent.find(
-        (r) => r.receiver.id === selectedUserId
-      );
-      if (sentRequest) {
-        setRelatedRequest(sentRequest);
-        return;
-      }
-
-      const receivedRequest = pendingRequests.received.find(
-        (r) => r.sender.id === selectedUserId
-      );
-      if (receivedRequest) {
-        setRelatedRequest(sentRequest);
-        return;
-      }
-
-      setRelatedRequest(null);
     };
 
     const fetchUserDetails = async () => {
@@ -65,7 +47,7 @@ function UserDetail() {
       }
     };
 
-    getRelatedRequest();
+    setRelatedRequest(findRelatedRequest());
     fetchUserDetails().then(() => setIsLoading(false));
   }, [selectedUserId, acceptedRequests, pendingRequests]);
 

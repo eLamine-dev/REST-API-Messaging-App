@@ -3,7 +3,7 @@ import axios from "axios";
 import { AppContext } from "../utils/AppContext";
 import useConversations from "../hooks/useConversations";
 
-function GroupDetails() {
+function GroupDetails({}) {
   const { authState, chatState, chatDispatch, setUiState } =
     useContext(AppContext);
 
